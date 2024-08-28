@@ -1,5 +1,7 @@
 .idea
 
+.env
 .venv
+api/ai_chat_api.egg-info
 
 data

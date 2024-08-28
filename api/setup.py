@@ -1,11 +1,12 @@
 from setuptools import setup, find_packages
 
 requirements = """
-
+fastapi==0.112.2
+uvicorn==0.30.6
 """
 
 setup(
-    name='ai_chat',
+    name='ai_chat_api',
     version='0.0.1',
     author='<NAME>',
     author_email='<EMAIL>',
