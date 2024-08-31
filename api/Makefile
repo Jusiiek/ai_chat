@@ -3,3 +3,6 @@ dev_run:
 
 dev_install:
 	@pip install -e .
+
+check_code:
+	@flake8 .
