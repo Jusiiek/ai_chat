@@ -6,6 +6,9 @@ from ai_chat_api.cassandradb import CassandraConnection
 
 
 def create_app() -> FastAPI:
+    """
+    Creates FastAPI application.
+    """
     app = FastAPI()
 
     return app

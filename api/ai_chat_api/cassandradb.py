@@ -15,13 +15,19 @@ class CassandraNodes(Enum):
 
 class CassandraConnection:
     def _get_auth_provider(self):
+        """
+        Return auth provider instance
+        """
         return PlainTextAuthProvider(
             username=Config.CASSANDRA_USERNAME,
             password=Config.CASSANDRA_PASSWORD
         )
 
     def create_cassandra_connection(self):
-
+        """
+        Creates connection to cassandra and returns
+        connection object (session)
+        """
         cluster = Cluster(
             [cluster.value for cluster in CassandraNodes],
             auth_provider=self._get_auth_provider(),
