@@ -5,6 +5,9 @@ fastapi==0.112.2
 uvicorn==0.30.6
 cassandra-driver==3.29.1
 flake8==7.1.1
+PyJWT==2.9.0
+passlib==1.7.4
+bcrypt==4.2.0
 """
 
 setup(

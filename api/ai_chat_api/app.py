@@ -15,18 +15,23 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+cassandra_connection = CassandraConnection()
 
 
 @app.on_event("startup")
 def startup_event():
-    connector = CassandraConnection()
-    connector.create_cassandra_connection()
+    cassandra_connection.create_cassandra_connection()
 
 
-if __name__ == '__main__':
+def run_dev_server():
     uvicorn.run(
-        app,
+        "ai_chat_api.app:app",
         host=Config.HOST,
         port=Config.PORT,
         reload=True,
+        workers=2,
     )
+
+
+if __name__ == '__main__':
+    run_dev_server()
