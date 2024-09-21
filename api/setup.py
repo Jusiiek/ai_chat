@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 requirements = """
-fastapi==0.112.2
+fastapi==0.115.0
 uvicorn==0.30.6
 cassandra-driver==3.29.1
 flake8==7.1.1

@@ -12,7 +12,7 @@ def _get_secret_value(secret: SecretType) -> str:
     """
     Return value of a secret.
 
-    returns
+    Returns
     --------
     secret: str - secret value
     """
@@ -36,7 +36,7 @@ def encode_jwt(
     secret : SecretType - jwt secret
     lifetime_seconds : optional in
 
-    return
+    Returns
     -----------
     token: str - JWT encoded jwt
     """
@@ -55,6 +55,17 @@ def decode_jwt(
 ) -> Dict[str, Any]:
     """
     Decodes JWT encoded jwt.
+
+    Parameters
+    ------------------
+    encoded_jwt : str - JWT encoded jwt
+    secret : SecretType - jwt secret
+    audience : List[str] - list of audience
+    algorithms : List[str] - list of algorithm
+
+    Returns
+    ---------------
+    Decoded JWT data
     """
     return jwt.decode(
         encoded_jwt,

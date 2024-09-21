@@ -1,25 +1,10 @@
 import secrets
-from typing import Optional, Protocol, Tuple, Union
+from typing import Optional, Tuple, Union
 
 from passlib.context import CryptContext
 
 
-class PasswordHelperProtocol(Protocol):
-
-    pwd_context: CryptContext = None
-
-    def verify_and_update(
-            self, password: str, hashed_password: str
-    ) -> Tuple[bool, Union[str, None]]: ...
-
-    def hash_password(self, password: str) -> str: ...
-
-    def generate_password(self) -> str: ...
-
-    def get_hashed_password(self) -> str: ...
-
-
-class PasswordHelper(PasswordHelperProtocol):
+class PasswordHelper:
     def __init__(self, hashed_password: Optional[str] = None) -> None:
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
         if hashed_password is None:
