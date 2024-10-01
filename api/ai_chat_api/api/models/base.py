@@ -8,14 +8,18 @@ class BaseModel(Model):
     __keyspace__ = 'base_model'
     id = columns.UUID(primary_key=True, default=uuid.uuid4)
 
-    @staticmethod
-    def create(**kwargs): ...
-
-    @staticmethod
-    def get_by_id(model_id: uuid.UUID): ...
+    @classmethod
+    async def create(cls, **kwargs):
+        return await cls.create(**kwargs)
 
     @classmethod
-    def update(cls, **kwargs): ...
+    async def get_by_id(cls, model_id: uuid.UUID):
+        return await cls.get(id=model_id)
 
     @classmethod
-    def delete(cls): ...
+    async def update(cls, **kwargs):
+        return await cls.update(**kwargs)
+
+    @classmethod
+    async def delete(cls):
+        return await cls.delete()
