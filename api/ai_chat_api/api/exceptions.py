@@ -12,3 +12,6 @@ class UserInactive(AppException):
 
 class InvalidVerifyToken(AppException):
     pass
+
+class PasswordInvalid(AppException):
+    pass
