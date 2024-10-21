@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 from ai_chat_api.api.models.base import BaseModel
 
@@ -29,3 +29,6 @@ class User(BaseModel):
     ) -> Tuple[bool, Union[str, None]]:
         ph = PasswordHelper("")
         return ph.verify_password(password, self.hashed_password)
+
+    async def get_by_email(self, email: str) -> Optional["User"]:
+        return self.objects.get(email=email)

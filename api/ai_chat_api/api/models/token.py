@@ -1,4 +1,5 @@
-import uuid
+from typing import Optional
+
 from cassandra.cqlengine import columns
 
 from ai_chat_api.api.models.base import BaseModel
@@ -12,5 +13,5 @@ class Token(BaseModel):
     status = columns.Text(default="")
 
     @classmethod
-    async def get_by_token(cls, token: str) -> 'Token':
+    async def get_by_token(cls, token: str) -> Optional["Token"]:
         return await cls.get(token)
