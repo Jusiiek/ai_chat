@@ -1,5 +1,7 @@
 import re
-from typing import Optional
+from typing import Optional, Any, Dict, Tuple, Union
+
+from fastapi.security import OAuth2PasswordRequestForm
 
 from ai_chat_api.api.authentication.jwt import (
     SecretType,
@@ -12,6 +14,7 @@ from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.schemas import user as user_schemas
+from ai_chat_api.api.schemas import auth as auth_schemas
 
 
 RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
@@ -60,7 +63,7 @@ class UserManager:
             return True
         return False
 
-    async def get(self, user_id: models.ID) -> models.UP:
+    async def get(self, user_id: models.ID) -> User:
         """
         Gets a user with the given email
         Parameters
@@ -78,7 +81,7 @@ class UserManager:
 
         return user
 
-    async def get_by_email(self, email: str) -> models.UP:
+    async def get_by_email(self, email: str) -> User:
         """
         Gets a user with the given email
         Parameters
@@ -95,7 +98,7 @@ class UserManager:
 
         return user
 
-    async def get_by_token(self, token: str) -> models.UP:
+    async def get_by_token(self, token: str) -> User:
         """
         Gets a user with the given email
         Parameters
@@ -115,7 +118,7 @@ class UserManager:
     async def create(
         self,
         user_create: user_schemas.BCU
-    ) -> models.UP:
+    ) -> User:
         """
         Creates a new user
 
@@ -141,3 +144,109 @@ class UserManager:
 
         created_user = self.user.create(**user_dict)
         return created_user
+
+    async def _update(
+        self,
+        user: User,
+        update_dict: Dict[str, Any]
+    ) -> User:
+        """
+        Validates sent data and updates a user
+        Parameters
+        ----------
+        user: User - The user to update
+        update_dict: dict - The updated data
+
+        Returns
+        -------
+        updated_user: User - The updated user
+        """
+        validated_dict = {}
+        for key, value in update_dict.items():
+            if key == "email" and value != user.email:
+                try:
+                    await user.get_by_email(value)
+                    raise exceptions.UserAlreadyExist()
+                except exceptions.UserNotExist:
+                    validated_dict[key] = value
+            elif key == "password" and value is not None:
+                await self._validate_password(value)
+                validated_dict[key] = self.password_helper.hash_password(value)
+            else:
+                validated_dict[key] = value
+
+        return await user.update(**validated_dict)
+
+    async def update(
+        self,
+        user_update: user_schemas.BUU,
+        user: User
+    ):
+        """
+        Updates a user
+        Parameters
+        ----------
+        user_update: UserUpdate - The updated data
+        user: User - The user to update
+
+        Returns
+        -------
+        updated_user: User - The updated user
+        """
+        updated_user_data = user_update.create_update_dict()
+        updated_user = await self._update(user, updated_user_data)
+        return updated_user
+
+    async def delete(self, user: User) -> None:
+        """
+        Deletes a user
+
+        Parameters
+        ----------
+        user: User - The user to delete
+
+        Returns
+        -------
+        None
+        """
+        user.delete()
+        return
+
+    async def validate_password(
+        self,
+        password: str,
+        user: User
+    ) -> Tuple[bool, Union[str, None]]:
+        """
+        Validates a user password
+
+        Parameters
+        ----------
+        password: str - The password to validate
+        user: User - The user to validate
+
+        Returns
+        -------
+        valid: bool - Whether the password is valid
+        """
+        return await user.verify_password(password)
+
+    async def authenticate(
+        self,
+        credentials: auth_schemas.APRF
+    ) -> Optional[User]:
+        try:
+            user: User = self.get_by_email(credentials.email)
+        except exceptions.UserNotExist:
+            return None
+
+        verified, password_hash = self.password_helper.verify_password(
+            credentials.password, user.hashed_password
+        )
+        if not verified:
+            return None
+
+        if password_hash is None:
+            await self._update(user, {"hashed_password": password_hash})
+
+        return user
