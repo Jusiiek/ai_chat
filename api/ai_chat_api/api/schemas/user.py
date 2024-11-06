@@ -4,6 +4,10 @@ from pydantic import BaseModel
 from ai_chat_api.api.protocols import models
 
 
+def model_dump(model: BaseModel, *args, **kwargs) -> dict:
+    return model.model_dump(*args, **kwargs)
+
+
 class CreateUpdateModel(BaseModel):
     def create_update_dict(self):
         return self.model_dump(

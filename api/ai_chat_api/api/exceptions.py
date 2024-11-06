@@ -15,3 +15,6 @@ class InvalidVerifyToken(AppException):
 
 class PasswordInvalid(AppException):
     pass
+
+class NotSupported(AppException):
+    pass

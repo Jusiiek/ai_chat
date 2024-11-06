@@ -32,7 +32,7 @@ class UserManager:
 
     def __init__(
         self,
-        user: User,
+        user: User = None,
         password_helper: Optional[PasswordHelper] = None
     ):
         self.user = user
@@ -74,11 +74,12 @@ class UserManager:
         -------
         result: A user
         """
-        user = self.user.get_by_id(user_id)
 
+        user: Union[User, None] = await User.get_by_id(user_id)
         if user is None:
             raise exceptions.UserNotExist()
 
+        self.user = user
         return user
 
     async def get_by_email(self, email: str) -> User:
@@ -92,10 +93,12 @@ class UserManager:
         -------
         result: A user
         """
-        user = self.user.get_by_email(email)
+
+        user: Union[User, None] = await User.get_by_email(email)
         if user is None:
             raise exceptions.UserNotExist()
 
+        self.user = user
         return user
 
     async def get_by_token(self, token: str) -> User:
@@ -109,7 +112,7 @@ class UserManager:
         -------
         result: A user
         """
-        token_db: Token = Token.get_by_token(token)
+        token_db: Union[Token, None] = await Token.get_by_token(token)
         if token_db is None:
             raise exceptions.InvalidVerifyToken()
 
@@ -142,7 +145,7 @@ class UserManager:
         password = user_dict.pop('password')
         user_dict["hashed_password"] = self.password_helper.hash_password(password)
 
-        created_user = self.user.create(**user_dict)
+        created_user = await User.create(**user_dict)
         return created_user
 
     async def _update(
@@ -209,8 +212,7 @@ class UserManager:
         -------
         None
         """
-        user.delete()
-        return
+        return await user.delete()
 
     async def validate_password(
         self,
@@ -236,7 +238,7 @@ class UserManager:
         credentials: auth_schemas.APRF
     ) -> Optional[User]:
         try:
-            user: User = self.get_by_email(credentials.email)
+            user: User = await self.get_by_email(credentials.email)
         except exceptions.UserNotExist:
             return None
 

@@ -17,11 +17,3 @@ class BaseModel(Model):
     @classmethod
     async def get_by_id(cls, model_id: ID):
         return await cls.get(id=model_id)
-
-    @classmethod
-    async def update(cls, **kwargs):
-        return await cls.update(**kwargs)
-
-    @classmethod
-    async def delete(cls):
-        return await cls.delete()

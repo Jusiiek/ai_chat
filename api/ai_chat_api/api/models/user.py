@@ -7,6 +7,8 @@ from ai_chat_api.api.authentication.password import PasswordHelper
 
 
 class User(BaseModel):
+    __keyspace__ = "user"
+
     email: str
     hashed_password: str
     is_active: bool
@@ -30,5 +32,6 @@ class User(BaseModel):
         ph = PasswordHelper("")
         return ph.verify_password(password, self.hashed_password)
 
-    async def get_by_email(self, email: str) -> Optional["User"]:
-        return self.objects.get(email=email)
+    @classmethod
+    async def get_by_email(cls, email: str) -> Optional["User"]:
+        return cls.objects.get(email=email)
