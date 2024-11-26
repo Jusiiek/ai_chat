@@ -4,38 +4,6 @@ from cassandra.auth import PlainTextAuthProvider
 from ai_chat_api.config import Config
 
 
-class CassandraNodes:
-    CASSANDRA_1 = {
-        "host": "0.0.0.0",
-        "port": 9042
-    }
-    CASSANDRA_2 = {
-        "host": "0.0.0.0",
-        "port": 9043
-    }
-    CASSANDRA_3 = {
-        "host": "0.0.0.0",
-        "port": 9044
-    }
-
-    @staticmethod
-    def get_cassandra_nodes():
-        """
-        Returns all nodes available in cassandra.
-
-        return
-        --------------
-        nodes: list - list of cassandra nodes
-        """
-        nodes = [
-            CassandraNodes.CASSANDRA_1,
-            CassandraNodes.CASSANDRA_2,
-            CassandraNodes.CASSANDRA_3,
-        ]
-
-        return nodes
-
-
 class CassandraConnection:
     def __init__(self):
         self.cluster = None
@@ -56,10 +24,8 @@ class CassandraConnection:
         connection object (session)
         """
         self.cluster = Cluster(
-            [
-                (node["host"], node["port"])
-                for node in CassandraNodes.get_cassandra_nodes()
-            ],
+            [Config.CASSANDRA_HOST],
+            port=Config.CASSANDRA_PORT,
             auth_provider=self._get_auth_provider(),
         )
 

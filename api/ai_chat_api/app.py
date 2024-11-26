@@ -9,6 +9,7 @@ def create_app() -> FastAPI:
     """
     Creates FastAPI application.
     """
+    # TODO add middlewares
     app = FastAPI()
 
     return app
