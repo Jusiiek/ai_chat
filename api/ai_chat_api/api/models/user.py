@@ -26,8 +26,8 @@ class User(BaseModel):
         await self.save()
 
     async def verify_password(
-            self,
-            password: str
+        self,
+        password: str
     ) -> Tuple[bool, Union[str, None]]:
         ph = PasswordHelper("")
         return ph.verify_password(password, self.hashed_password)
