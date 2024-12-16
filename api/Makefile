@@ -6,3 +6,6 @@ dev_install:
 
 check_code:
 	@flake8 .
+
+test_unit:
+	pytest tests_unit -v --cov=ai_chat_api

@@ -1,22 +1,17 @@
-from enum import Enum
-
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
-from cassandra.cqlengine import connection
 
 from ai_chat_api.config import Config
 
 
-class CassandraNodes(Enum):
-    CASSANDRA_1 = "cassandra1"
-    CASSANDRA_2 = "cassandra2"
-    CASSANDRA_3 = "cassandra3"
-
-
 class CassandraConnection:
+    def __init__(self):
+        self.cluster = None
+        self.session = None
+
     def _get_auth_provider(self):
         """
-        Return auth provider instance
+        Returns auth provider instance
         """
         return PlainTextAuthProvider(
             username=Config.CASSANDRA_USERNAME,
@@ -28,11 +23,21 @@ class CassandraConnection:
         Creates connection to cassandra and returns
         connection object (session)
         """
-        cluster = Cluster(
-            [cluster.value for cluster in CassandraNodes],
+        self.cluster = Cluster(
+            [Config.CASSANDRA_HOST],
+            port=Config.CASSANDRA_PORT,
             auth_provider=self._get_auth_provider(),
         )
 
-        session = cluster.connect()
-        connection.set_session(session)
-        return session
+        self.session = self.cluster.connect()
+        return self.session
+
+    def close_connection(self):
+        """
+        Closes connection to cassandra
+        """
+        if self.session:
+            self.session.shutdown()
+        if self.cluster:
+            self.cluster.shutdown()
+        print("Cassandra connection closed.")

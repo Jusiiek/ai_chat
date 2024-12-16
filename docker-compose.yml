@@ -8,50 +8,15 @@ services:
       - 9042:9042
     environment:
       CASSANDRA_CLUSTER_NAME: "Cassandra_cluster"
-      CASSANDRA_SEEDS: "cassandra1,cassandra2"
-      CASSANDRA_START_RPC: "false"
-      CASSANDRA_BROADCAST_ADDRESS: "cassandra1"
-      CASSANDRA_LISTEN_ADDRESS: "cassandra1"
       CASSANDRA_AUTHENTICATOR: "PasswordAuthenticator"
       CASSANDRA_USERNAME: "admin"
       CASSANDRA_PASSWORD: "admin"
     volumes:
       - ./data/cassandra1_data:/var/lib/cassandra
-
-  cassandra2:
-    image: cassandra:4.0
-    container_name: cassandra2
-    ports:
-      - 9043:9042
-    environment:
-      CASSANDRA_CLUSTER_NAME: "Cassandra_cluster"
-      CASSANDRA_SEEDS: "cassandra1,cassandra2"
-      CASSANDRA_START_RPC: "false"
-      CASSANDRA_BROADCAST_ADDRESS: "cassandra2"
-      CASSANDRA_LISTEN_ADDRESS: "cassandra2"
-      CASSANDRA_AUTHENTICATOR: "PasswordAuthenticator"
-      CASSANDRA_USERNAME: "admin"
-      CASSANDRA_PASSWORD: "admin"
-    volumes:
-      - ./data/cassandra2_data:/var/lib/cassandra
-
-  cassandra3:
-    image: cassandra:4.0
-    container_name: cassandra3
-    ports:
-      - 9044:9042
-    environment:
-      CASSANDRA_CLUSTER_NAME: "Cassandra_cluster"
-      CASSANDRA_SEEDS: "cassandra1,cassandra2"
-      CASSANDRA_START_RPC: "false"
-      CASSANDRA_BROADCAST_ADDRESS: "cassandra3"
-      CASSANDRA_LISTEN_ADDRESS: "cassandra3"
-      CASSANDRA_AUTHENTICATOR: "PasswordAuthenticator"
-      CASSANDRA_USERNAME: "admin"
-      CASSANDRA_PASSWORD: "admin"
-    volumes:
-      - ./data/cassandra3_data:/var/lib/cassandra
+    networks:
+      - cassandra_net
 
 networks:
-  default:
+  cassandra_net:
     name: "cassandra_net"
+    driver: bridge
