@@ -18,5 +18,11 @@ setup(
     author_email='<EMAIL>',
     packages=find_packages(),
     install_requires=requirements,
-    python_requires='>=3.12'
+    python_requires='>=3.12',
+    # all functions @cli.command()
+    entry_points={
+        "console_scripts": [
+            "ai_chat_api_cli = ai_chat_api.cli:cli",
+        ]
+    },
 )
