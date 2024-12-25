@@ -13,6 +13,12 @@ bcrypt==4.2.0
 
 setup(
     name='ai_chat_api',
+    setup_requires=["setuptools_scm"],
+    use_scm_version={
+        "write_to": "../version.txt",
+        "root": "..",
+        "relative_to": __file__,
+    },
     version='0.0.1',
     author='<NAME>',
     author_email='<EMAIL>',
