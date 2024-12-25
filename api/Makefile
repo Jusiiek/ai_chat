@@ -11,4 +11,4 @@ test_unit:
 	pytest tests_unit -v --cov=ai_chat_api
 
 init_db:
-	@ai_chat_api_cli init_db
+	@ai_chat_api_cli init-db
