@@ -6,6 +6,7 @@ from ai_chat_api.api.models.base import BaseModel
 
 
 class Token(BaseModel):
+    _table_name = 'token'
     __keyspace__ = "token"
 
     token = columns.Text(primary_key=True)
