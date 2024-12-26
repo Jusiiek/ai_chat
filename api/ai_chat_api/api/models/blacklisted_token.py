@@ -6,7 +6,7 @@ from ai_chat_api.api.models.base import BaseModel
 
 
 class BlacklistedToken(BaseModel):
-    _table_name = 'blacklisted_token'
+    __table_name__ = 'blacklisted_token'
     __keyspace__ = "blacklisted_token"
 
     token = columns.Text(primary_key=True)
