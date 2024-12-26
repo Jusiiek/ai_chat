@@ -2,10 +2,7 @@ import click
 import asyncio
 from functools import wraps
 
-from ai_chat_api.utils.db import (
-    drop_db,
-    create_db
-)
+from ai_chat_api.cassandradb import DatabaseManager
 
 
 def coroutine(f):
@@ -25,8 +22,13 @@ def cli():
 @cli.command()
 @coroutine
 async def init_db():
-    await drop_db()
-    await create_db()
+    db = DatabaseManager.get_instance()
+    db.connect()
+
+    db.drop_db()
+    db.create_db()
+
+    db.close()
 
 
 if __name__ == "__main__":

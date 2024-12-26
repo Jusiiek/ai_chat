@@ -7,7 +7,7 @@ from ai_chat_api.middleware import (
     security_headers_middleware
 )
 from ai_chat_api.config import Config
-from ai_chat_api.cassandradb import CassandraConnection
+from ai_chat_api.cassandradb import DatabaseManager
 
 
 def create_app() -> FastAPI:
@@ -33,12 +33,18 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-cassandra_connection = CassandraConnection()
 
 
 @app.on_event("startup")
-def startup_event():
-    cassandra_connection.create_cassandra_connection()
+async def startup_event():
+    db = DatabaseManager.get_instance()
+    db.connect()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    db = DatabaseManager.get_instance()
+    db.close()
 
 
 def run_dev_server():

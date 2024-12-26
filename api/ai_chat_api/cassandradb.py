@@ -1,13 +1,29 @@
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
+from cassandra.cqlengine.management import (
+    sync_table,
+    drop_table
+)
 
 from ai_chat_api.config import Config
+from ai_chat_api.api.models.user import User
+from ai_chat_api.api.models.token import Token
+from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 
 
-class CassandraConnection:
+class DatabaseManager:
+    _instance = None
+    MODELS = [User, Token, BlacklistedToken]
+
     def __init__(self):
         self.cluster = None
         self.session = None
+
+    @classmethod
+    def get_instance(cls):
+        if not cls._instance:
+            cls._instance = DatabaseManager()
+        return cls._instance
 
     def _get_auth_provider(self):
         """
@@ -18,21 +34,25 @@ class CassandraConnection:
             password=Config.CASSANDRA_PASSWORD
         )
 
-    def create_cassandra_connection(self):
+    def connect(self):
         """
         Creates connection to cassandra and returns
         connection object (session)
         """
-        self.cluster = Cluster(
-            [Config.CASSANDRA_HOST],
-            port=Config.CASSANDRA_PORT,
-            auth_provider=self._get_auth_provider(),
-        )
+        try:
+            self.cluster = Cluster(
+                [Config.CASSANDRA_HOST],
+                port=Config.CASSANDRA_PORT,
+                auth_provider=self._get_auth_provider(),
+            )
 
-        self.session = self.cluster.connect()
-        return self.session
+            self.session = self.cluster.connect()
+            return self.session
+        except Exception as e:
+            print(f"Failed to connect to Cassandra cluster: {str(e)}")
+            raise
 
-    def close_connection(self):
+    def close(self):
         """
         Closes connection to cassandra
         """
@@ -41,3 +61,19 @@ class CassandraConnection:
         if self.cluster:
             self.cluster.shutdown()
         print("Cassandra connection closed.")
+
+    def drop_db(self):
+        for model in self.MODELS:
+            try:
+                drop_table(model)
+                print(f"Successfully dropped table for model: {model.__name__}")
+            except Exception as e:
+                print(f"Failed to drop table for model {model.__name__}: {e}")
+
+    def create_db(self):
+        for model in self.MODELS:
+            try:
+                sync_table(model)
+                print(f"Successfully created table for model: {model.__name__}")
+            except Exception as e:
+                print(f"Failed to create table for model: {model.__name__}: {e}")
