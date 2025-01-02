@@ -25,6 +25,7 @@ async def init_db():
     db = DatabaseManager.get_instance()
     db.connect()
 
+    db.create_keyspace()
     db.drop_db()
     db.create_db()
 

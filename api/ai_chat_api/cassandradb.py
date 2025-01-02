@@ -1,9 +1,13 @@
+from typing import Type, List
+
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.cqlengine.management import (
     sync_table,
     drop_table
 )
+from cassandra.cqlengine.models import Model
+from cassandra.cqlengine import connection
 
 from ai_chat_api.config import Config
 from ai_chat_api.api.models.user import User
@@ -13,14 +17,20 @@ from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 
 class DatabaseManager:
     _instance = None
-    MODELS = [User, Token, BlacklistedToken]
+
+    KEYSPACE = Config.APP_KEYSPACE
+    MODELS: List[Type[Model]] = [
+        User,
+        Token,
+        BlacklistedToken
+    ]
 
     def __init__(self):
         self.cluster = None
         self.session = None
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> 'DatabaseManager':
         if not cls._instance:
             cls._instance = DatabaseManager()
         return cls._instance
@@ -47,6 +57,14 @@ class DatabaseManager:
             )
 
             self.session = self.cluster.connect()
+            self.session.set_keyspace(self.KEYSPACE)
+
+            connection.register_connection(
+                "default",
+                hosts=[Config.CASSANDRA_HOST]
+            )
+            connection.set_default_connection("default")
+
             return self.session
         except Exception as e:
             print(f"Failed to connect to Cassandra cluster: {str(e)}")
@@ -61,6 +79,13 @@ class DatabaseManager:
         if self.cluster:
             self.cluster.shutdown()
         print("Cassandra connection closed.")
+
+    def create_keyspace(self):
+        if self.session:
+            self.session.execute("""
+                    CREATE KEYSPACE IF NOT EXISTS {}
+                    WITH replication = {{'class': 'SimpleStrategy', 'replication_factor': '1'}}
+                """.format(self.KEYSPACE))
 
     def drop_db(self):
         for model in self.MODELS:
