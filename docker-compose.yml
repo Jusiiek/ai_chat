@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  cassandra1:
+  cassandra:
     image: cassandra:4.0
-    container_name: cassandra1
+    container_name: cassandra
     ports:
       - 9042:9042
     environment:
@@ -12,7 +12,7 @@ services:
       CASSANDRA_USERNAME: "admin"
       CASSANDRA_PASSWORD: "admin"
     volumes:
-      - ./data/cassandra1_data:/var/lib/cassandra
+      - ./data/cassandra_data:/var/lib/cassandra
     networks:
       - cassandra_net
 

@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 from typing import Optional, Protocol, TypeVar
 
-ID = uuid.UUID
+ID = TypeVar('ID', bound=uuid.UUID)
+
 
 class UserProtocol(Protocol[ID]):
 
@@ -25,6 +26,7 @@ class AuthProtocol(Protocol[ID]):
     refresh_token: Optional[str]
     account_id: ID
     account_email: str
+
 
 UP = TypeVar("UP", bound=UserProtocol)
 AP = TypeVar("AP", bound=AuthProtocol)

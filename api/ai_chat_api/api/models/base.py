@@ -4,10 +4,14 @@ from cassandra.cqlengine import columns
 from cassandra.cqlengine.models import Model
 
 from ai_chat_api.api.protocols.models import ID
+from ai_chat_api.config import Config
 
 
 class BaseModel(Model):
-    __keyspace__ = 'base_model'
+    __abstract__ = True
+    __table_name__ = 'base_model'
+    __keyspace__ = Config.APP_KEYSPACE
+
     id = columns.UUID(primary_key=True, default=uuid.uuid4)
 
     @classmethod

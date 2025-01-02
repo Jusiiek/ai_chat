@@ -7,7 +7,7 @@ from ai_chat_api.api.authentication.password import PasswordHelper
 
 
 class User(BaseModel):
-    __keyspace__ = "user"
+    __table_name__ = 'user'
 
     email: str
     hashed_password: str

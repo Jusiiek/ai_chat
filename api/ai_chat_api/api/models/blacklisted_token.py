@@ -6,11 +6,11 @@ from ai_chat_api.api.models.base import BaseModel
 
 
 class BlacklistedToken(BaseModel):
-    __keyspace__ = "blacklisted_token"
+    __table_name__ = 'blacklisted_token'
 
     token = columns.Text(primary_key=True)
     user_id = columns.UUID(index=True)
-    expire_at = columns.DateTime()
+    expired_at = columns.DateTime()
     status = columns.Text(default="")
 
     @classmethod
