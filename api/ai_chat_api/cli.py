@@ -22,6 +22,9 @@ def cli():
 @cli.command()
 @coroutine
 async def init_db():
+    """
+    Inits database for ai_chat_api.
+    """
     db = DatabaseManager.get_instance()
     db.connect()
 

@@ -31,6 +31,9 @@ class DatabaseManager:
 
     @classmethod
     def get_instance(cls) -> 'DatabaseManager':
+        """
+        Returns DatabaseManager instance
+        """
         if not cls._instance:
             cls._instance = DatabaseManager()
         return cls._instance
@@ -88,6 +91,9 @@ class DatabaseManager:
                 """.format(self.KEYSPACE))
 
     def drop_db(self):
+        """
+        Drops models tables
+        """
         for model in self.MODELS:
             try:
                 drop_table(model)
@@ -96,6 +102,9 @@ class DatabaseManager:
                 print(f"Failed to drop table for model {model.__name__}: {e}")
 
     def create_db(self):
+        """
+        Creates models tables
+        """
         for model in self.MODELS:
             try:
                 sync_table(model)
