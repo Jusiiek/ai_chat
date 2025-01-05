@@ -21,6 +21,13 @@ class User(BaseModel):
       self,
       password: str
     ) -> None:
+        """
+        Set user password
+
+        Params
+        -----------------
+        password: str - New user password
+        """
         ph = PasswordHelper("")
         self.hashed_password = ph.hash_password(password)
         await self.save()
@@ -29,6 +36,17 @@ class User(BaseModel):
         self,
         password: str
     ) -> Tuple[bool, Union[str, None]]:
+        """
+        Verify user password
+
+        Params
+        ---------------------
+        password: str - User password
+
+        Returns
+        ---------------------
+        is_valid: bool - User password is valid or not
+        """
         ph = PasswordHelper("")
         return ph.verify_password(password, self.hashed_password)
 
