@@ -11,6 +11,9 @@ class Config:
     HOST = os.environ.get('HOST', '0.0.0.0')
     PORT = os.environ.get('PORT', 8000)
 
+    # router
+    MAIN_ROUTER = "/api"
+
     # cassandra
     CASSANDRA_USERNAME = os.environ.get('CASSANDRA_USERNAME', 'admin')
     CASSANDRA_PASSWORD = os.environ.get('CASSANDRA_PASSWORD', 'admin')

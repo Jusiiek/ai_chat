@@ -2,10 +2,11 @@ import uuid
 from datetime import datetime
 from typing import Optional, Protocol, TypeVar
 
-ID = TypeVar('ID', bound=uuid.UUID)
+ID = TypeVar("ID", bound=uuid.UUID)
 
 
 class UserProtocol(Protocol[ID]):
+    """User protocol that orm model should follow."""
 
     id: ID
     email: str
@@ -18,6 +19,7 @@ class UserProtocol(Protocol[ID]):
 
 
 class AuthProtocol(Protocol[ID]):
+    """Auth protocol that orm model should follow."""
 
     id: ID
     auth_name: str
