@@ -26,5 +26,5 @@ class NotSupported(AppException):
     pass
 
 
-class StrategyDestroyNotSupportedError(Exception):
+class LogoutError(AppException):
     pass

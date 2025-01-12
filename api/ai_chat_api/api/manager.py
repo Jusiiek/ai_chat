@@ -15,7 +15,7 @@ RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
 VERIFY_USER_TOKEN_AUDIENCE = "verify-user-token"
 
 
-class UserManager(Generic[models.UP, models.ID]):
+class UserManager(Generic[User, models.ID]):
     reset_password_token_secret: SecretType
     reset_password_token_lifetime_seconds: int = 3600
     reset_password_token_audience: str = RESET_PASSWORD_TOKEN_AUDIENCE

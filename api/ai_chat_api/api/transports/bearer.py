@@ -16,8 +16,8 @@ class BearerResponseSchema(BaseModel):
 class BearerTransport(SecurityTransport):
     scheme: OAuth2PasswordBearer
 
-    def __init__(self, tokenUrl: str):
-        self.token_url = OAuth2PasswordBearer(tokenUrl, auto_error=False)
+    def __init__(self, token_url: str):
+        self.token_url = OAuth2PasswordBearer(token_url, auto_error=False)
 
     async def get_login_response(self, token: str) -> Response:
         bearer_response = BearerResponseSchema(
