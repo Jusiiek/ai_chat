@@ -10,6 +10,16 @@ from ai_chat_api.api.models.user import User
 
 
 class AuthenticationBackend(Generic[User, models.ID]):
+	"""
+
+	Authentication backend, they provide a full authentication method logic, login and logout
+
+	Params
+	------------------------
+	bearer_transport: BearerTransport - Authentication transport instance.
+	security: AuthLogic - Security instance.
+
+	"""
 	bearer_transport: BearerTransport
 	security: AuthLogic
 
