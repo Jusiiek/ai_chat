@@ -5,7 +5,7 @@ from ai_chat_api.api.protocols import models
 from ai_chat_api.api.models.user import User
 
 
-class AuthLogic(Protocol, Generic[User, models.ID]):
+class Strategy(Protocol, Generic[User, models.ID]):
     async def read_token(
         self, token: Optional[str], user_manager: UserManager[User, models.ID]
     ) -> Optional[User]: ...
