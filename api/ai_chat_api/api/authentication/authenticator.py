@@ -1,5 +1,7 @@
 from typing import Generic, Optional
 
+from fastapi import Depends, HTTPException, status
+
 from ai_chat_api.api.manager import UserManager
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.protocols import models
@@ -34,25 +36,56 @@ class Authenticator(Generic[User, models.ID]):
 		is_verified: bool = False,
 		is_superuser: bool = False,
 		**kwargs
-	) -> tuple[Optional[User, None]]:
+	) -> tuple[Optional[User], Optional[str]]:
 		"""
 		Authenticates user
 
 		Params
 		-------------------
 		user_manager: UserManager - user manager
-		is_active: boolean - if is true, checks if user is active
-		is_verified: boolean - if is true, checks if user is verified
-		is_superuser: boolean - if is true, checks if user is superuser
+		is_active: boolean - 'if is true, checks if user is active.
+		If not throws exception with status unauthorized. Defaults to False.'
+		is_verified: boolean - 'if is true, checks if user is verified.
+		If not throws exception with status forbidden. Defaults to False.'
+		is_superuser: boolean - 'if is true, checks if user is superuser.
+		If not throws exception with status forbidden. Defaults to False.'
 		kwargs: keyword arguments
+
+		Returns
+		-------------------
+		user: User - user
+		token: str - token
 		"""
 		user: Optional[User, None] = None
-		token: Optional[str] = None
+		token: Optional[str] = kwargs.pop("token", None)
 
-	def current_user_token(
+		if token:
+			user: Optional[User, None] = self.backend.security.read_token(token, user_manager)
+
+		status_code = status.HTTP_401_UNAUTHORIZED
+		if user:
+			status_code = status.HTTP_403_FORBIDDEN
+			if is_active and not user.is_active:
+				status_code = status.HTTP_401_UNAUTHORIZED
+				user = None
+			elif is_verified and not user.is_verified or is_superuser and not user.is_superuser:
+				user = None
+
+		if not user:
+			raise HTTPException(status_code=status_code)
+		return user, token
+
+	async def current_user_token(
 		self,
 		is_active: bool = False,
 		is_verified: bool = False,
 		is_superuser: bool = False,
+		**kwargs
 	):
-		pass
+		return await self._authenticate(
+			self.user_manager,
+			is_active=is_active,
+			is_verified=is_verified,
+			is_superuser=is_superuser,
+			**kwargs
+		)
