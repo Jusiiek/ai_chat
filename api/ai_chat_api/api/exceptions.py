@@ -2,7 +2,11 @@ class AppException(Exception):
     pass
 
 
-class UserNotExist(AppException):
+class UserNotExists(AppException):
+    pass
+
+
+class InvalidID(AppException):
     pass
 
 
@@ -27,4 +31,8 @@ class NotSupported(AppException):
 
 
 class LogoutError(AppException):
+    pass
+
+
+class StrategyDestroyTokenError(AppException):
     pass

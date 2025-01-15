@@ -70,7 +70,7 @@ class UserManager(Generic[User, models.ID]):
 
         user: Union[User, None] = await User.get_by_id(user_id)
         if user is None:
-            raise exceptions.UserNotExist()
+            raise exceptions.UserNotExists()
 
         self.user = user
         return user
@@ -89,7 +89,7 @@ class UserManager(Generic[User, models.ID]):
 
         user: Union[User, None] = await User.get_by_email(email)
         if user is None:
-            raise exceptions.UserNotExist()
+            raise exceptions.UserNotExists()
 
         self.user = user
         return user
@@ -163,7 +163,7 @@ class UserManager(Generic[User, models.ID]):
                 try:
                     await user.get_by_email(value)
                     raise exceptions.UserAlreadyExist()
-                except exceptions.UserNotExist:
+                except exceptions.UserNotExists:
                     validated_dict[key] = value
             elif key == "password" and value is not None:
                 await self._validate_password(value)
@@ -232,7 +232,7 @@ class UserManager(Generic[User, models.ID]):
     ) -> Optional[User]:
         try:
             user: User = await self.get_by_email(credentials.email)
-        except exceptions.UserNotExist:
+        except exceptions.UserNotExists:
             return None
 
         verified, password_hash = self.password_helper.verify_password(
