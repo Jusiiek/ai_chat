@@ -11,6 +11,7 @@ class Token(BaseModel):
     token = columns.Text(primary_key=True)
     user_id = columns.UUID(index=True)
     expire_at = columns.DateTime()
+    created_at = columns.DateTime()
 
     @classmethod
     async def get_by_token(cls, token: str) -> Optional["Token"]:

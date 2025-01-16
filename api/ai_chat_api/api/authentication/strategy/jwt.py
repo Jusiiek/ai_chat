@@ -64,10 +64,21 @@ class JWTStrategy(Strategy[User, models.ID], Generic[User, models.ID]):
         Token.create(
             token=token,
             user_id=user.id,
-            expires=datetime.datetime.utcnow() + datetime.timedelta()
+            expires=datetime.datetime.utcnow() + datetime.timedelta(),
+            created_at=datetime.datetime.utcnow(),
         )
 
         return token
 
     async def destroy_token(self, token: str, user: User) -> None:
-        raise StrategyDestroyTokenError()
+        token_obj: Optional[Token, None] = Token.get_by_token(token)
+
+        if token_obj is None:
+            await token_obj.delete()
+
+            BlacklistedToken.create(
+                token=token,
+                user_id=user.id,
+                expires=datetime.datetime.utcnow() + datetime.timedelta(),
+                created_at=datetime.datetime.utcnow(),
+            )
