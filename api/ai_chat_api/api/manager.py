@@ -1,3 +1,4 @@
+import uuid
 import re
 from typing import Optional, Any, Dict, Tuple, Union, Generic
 
@@ -55,6 +56,26 @@ class UserManager(Generic[User, models.ID]):
         if has_upper and has_lower and has_digit and has_special and is_long_enough:
             return True
         return False
+
+    def parse_id(self, user_id: Any) -> models.ID:
+        """
+        Parse a value into a correct ID type.
+
+        Parameters
+        ----------
+        user_id: Any - User ID as different type.
+
+        Returns
+        -------
+        id: ID - User correct ID
+        """
+
+        if isinstance(user_id, uuid.UUID):
+            return user_id
+        try:
+            return uuid.UUID(user_id)
+        except ValueError as e:
+            raise exceptions.InvalidID() from e
 
     async def get(self, user_id: models.ID) -> User:
         """
