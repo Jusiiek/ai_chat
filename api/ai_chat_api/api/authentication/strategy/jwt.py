@@ -1,10 +1,10 @@
+import uuid
 import jwt
 import datetime
 from typing import Generic, Optional
 
 from ai_chat_api.api.manager import UserManager
 from ai_chat_api.api.protocols.strategy import Strategy
-from ai_chat_api.api.exceptions import StrategyDestroyTokenError
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api.authentication.jwt import (
@@ -50,7 +50,7 @@ class JWTStrategy(Strategy[User, models.ID], Generic[User, models.ID]):
             return None
 
         try:
-            parsed_id = user_manager.parse_id(user_id)
+            parsed_id: uuid.UUID = user_manager.parse_id(user_id)
             return await user_manager.get(parsed_id)
         except (exceptions.UserNotExists, exceptions.InvalidID):
             return None
