@@ -1,8 +1,8 @@
 from typing import Generic, Optional
 
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException, status
 
-from ai_chat_api.api.manager import UserManager
+from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api.authentication.authentication_backend import AuthenticationBackend

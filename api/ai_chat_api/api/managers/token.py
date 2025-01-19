@@ -3,8 +3,7 @@ import jwt
 import datetime
 from typing import Generic, Optional
 
-from ai_chat_api.api.manager import UserManager
-from ai_chat_api.api.protocols.strategy import Strategy
+from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api.authentication.jwt import (
@@ -19,7 +18,7 @@ from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 
 
-class JWTStrategy(Strategy[User, models.ID], Generic[User, models.ID]):
+class TokenManager(Generic[User, models.ID]):
     def __init__(
         self,
         secret: SecretType,
@@ -38,6 +37,10 @@ class JWTStrategy(Strategy[User, models.ID], Generic[User, models.ID]):
         try:
             blacklisted_token: Optional[BlacklistedToken, None] = BlacklistedToken.get_by_token(token)
             if blacklisted_token is None:
+                return None
+
+            token_obj: [Token, None] = Token.get_by_token(token)
+            if token_obj is None or (token_obj and token_obj.is_expired):
                 return None
 
             data = decode_jwt(

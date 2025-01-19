@@ -1,4 +1,4 @@
-from ai_chat_api.api.manager import UserManager
+from ai_chat_api.api.managers.user import UserManager
 from cassandra.cqlengine.management import sync_table
 from ai_chat_api.api.models.user import User
 

@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from ai_chat_api.api.authentication.authenticator import Authenticator
 from ai_chat_api.api.authentication.authentication_backend import AuthenticationBackend
-from ai_chat_api.api.manager import UserManager
+from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.protocols import models
 

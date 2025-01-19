@@ -1,4 +1,5 @@
 from typing import Optional
+from datetime import datetime
 
 from cassandra.cqlengine import columns
 
@@ -16,3 +17,8 @@ class Token(BaseModel):
     @classmethod
     async def get_by_token(cls, token: str) -> Optional["Token"]:
         return await cls.get(token)
+
+    @property
+    def is_expired(self) -> bool:
+        """Check if the token is expired based on the `expire_at` datetime."""
+        return self.expire_at < datetime.utcnow()

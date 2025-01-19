@@ -3,10 +3,10 @@ from typing import Generic
 from fastapi import Response, status
 
 from ai_chat_api.api.protocols import models
-from ai_chat_api.api.protocols.strategy import Strategy
-from ai_chat_api.api.transports.bearer import BearerTransport
+from ai_chat_api.api.responses.auth import AuthResponse
 from ai_chat_api.api.exceptions import LogoutError
 from ai_chat_api.api.models.user import User
+from ai_chat_api.api.managers.token import TokenManager
 
 
 class AuthenticationBackend(Generic[User, models.ID]):
@@ -16,37 +16,37 @@ class AuthenticationBackend(Generic[User, models.ID]):
 
 	Params
 	------------------------
-	bearer_transport: BearerTransport - Authentication transport instance.
-	strategy: Strategy - Strategy instance.
+	auth_response: AuthResponse - Authentication response instance.
+	token_manager: TokenManager - Token manager instance.
 
 	"""
-	bearer_transport: BearerTransport
-	strategy: Strategy
+	token_manager: TokenManager
+	auth_response: AuthResponse
 
 	def __init__(
 		self,
-		bearer_transport: BearerTransport,
-		strategy: Strategy
+		token_manager: TokenManager,
+		auth_response: AuthResponse
 	):
-		self.bearer_transport = bearer_transport
-		self.strategy = strategy
+		self.token_manager = token_manager
+		self.auth_response = auth_response
 
 	async def login(
-		self, strategy: Strategy[User, models.ID], user: User
+		self, token_manager: TokenManager[User, models.ID], user: User
 	):
-		token = await strategy.write_token(user)
-		return await self.bearer_transport.get_login_response(token)
+		token = await token_manager.write_token(user)
+		return await self.auth_response.get_login_response(token)
 
 	async def logout(
-		self, strategy: Strategy[User, models.ID], user: User, token: str
+		self, token_manager: TokenManager[User, models.ID], user: User, token: str
 	) -> Response:
 		try:
-			await strategy.destroy_token(token, user)
+			await token_manager.destroy_token(token, user)
 		except LogoutError:
 			pass
 
 		try:
-			response = await self.bearer_transport.get_logout_response()
+			response = await self.auth_response.get_logout_response()
 		except LogoutError:
 			response = Response(status_code=status.HTTP_204_NO_CONTENT)
 
