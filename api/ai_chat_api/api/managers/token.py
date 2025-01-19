@@ -14,7 +14,6 @@ from ai_chat_api.api.authentication.jwt import (
 )
 from ai_chat_api.config import Config
 from ai_chat_api.api import exceptions
-from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 
 

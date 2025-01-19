@@ -1,5 +1,8 @@
 import os
 
+from ai_chat_api.api.authentication.authentication_backend import AuthenticationBackend
+from ai_chat_api.api.managers.user import UserManager
+
 
 class Config:
     """
@@ -22,3 +25,9 @@ class Config:
 
     # web
     WEB_HOST = os.environ.get('WEB_HOST', 'http://localhost:3000')
+
+
+class AppConfig:
+
+    user_manager: UserManager
+    authentication_backend: AuthenticationBackend

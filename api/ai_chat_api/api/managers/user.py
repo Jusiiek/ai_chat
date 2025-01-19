@@ -9,7 +9,6 @@ from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.schemas import user as user_schemas
-from ai_chat_api.api.schemas import auth as auth_schemas
 
 
 RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
@@ -249,7 +248,7 @@ class UserManager(Generic[User, models.ID]):
 
     async def authenticate(
         self,
-        credentials: auth_schemas.APRF
+        credentials: OAuth2PasswordRequestForm
     ) -> Optional[User]:
         try:
             user: User = await self.get_by_email(credentials.email)

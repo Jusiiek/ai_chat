@@ -8,6 +8,7 @@ from ai_chat_api.middleware import (
 )
 from ai_chat_api.config import Config
 from ai_chat_api.cassandradb import DatabaseManager
+from ai_chat_api.api.router import Router
 
 
 def create_app() -> FastAPI:
@@ -39,6 +40,7 @@ app = create_app()
 async def startup_event():
     db = DatabaseManager.get_instance()
     db.connect()
+    router = Router()
 
 
 @app.on_event("shutdown")
