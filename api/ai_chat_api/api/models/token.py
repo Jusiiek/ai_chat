@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 from datetime import datetime
 
@@ -17,6 +18,10 @@ class Token(BaseModel):
     @classmethod
     async def get_by_token(cls, token: str) -> Optional["Token"]:
         return await cls.get(token)
+
+    @classmethod
+    async def get_by_user_id(cls, user_id: uuid.UUID) -> Optional["Token"]:
+        return await cls.get(user_id)
 
     @property
     def is_expired(self) -> bool:
