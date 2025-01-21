@@ -1,8 +1,5 @@
 import os
 
-from ai_chat_api.api.authentication.authentication_backend import AuthenticationBackend
-from ai_chat_api.api.managers.user import UserManager
-
 
 class Config:
     """
@@ -13,6 +10,9 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     HOST = os.environ.get('HOST', '0.0.0.0')
     PORT = os.environ.get('PORT', 8000)
+
+    # security
+    TOKEN_LIFETIME = int(os.environ.get('TOKEN_LIFE_TIME', 60 * 60 * 24)) # day
 
     # router
     MAIN_ROUTER = "/api"
@@ -25,9 +25,3 @@ class Config:
 
     # web
     WEB_HOST = os.environ.get('WEB_HOST', 'http://localhost:3000')
-
-
-class AppConfig:
-
-    user_manager: UserManager
-    authentication_backend: AuthenticationBackend

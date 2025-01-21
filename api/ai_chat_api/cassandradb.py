@@ -60,6 +60,7 @@ class DatabaseManager:
             )
 
             self.session = self.cluster.connect()
+            self.create_keyspace()
             self.session.set_keyspace(self.KEYSPACE)
 
             connection.register_connection(
@@ -78,6 +79,7 @@ class DatabaseManager:
         Closes connection to cassandra
         """
         if self.session:
+            self.session.execute(f"DROP KEYSPACE IF EXISTS {self.KEYSPACE}")
             self.session.shutdown()
         if self.cluster:
             self.cluster.shutdown()

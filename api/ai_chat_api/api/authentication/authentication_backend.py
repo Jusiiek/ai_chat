@@ -20,16 +20,16 @@ class AuthenticationBackend(Generic[User, models.ID]):
 	token_manager: TokenManager - Token manager instance.
 
 	"""
-	token_manager: TokenManager
 	auth_response: AuthResponse
+	token_manager: TokenManager
 
 	def __init__(
 		self,
-		token_manager: TokenManager,
-		auth_response: AuthResponse
+		auth_response: AuthResponse,
+		token_manager: TokenManager
 	):
-		self.token_manager = token_manager
 		self.auth_response = auth_response
+		self.token_manager = token_manager
 
 	async def login(
 		self, token_manager: TokenManager[User, models.ID], user: User

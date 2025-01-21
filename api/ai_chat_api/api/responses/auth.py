@@ -27,14 +27,6 @@ class AuthResponse:
         return {
             status.HTTP_200_OK: {
                 "model": auth.ARS,
-                "content": {
-                    "application/json": {
-                        "example": {
-                            "access_token": "some0token",
-                            "token_type": "bearer",
-                        }
-                    }
-                }
             }
         }
 

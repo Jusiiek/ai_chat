@@ -5,6 +5,8 @@ from typing import Generic, Optional
 
 from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.models.user import User
+from ai_chat_api.api.models.token import Token
+from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api.authentication.jwt import (
     SecretType,
@@ -14,7 +16,6 @@ from ai_chat_api.api.authentication.jwt import (
 )
 from ai_chat_api.config import Config
 from ai_chat_api.api import exceptions
-from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 
 
 class TokenManager(Generic[User, models.ID]):
@@ -35,11 +36,11 @@ class TokenManager(Generic[User, models.ID]):
     ) -> Optional[User]:
         try:
             blacklisted_token: Optional[BlacklistedToken, None] = BlacklistedToken.get_by_token(token)
-            if blacklisted_token is None:
+            if blacklisted_token is not None:
                 return None
 
             token_obj: [Token, None] = Token.get_by_token(token)
-            if token_obj is None or (token_obj and token_obj.is_expired):
+            if token_obj is not None:
                 return None
 
             data = decode_jwt(
