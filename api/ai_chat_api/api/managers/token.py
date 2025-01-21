@@ -1,17 +1,15 @@
 import uuid
 import jwt
-import datetime
-from typing import Generic, Optional
+from datetime import timedelta, datetime
+from typing import Generic, Optional, List, Dict, Any
+from pydantic import SecretStr
 
 from ai_chat_api.api.managers.user import UserManager
-from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api.authentication.jwt import (
     SecretType,
-    encode_jwt,
-    decode_jwt,
     JWT_ALGORITHM
 )
 from ai_chat_api.config import Config
@@ -19,6 +17,18 @@ from ai_chat_api.api import exceptions
 
 
 class TokenManager(Generic[models.UserType, models.ID]):
+    """
+    Token manager is a class used to manage tokens such as creating, reading or deleting.
+
+    Parameters
+    -------------
+    secret: Secret - Token model
+    lifetime_seconds: Optional[int] - Token lifetime in seconds
+    token_audience: list[str] = List of audience
+    algorithm: str = JWT_ALGORITHM - algorithm used to sign the token.
+
+    """
+
     def __init__(
         self,
         secret: SecretType,
@@ -31,6 +41,72 @@ class TokenManager(Generic[models.UserType, models.ID]):
         self.token_audience = token_audience
         self.algorithm = algorithm
 
+    def _get_secret_value(self, secret: SecretType) -> str:
+        """
+        Return value of a secret.
+
+        Returns
+        --------
+        secret: str - secret value
+        """
+        if isinstance(secret, SecretStr):
+            return secret.get_secret_value()
+        return secret
+
+    def _encode_jwt(
+            self,
+            data: dict,
+            secret: SecretType,
+            lifetime_seconds: Optional[int] = None,
+            algorithm: str = JWT_ALGORITHM,
+    ) -> str:
+        """
+        Returns JWT encoded jwt.
+
+        Parameters
+        ----------
+        data : dict - user data to encode
+        secret : SecretType - jwt secret
+        lifetime_seconds : optional in
+
+        Returns
+        -----------
+        token: str - JWT encoded jwt
+        """
+        payload = data.copy()
+        if lifetime_seconds:
+            expire = datetime.utcnow() + timedelta(seconds=lifetime_seconds)
+            payload["exp"] = expire
+        return jwt.encode(payload, self._get_secret_value(secret), algorithm=algorithm)
+
+    def _decode_jwt(
+            self,
+            encoded_jwt: str,
+            secret: SecretType,
+            audience: List[str],
+            algorithms: List[str] = [JWT_ALGORITHM],
+    ) -> Dict[str, Any]:
+        """
+        Decodes JWT encoded jwt.
+
+        Parameters
+        ------------------
+        encoded_jwt : str - JWT encoded jwt
+        secret : SecretType - jwt secret
+        audience : List[str] - list of audience
+        algorithms : List[str] - list of algorithm
+
+        Returns
+        ---------------
+        Decoded JWT data
+        """
+        return jwt.decode(
+            encoded_jwt,
+            self._get_secret_value(secret),
+            audience=audience,
+            algorithms=algorithms
+        )
+
     async def read_token(
         self, token: Optional[str], user_manager: UserManager[models.UserType, models.ID]
     ) -> Optional[models.UserType]:
@@ -40,10 +116,10 @@ class TokenManager(Generic[models.UserType, models.ID]):
                 return None
 
             token_obj: [Token, None] = Token.get_by_token(token)
-            if token_obj is not None:
+            if token_obj is not None and token_obj.is_expired:
                 return None
 
-            data = decode_jwt(
+            data = self._decode_jwt(
                 token, self.secret, self.token_audience, algorithms=[self.algorithm]
             )
             user_id = data.get("sub")
@@ -59,16 +135,21 @@ class TokenManager(Generic[models.UserType, models.ID]):
             return None
 
     async def write_token(self, user: models.UserType) -> str:
+
+        token: Optional[Token, None] = Token.get_by_user_id(user.id)
+        if token is not None:
+            return token.token
+
         data = {"sub": str(user.id), "aud": self.token_audience}
-        token = encode_jwt(
+        token = self._encode_jwt(
             data, self.secret, self.lifetime_seconds, algorithm=self.algorithm
         )
 
         Token.create(
             token=token,
             user_id=user.id,
-            expires=datetime.datetime.utcnow() + datetime.timedelta(),
-            created_at=datetime.datetime.utcnow(),
+            expire_at=datetime.utcnow() + timedelta(seconds=self.lifetime_seconds),
+            created_at=datetime.utcnow(),
         )
 
         return token
@@ -82,6 +163,6 @@ class TokenManager(Generic[models.UserType, models.ID]):
             BlacklistedToken.create(
                 token=token,
                 user_id=user.id,
-                expires=datetime.datetime.utcnow() + datetime.timedelta(),
-                created_at=datetime.datetime.utcnow(),
+                expire_at=datetime..utcnow() + timedelta(seconds=self.lifetime_seconds),
+                created_at=datetime.utcnow(),
             )
