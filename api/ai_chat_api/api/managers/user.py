@@ -83,7 +83,7 @@ class UserManager(Generic[models.UserType, models.ID]):
         Gets a user with the given email
         Parameters
         ----------
-        id: ID - The user's id
+        user_id: ID - The user's id
 
         Returns
         -------

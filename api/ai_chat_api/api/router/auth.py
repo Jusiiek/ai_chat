@@ -8,14 +8,12 @@ from ai_chat_api.api.authentication.authenticator import Authenticator
 from ai_chat_api.api.authentication.authentication_backend import AuthenticationBackend
 from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.managers.token import TokenManager
-from ai_chat_api.api.models.user import User
 from ai_chat_api.api.protocols import models
 
 
 def get_auth_router(
     backend: AuthenticationBackend[models.UserType, models.ID],
-    authenticator: Authenticator[models.UserType, models.ID],
-    requires_verification: bool = False,
+    authenticator: Authenticator[models.UserType, models.ID]
 ) -> APIRouter:
     """
     Creates a router with auth routes for an authentication backend.
@@ -23,7 +21,7 @@ def get_auth_router(
 
     router = APIRouter()
     get_current_user_token = authenticator.current_user_token(
-        is_active=True, is_verified=requires_verification
+        is_active=True, is_verified=True
     )
 
     login_response: Dict[str, Any] = {
@@ -52,8 +50,7 @@ def get_auth_router(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="LOGIN_BAD_CREDENTIALS"
             )
-
-        if requires_verification and not user.is_verified:
+        if not user.is_verified:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="LOGIN_USER_NOT_VERIFIED",
