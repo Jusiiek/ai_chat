@@ -13,8 +13,8 @@ from ai_chat_api.api.protocols import models
 
 
 def get_auth_router(
-    backend: AuthenticationBackend[User, models.ID],
-    authenticator: Authenticator[User, models.ID],
+    backend: AuthenticationBackend[models.UserType, models.ID],
+    authenticator: Authenticator[models.UserType, models.ID],
     requires_verification: bool = False,
 ) -> APIRouter:
     """
@@ -27,7 +27,7 @@ def get_auth_router(
     )
 
     login_response: Dict[str, Any] = {
-        **backend.bearer_transport.get_success_login_response()
+        **backend.auth_response.success_login_response()
     }
 
     logout_response: Dict[str, Any] = {
@@ -36,16 +36,16 @@ def get_auth_router(
                 "detail": "You are not authorized to perform this action."
             }
         },
-        **backend.bearer_transport.get_success_logout_response()
+        **backend.auth_response.success_logout_response()
     }
 
     @router.post("/login", responses=login_response)
     async def login(
         credentials: OAuth2PasswordBearer = Depends(),
-        user_manager: UserManager[User, models.ID] = Depends(get_current_user_token),
-        token_manager: TokenManager[User, models.ID] = Depends(get_current_user_token),
+        user_manager: UserManager[models.UserType, models.ID] = Depends(get_current_user_token),
+        token_manager: TokenManager[models.UserType, models.ID] = Depends(get_current_user_token),
     ):
-        user: Optional[User, None] = await user_manager.authenticate(credentials)
+        user: Optional[models.UserType, None] = await user_manager.authenticate(credentials)
 
         if not user or not user.is_active:
             raise HTTPException(
@@ -63,8 +63,8 @@ def get_auth_router(
 
     @router.post("/logout", responses=logout_response)
     async def logout(
-        user_and_token: tuple[User, str] = Depends(get_current_user_token),
-        token_manager: TokenManager[User, models.ID] = Depends(get_current_user_token),
+        user_and_token: tuple[models.UserType, str] = Depends(get_current_user_token),
+        token_manager: TokenManager[models.UserType, models.ID] = Depends(get_current_user_token),
     ):
         user, token = user_and_token
         return await backend.logout(token_manager, user, token)

@@ -18,7 +18,7 @@ from ai_chat_api.config import Config
 from ai_chat_api.api import exceptions
 
 
-class TokenManager(Generic[User, models.ID]):
+class TokenManager(Generic[models.UserType, models.ID]):
     def __init__(
         self,
         secret: SecretType,
@@ -32,8 +32,8 @@ class TokenManager(Generic[User, models.ID]):
         self.algorithm = algorithm
 
     async def read_token(
-        self, token: Optional[str], user_manager: UserManager[User, models.ID]
-    ) -> Optional[User]:
+        self, token: Optional[str], user_manager: UserManager[models.UserType, models.ID]
+    ) -> Optional[models.UserType]:
         try:
             blacklisted_token: Optional[BlacklistedToken, None] = BlacklistedToken.get_by_token(token)
             if blacklisted_token is not None:
@@ -58,7 +58,7 @@ class TokenManager(Generic[User, models.ID]):
         except (exceptions.UserNotExists, exceptions.InvalidID):
             return None
 
-    async def write_token(self, user: User) -> str:
+    async def write_token(self, user: models.UserType) -> str:
         data = {"sub": str(user.id), "aud": self.token_audience}
         token = encode_jwt(
             data, self.secret, self.lifetime_seconds, algorithm=self.algorithm
@@ -73,7 +73,7 @@ class TokenManager(Generic[User, models.ID]):
 
         return token
 
-    async def destroy_token(self, token: str, user: User) -> None:
+    async def destroy_token(self, token: str, user: models.UserType) -> None:
         token_obj: Optional[Token, None] = Token.get_by_token(token)
 
         if token_obj is None:

@@ -1,4 +1,4 @@
-from typing import Generic, Optional
+from typing import Generic, Optional, Any
 
 from fastapi import HTTPException, status
 
@@ -8,7 +8,7 @@ from ai_chat_api.api.protocols import models
 from ai_chat_api.api.authentication.authentication_backend import AuthenticationBackend
 
 
-class Authenticator(Generic[User, models.ID]):
+class Authenticator(Generic[models.UserType, models.ID]):
 	"""
 
 	Performs the authentication.
@@ -23,20 +23,20 @@ class Authenticator(Generic[User, models.ID]):
 
 	def __init__(
 		self,
-		backend: AuthenticationBackend[User, models.ID],
-		user_manager: UserManager[User, models.ID]
+		backend: AuthenticationBackend[models.UserType, models.ID],
+		user_manager: UserManager[models.UserType, models.ID]
 	):
 		self.backend = backend
 		self.user_manager = user_manager
 
 	async def _authenticate(
 		self,
-		user_manager: UserManager[User, models.ID],
+		user_manager: UserManager[models.UserType, models.ID],
 		is_active: bool = False,
 		is_verified: bool = False,
 		is_superuser: bool = False,
 		**kwargs
-	) -> tuple[Optional[User], Optional[str]]:
+	) -> tuple[Optional[models.UserType], Optional[str]]:
 		"""
 		Authenticates user
 
@@ -56,11 +56,11 @@ class Authenticator(Generic[User, models.ID]):
 		user: User - user
 		token: str - token
 		"""
-		user: Optional[User, None] = None
+		user: Optional[models.UserType, None] = None
 		token: Optional[str] = kwargs.pop("token", None)
 
 		if token:
-			user: Optional[User, None] = self.backend.security.read_token(token, user_manager)
+			user: Optional[models.UserType, None] = self.backend.token_manager.read_token(token, user_manager)
 
 		status_code = status.HTTP_401_UNAUTHORIZED
 		if user:
@@ -75,17 +75,20 @@ class Authenticator(Generic[User, models.ID]):
 			raise HTTPException(status_code=status_code)
 		return user, token
 
-	async def current_user_token(
+	def current_user_token(
 		self,
 		is_active: bool = False,
 		is_verified: bool = False,
 		is_superuser: bool = False,
-		**kwargs
 	):
-		return await self._authenticate(
-			self.user_manager,
-			is_active=is_active,
-			is_verified=is_verified,
-			is_superuser=is_superuser,
-			**kwargs
-		)
+
+		async def current_user_token_dependency(*args: Any, **kwargs: Any):
+			await self._authenticate(
+				self.user_manager,
+				is_active=is_active,
+				is_verified=is_verified,
+				is_superuser=is_superuser,
+				**kwargs
+			)
+
+		return current_user_token_dependency

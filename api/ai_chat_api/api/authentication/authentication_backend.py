@@ -3,13 +3,13 @@ from typing import Generic
 from fastapi import Response, status
 
 from ai_chat_api.api.protocols import models
-from ai_chat_api.api.responses.auth import AuthResponse
+from ai_chat_api.api.responses.base import AuthResponse
 from ai_chat_api.api.exceptions import LogoutError
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.managers.token import TokenManager
 
 
-class AuthenticationBackend(Generic[User, models.ID]):
+class AuthenticationBackend(Generic[models.UserType, models.ID]):
 	"""
 
 	Authentication backend, they provide a full authentication method logic, login and logout
@@ -32,13 +32,13 @@ class AuthenticationBackend(Generic[User, models.ID]):
 		self.token_manager = token_manager
 
 	async def login(
-		self, token_manager: TokenManager[User, models.ID], user: User
+		self, token_manager: TokenManager[models.UserType, models.ID], user: User
 	):
 		token = await token_manager.write_token(user)
-		return await self.auth_response.get_login_response(token)
+		return await self.auth_response.login_response(token)
 
 	async def logout(
-		self, token_manager: TokenManager[User, models.ID], user: User, token: str
+		self, token_manager: TokenManager[models.UserType, models.ID], user: User, token: str
 	) -> Response:
 		try:
 			await token_manager.destroy_token(token, user)
@@ -46,7 +46,7 @@ class AuthenticationBackend(Generic[User, models.ID]):
 			pass
 
 		try:
-			response = await self.auth_response.get_logout_response()
+			response = await self.auth_response.logout_response()
 		except LogoutError:
 			response = Response(status_code=status.HTTP_204_NO_CONTENT)
 

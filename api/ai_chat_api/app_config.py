@@ -5,8 +5,9 @@ from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.managers.token import TokenManager
-from ai_chat_api.api.responses.auth import AuthResponse
+from ai_chat_api.api.responses.base import AuthResponse
 from ai_chat_api.api.authentication.authentication_backend import AuthenticationBackend
+from ai_chat_api.api.protocols import models
 
 
 async def get_user_db():
@@ -17,7 +18,7 @@ async def get_access_token_db():
     yield Token
 
 
-async def get_user_manager(user_db: User = Depends(get_user_db)):
+async def get_user_manager(user_db: models.UserType = Depends(get_user_db)):
     yield UserManager(user_db)
 
 

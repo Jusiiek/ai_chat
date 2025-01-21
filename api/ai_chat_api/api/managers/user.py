@@ -2,6 +2,8 @@ import uuid
 import re
 from typing import Optional, Any, Dict, Tuple, Union, Generic
 
+from fastapi.security import OAuth2PasswordRequestForm
+
 from ai_chat_api.api.authentication.jwt import SecretType
 from ai_chat_api.api.authentication.password import PasswordHelper
 from ai_chat_api.api.models.user import User
@@ -15,7 +17,7 @@ RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
 VERIFY_USER_TOKEN_AUDIENCE = "verify-user-token"
 
 
-class UserManager(Generic[User, models.ID]):
+class UserManager(Generic[models.UserType, models.ID]):
     reset_password_token_secret: SecretType
     reset_password_token_lifetime_seconds: int = 3600
     reset_password_token_audience: str = RESET_PASSWORD_TOKEN_AUDIENCE
@@ -26,7 +28,7 @@ class UserManager(Generic[User, models.ID]):
 
     def __init__(
         self,
-        user: User = None,
+        user: models.UserType = None,
         password_helper: Optional[PasswordHelper] = None
     ):
         self.user = user
@@ -76,7 +78,7 @@ class UserManager(Generic[User, models.ID]):
         except ValueError as e:
             raise exceptions.InvalidID() from e
 
-    async def get(self, user_id: models.ID) -> User:
+    async def get(self, user_id: models.ID) -> models.UserType:
         """
         Gets a user with the given email
         Parameters
@@ -88,14 +90,14 @@ class UserManager(Generic[User, models.ID]):
         result: A user
         """
 
-        user: Union[User, None] = await User.get_by_id(user_id)
+        user: Union[models.UserType, None] = await User.get_by_id(user_id)
         if user is None:
             raise exceptions.UserNotExists()
 
         self.user = user
         return user
 
-    async def get_by_email(self, email: str) -> User:
+    async def get_by_email(self, email: str) -> models.UserType:
         """
         Gets a user with the given email
         Parameters
@@ -107,14 +109,14 @@ class UserManager(Generic[User, models.ID]):
         result: A user
         """
 
-        user: Union[User, None] = await User.get_by_email(email)
+        user: Union[models.UserType, None] = await User.get_by_email(email)
         if user is None:
             raise exceptions.UserNotExists()
 
         self.user = user
         return user
 
-    async def get_by_token(self, token: str) -> User:
+    async def get_by_token(self, token: str) -> models.UserType:
         """
         Gets a user with the given email
         Parameters
@@ -134,7 +136,7 @@ class UserManager(Generic[User, models.ID]):
     async def create(
         self,
         user_create: user_schemas.BCU
-    ) -> User:
+    ) -> models.UserType:
         """
         Creates a new user
 
@@ -165,7 +167,7 @@ class UserManager(Generic[User, models.ID]):
         self,
         user: User,
         update_dict: Dict[str, Any]
-    ) -> User:
+    ) -> models.UserType:
         """
         Validates sent data and updates a user
         Parameters
@@ -249,9 +251,9 @@ class UserManager(Generic[User, models.ID]):
     async def authenticate(
         self,
         credentials: OAuth2PasswordRequestForm
-    ) -> Optional[User]:
+    ) -> Optional[models.UserType]:
         try:
-            user: User = await self.get_by_email(credentials.email)
+            user: models.UserType = await self.get_by_email(credentials.email)
         except exceptions.UserNotExists:
             return None
 
