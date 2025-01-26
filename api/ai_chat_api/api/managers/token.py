@@ -1,19 +1,18 @@
 import uuid
 import jwt
 from datetime import timedelta, datetime
-from typing import Generic, Optional, List, Dict, Any
-from pydantic import SecretStr
+from typing import Generic, Optional, List, Dict, Any, Union
+from pydantic import SecretStr, SecretType
 
 from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 from ai_chat_api.api.protocols import models
-from ai_chat_api.api.authentication.jwt import (
-    SecretType,
-    JWT_ALGORITHM
-)
 from ai_chat_api.config import Config
 from ai_chat_api.api import exceptions
+
+
+SecretType = Union[str, SecretStr]
 
 
 class TokenManager(Generic[models.UserType, models.ID]):
@@ -34,7 +33,7 @@ class TokenManager(Generic[models.UserType, models.ID]):
         secret: SecretType,
         lifetime_seconds: Optional[int],
         token_audience: list[str] = [f"{Config.APP_NAME.lower()}:auth"],
-        algorithm: str = JWT_ALGORITHM
+        algorithm: str = Config.JWT_ALGORITHM
     ):
         self.secret = secret
         self.lifetime_seconds = lifetime_seconds
@@ -54,11 +53,11 @@ class TokenManager(Generic[models.UserType, models.ID]):
         return secret
 
     def _encode_jwt(
-            self,
-            data: dict,
-            secret: SecretType,
-            lifetime_seconds: Optional[int] = None,
-            algorithm: str = JWT_ALGORITHM,
+        self,
+        data: dict,
+        secret: SecretType,
+        lifetime_seconds: Optional[int] = None,
+        algorithm: str = Config.JWT_ALGORITHM,
     ) -> str:
         """
         Returns JWT encoded jwt.
@@ -80,11 +79,11 @@ class TokenManager(Generic[models.UserType, models.ID]):
         return jwt.encode(payload, self._get_secret_value(secret), algorithm=algorithm)
 
     def _decode_jwt(
-            self,
-            encoded_jwt: str,
-            secret: SecretType,
-            audience: List[str],
-            algorithms: List[str] = [JWT_ALGORITHM],
+        self,
+        encoded_jwt: str,
+        secret: SecretType,
+        audience: List[str],
+        algorithms: List[str] = [Config.JWT_ALGORITHM],
     ) -> Dict[str, Any]:
         """
         Decodes JWT encoded jwt.

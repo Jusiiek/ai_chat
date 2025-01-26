@@ -4,7 +4,6 @@ from typing import Optional, Any, Dict, Tuple, Union, Generic
 
 from fastapi.security import OAuth2PasswordRequestForm
 
-from ai_chat_api.api.authentication.jwt import SecretType
 from ai_chat_api.api.authentication.password import PasswordHelper
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.token import Token
@@ -18,14 +17,6 @@ VERIFY_USER_TOKEN_AUDIENCE = "verify-user-token"
 
 
 class UserManager(Generic[models.UserType, models.ID]):
-    reset_password_token_secret: SecretType
-    reset_password_token_lifetime_seconds: int = 3600
-    reset_password_token_audience: str = RESET_PASSWORD_TOKEN_AUDIENCE
-
-    verification_token_secret: SecretType
-    verification_token_lifetime_seconds: int = 3600
-    verification_token_audience: str = VERIFY_USER_TOKEN_AUDIENCE
-
     def __init__(
         self,
         user: models.UserType = None,

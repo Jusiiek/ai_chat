@@ -1,5 +1,8 @@
 import os
 
+from typing import Union
+from pydantic import SecretStr
+
 
 class Config:
     """
@@ -12,7 +15,10 @@ class Config:
     PORT = os.environ.get('PORT', 8000)
 
     # security
-    TOKEN_LIFETIME = int(os.environ.get('TOKEN_LIFE_TIME', 60 * 60 * 24)) # day
+    TOKEN_LIFETIME = 60 * 60 * 24 # day
+    RESET_PASSWORD_TOKEN_LIFETIME = 3600
+    VERIFICATION_TOKEN_LIFETIME = 3600
+    JWT_ALGORITHM = "HS256"
 
     # router
     MAIN_ROUTER = "/api"
