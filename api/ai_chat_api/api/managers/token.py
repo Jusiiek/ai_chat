@@ -19,7 +19,7 @@ class TokenManager(Generic[models.UserType, models.ID]):
     """
     Token manager is a class used to manage tokens such as creating, reading or deleting.
 
-    Parameters
+    Args
     -------------
     secret: Secret - Token model
     lifetime_seconds: Optional[int] - Token lifetime in seconds
@@ -62,7 +62,7 @@ class TokenManager(Generic[models.UserType, models.ID]):
         """
         Returns JWT encoded jwt.
 
-        Parameters
+        Args
         ----------
         data : dict - user data to encode
         secret : SecretType - jwt secret
@@ -88,7 +88,7 @@ class TokenManager(Generic[models.UserType, models.ID]):
         """
         Decodes JWT encoded jwt.
 
-        Parameters
+        Args
         ------------------
         encoded_jwt : str - JWT encoded jwt
         secret : SecretType - jwt secret

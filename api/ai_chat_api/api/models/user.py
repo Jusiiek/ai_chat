@@ -24,7 +24,7 @@ class User(BaseModel):
         """
         Set user password
 
-        Params
+        Args
         -----------------
         password: str - New user password
         """
@@ -39,7 +39,7 @@ class User(BaseModel):
         """
         Verify user password
 
-        Params
+        Args
         ---------------------
         password: str - User password
 

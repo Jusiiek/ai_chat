@@ -31,7 +31,7 @@ class UserManager(Generic[models.UserType, models.ID]):
     async def _validate_password(self, password: str) -> bool:
         """
         Validates a password
-        Parameters
+        Args
         ----------
         password: str - The password to validate
 
@@ -53,7 +53,7 @@ class UserManager(Generic[models.UserType, models.ID]):
         """
         Parse a value into a correct ID type.
 
-        Parameters
+        Args
         ----------
         user_id: Any - User ID as different type.
 
@@ -72,7 +72,7 @@ class UserManager(Generic[models.UserType, models.ID]):
     async def get(self, user_id: models.ID) -> models.UserType:
         """
         Gets a user with the given email
-        Parameters
+        Args
         ----------
         user_id: ID - The user's id
 
@@ -91,7 +91,7 @@ class UserManager(Generic[models.UserType, models.ID]):
     async def get_by_email(self, email: str) -> models.UserType:
         """
         Gets a user with the given email
-        Parameters
+        Args
         ----------
         email: str - The user's email
 
@@ -110,7 +110,7 @@ class UserManager(Generic[models.UserType, models.ID]):
     async def get_by_token(self, token: str) -> models.UserType:
         """
         Gets a user with the given email
-        Parameters
+        Args
         ----------
         token: str - A token that can be associated with a user.
 
@@ -131,7 +131,7 @@ class UserManager(Generic[models.UserType, models.ID]):
         """
         Creates a new user
 
-        Parameters
+        Args
         ----------
         user_create: UserCreate - The user to create schema to create
 
@@ -161,7 +161,7 @@ class UserManager(Generic[models.UserType, models.ID]):
     ) -> models.UserType:
         """
         Validates sent data and updates a user
-        Parameters
+        Args
         ----------
         user: User - The user to update
         update_dict: dict - The updated data
@@ -193,7 +193,7 @@ class UserManager(Generic[models.UserType, models.ID]):
     ):
         """
         Updates a user
-        Parameters
+        Args
         ----------
         user_update: UserUpdate - The updated data
         user: User - The user to update
@@ -210,7 +210,7 @@ class UserManager(Generic[models.UserType, models.ID]):
         """
         Deletes a user
 
-        Parameters
+        Args
         ----------
         user: User - The user to delete
 
@@ -228,7 +228,7 @@ class UserManager(Generic[models.UserType, models.ID]):
         """
         Validates a user password
 
-        Parameters
+        Args
         ----------
         password: str - The password to validate
         user: User - The user to validate

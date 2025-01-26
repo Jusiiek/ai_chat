@@ -30,7 +30,7 @@ class Router(Generic[models.UserType, models.ID]):
 
         Returns an authentication router for the given backend.
 
-        Parameters
+        Args
         ----------
         backend : AuthenticationBackend - The authentication backend instance.
         requires_verification (bool) - Whether the authentication backend requires the user to be verified.
