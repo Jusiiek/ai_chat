@@ -34,5 +34,5 @@ class LogoutError(AppException):
     pass
 
 
-class StrategyDestroyTokenError(AppException):
+class DestroyTokenError(AppException):
     pass

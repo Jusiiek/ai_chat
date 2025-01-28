@@ -8,7 +8,6 @@ from ai_chat_api.config import Config
 
 
 class BaseModel(Model):
-    __abstract__ = True
     __table_name__ = 'base_model'
     __keyspace__ = Config.APP_KEYSPACE
 

@@ -14,7 +14,7 @@ class BearerResponse(AuthResponse):
         self.token_url = OAuth2PasswordBearer(token_url, auto_error=False)
 
     @staticmethod
-    def success_login_response() -> dict:
+    def get_success_login_response() -> dict:
         return {
             status.HTTP_200_OK: {
                 "model": auth.ARS,
@@ -22,15 +22,15 @@ class BearerResponse(AuthResponse):
         }
 
     @staticmethod
-    def success_logout_response() -> dict:
+    def get_success_logout_response() -> dict:
         return {}
 
-    async def login_response(self, token: str) -> Response:
+    async def get_login_response(self, token: str) -> Response:
         bearer_response = auth.ARS(
             access_token=token,
             token_type="bearer",
         )
         return JSONResponse(model_dump(bearer_response))
 
-    async def logout_response(self) -> Response:
+    async def get_logout_response(self) -> Response:
         raise NotImplementedError()

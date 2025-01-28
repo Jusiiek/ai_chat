@@ -1,6 +1,6 @@
 import uuid
 import re
-from typing import Optional, Any, Dict, Tuple, Union, Generic
+from typing import Optional, Any, Dict, Tuple, Union
 
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -16,10 +16,10 @@ RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
 VERIFY_USER_TOKEN_AUDIENCE = "verify-user-token"
 
 
-class UserManager(Generic[models.UserType, models.ID]):
+class UserManager:
     def __init__(
         self,
-        user: models.UserType = None,
+        user: User = None,
         password_helper: Optional[PasswordHelper] = None
     ):
         self.user = user
@@ -62,14 +62,14 @@ class UserManager(Generic[models.UserType, models.ID]):
         id: ID - User correct ID
         """
 
-        if isinstance(user_id, uuid.UUID):
+        if isinstance(user_id, models.ID):
             return user_id
         try:
             return uuid.UUID(user_id)
         except ValueError as e:
             raise exceptions.InvalidID() from e
 
-    async def get(self, user_id: models.ID) -> models.UserType:
+    async def get(self, user_id: models.ID) -> User:
         """
         Gets a user with the given email
         Args
@@ -81,14 +81,14 @@ class UserManager(Generic[models.UserType, models.ID]):
         result: A user
         """
 
-        user: Union[models.UserType, None] = await User.get_by_id(user_id)
+        user: Union[User, None] = await User.get_by_id(user_id)
         if user is None:
             raise exceptions.UserNotExists()
 
         self.user = user
         return user
 
-    async def get_by_email(self, email: str) -> models.UserType:
+    async def get_by_email(self, email: str) -> User:
         """
         Gets a user with the given email
         Args
@@ -100,14 +100,14 @@ class UserManager(Generic[models.UserType, models.ID]):
         result: A user
         """
 
-        user: Union[models.UserType, None] = await User.get_by_email(email)
+        user: Union[User, None] = await User.get_by_email(email)
         if user is None:
             raise exceptions.UserNotExists()
 
         self.user = user
         return user
 
-    async def get_by_token(self, token: str) -> models.UserType:
+    async def get_by_token(self, token: str) -> User:
         """
         Gets a user with the given email
         Args
@@ -127,7 +127,7 @@ class UserManager(Generic[models.UserType, models.ID]):
     async def create(
         self,
         user_create: user_schemas.BCU
-    ) -> models.UserType:
+    ) -> User:
         """
         Creates a new user
 
@@ -158,7 +158,7 @@ class UserManager(Generic[models.UserType, models.ID]):
         self,
         user: User,
         update_dict: Dict[str, Any]
-    ) -> models.UserType:
+    ) -> User:
         """
         Validates sent data and updates a user
         Args
@@ -242,9 +242,9 @@ class UserManager(Generic[models.UserType, models.ID]):
     async def authenticate(
         self,
         credentials: OAuth2PasswordRequestForm
-    ) -> Optional[models.UserType]:
+    ) -> Union[User, None]:
         try:
-            user: models.UserType = await self.get_by_email(credentials.email)
+            user: User = await self.get_by_email(credentials.email)
         except exceptions.UserNotExists:
             return None
 
