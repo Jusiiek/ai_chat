@@ -1,3 +1,4 @@
+import asyncio
 from typing import Optional, Union
 
 from fastapi import status, HTTPException
@@ -35,10 +36,11 @@ class Authenticator:
 
     async def _authenticate(
         self,
+        *args,
         optional: bool = False,
-        active: bool = False,
-        verified: bool = False,
-        superuser: bool = False,
+        is_active: bool = False,
+        is_verified: bool = False,
+        is_superuser: bool = False,
         **kwargs,
     ) -> tuple[Optional[dict], Optional[str]]:
         user: Union[User, None] = None
@@ -49,12 +51,10 @@ class Authenticator:
         status_code = status.HTTP_401_UNAUTHORIZED
         if user:
             status_code = status.HTTP_403_FORBIDDEN
-            if active and not user.is_active:
+            if is_active and not user.is_active:
                 status_code = status.HTTP_401_UNAUTHORIZED
                 user = None
-            elif (
-                verified and not user.is_verified or superuser and not user.is_superuser
-            ):
+            elif is_verified and not user.is_verified or is_superuser and not user.is_superuser:
                 user = None
         if not user and not optional:
             raise HTTPException(status_code=status_code)
@@ -63,8 +63,17 @@ class Authenticator:
     def get_current_user(
         self,
         optional: bool = False,
-        active: bool = False,
-        verified: bool = False,
-        superuser: bool = False,
+        is_active: bool = False,
+        is_verified: bool = False,
+        is_superuser: bool = False,
     ):
-        return self._authenticate(optional, active, verified, superuser)
+        async def current_user_dependency(*args, **kwargs):
+            return await self._authenticate(
+                *args,
+                optional=optional,
+                is_active=is_active,
+                is_verified=is_verified,
+                is_superuser=is_superuser,
+                **kwargs
+            )
+        return current_user_dependency

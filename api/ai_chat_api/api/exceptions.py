@@ -10,7 +10,7 @@ class InvalidID(AppException):
     pass
 
 
-class UserAlreadyExist(AppException):
+class UserAlreadyExists(AppException):
     pass
 
 
@@ -23,7 +23,8 @@ class InvalidVerifyToken(AppException):
 
 
 class PasswordInvalid(AppException):
-    pass
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
 
 
 class NotSupported(AppException):

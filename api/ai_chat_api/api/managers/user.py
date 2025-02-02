@@ -126,7 +126,7 @@ class UserManager:
 
     async def create(
         self,
-        user_create: user_schemas.BCU
+        user_create: user_schemas.UC
     ) -> User:
         """
         Creates a new user
@@ -145,7 +145,7 @@ class UserManager:
 
         is_user_exists = self.user.get_by_email(user_create.email)
         if not is_user_exists:
-            raise exceptions.UserAlreadyExist()
+            raise exceptions.UserAlreadyExists()
 
         user_dict = user_create.create_update_dict()
         password = user_dict.pop('password')
@@ -175,7 +175,7 @@ class UserManager:
             if key == "email" and value != user.email:
                 try:
                     await user.get_by_email(value)
-                    raise exceptions.UserAlreadyExist()
+                    raise exceptions.UserAlreadyExists()
                 except exceptions.UserNotExists:
                     validated_dict[key] = value
             elif key == "password" and value is not None:
@@ -188,7 +188,7 @@ class UserManager:
 
     async def update(
         self,
-        user_update: user_schemas.BUU,
+        user_update: user_schemas.UU,
         user: User
     ):
         """

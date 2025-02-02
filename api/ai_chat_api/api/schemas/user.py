@@ -51,7 +51,6 @@ class BaseAuthModel(BaseModel):
     account_email: str
 
 
-
-BU = TypeVar("BU", bound=BaseUser)
-BCU = TypeVar("BCU", bound=BaseCreateUser)
-BUU = TypeVar("BUU", bound=BaseUpdateUser)
+U = TypeVar("U", bound=BaseUser)
+UC = TypeVar("UC", bound=BaseCreateUser)
+UU = TypeVar("UU", bound=BaseUpdateUser)
