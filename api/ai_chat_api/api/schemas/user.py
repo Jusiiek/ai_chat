@@ -4,10 +4,6 @@ from pydantic import BaseModel
 from ai_chat_api.api.protocols import models
 
 
-def model_dump(model: BaseModel, *args, **kwargs) -> dict:
-    return model.model_dump(*args, **kwargs)
-
-
 class CreateUpdateModel(BaseModel):
     def create_update_dict(self):
         return self.model_dump(
@@ -55,7 +51,6 @@ class BaseAuthModel(BaseModel):
     account_email: str
 
 
-
-BU = TypeVar("BU", bound=BaseUser)
-BCU = TypeVar("BCU", bound=BaseCreateUser)
-BUU = TypeVar("BUU", bound=BaseUpdateUser)
+U = TypeVar("U", bound=BaseUser)
+UC = TypeVar("UC", bound=BaseCreateUser)
+UU = TypeVar("UU", bound=BaseUpdateUser)

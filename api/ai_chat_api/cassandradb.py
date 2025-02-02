@@ -31,6 +31,9 @@ class DatabaseManager:
 
     @classmethod
     def get_instance(cls) -> 'DatabaseManager':
+        """
+        Returns DatabaseManager instance
+        """
         if not cls._instance:
             cls._instance = DatabaseManager()
         return cls._instance
@@ -57,6 +60,7 @@ class DatabaseManager:
             )
 
             self.session = self.cluster.connect()
+            self.create_keyspace()
             self.session.set_keyspace(self.KEYSPACE)
 
             connection.register_connection(
@@ -75,6 +79,7 @@ class DatabaseManager:
         Closes connection to cassandra
         """
         if self.session:
+            self.session.execute(f"DROP KEYSPACE IF EXISTS {self.KEYSPACE}")
             self.session.shutdown()
         if self.cluster:
             self.cluster.shutdown()
@@ -88,6 +93,9 @@ class DatabaseManager:
                 """.format(self.KEYSPACE))
 
     def drop_db(self):
+        """
+        Drops models tables
+        """
         for model in self.MODELS:
             try:
                 drop_table(model)
@@ -96,6 +104,9 @@ class DatabaseManager:
                 print(f"Failed to drop table for model {model.__name__}: {e}")
 
     def create_db(self):
+        """
+        Creates models tables
+        """
         for model in self.MODELS:
             try:
                 sync_table(model)

@@ -1,20 +1,15 @@
+import uuid
 import re
 from typing import Optional, Any, Dict, Tuple, Union
 
 from fastapi.security import OAuth2PasswordRequestForm
 
-from ai_chat_api.api.authentication.jwt import (
-    SecretType,
-    decode_jwt,
-    encode_jwt
-)
 from ai_chat_api.api.authentication.password import PasswordHelper
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.schemas import user as user_schemas
-from ai_chat_api.api.schemas import auth as auth_schemas
 
 
 RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
@@ -22,14 +17,6 @@ VERIFY_USER_TOKEN_AUDIENCE = "verify-user-token"
 
 
 class UserManager:
-    reset_password_token_secret: SecretType
-    reset_password_token_lifetime_seconds: int = 3600
-    reset_password_token_audience: str = RESET_PASSWORD_TOKEN_AUDIENCE
-
-    verification_token_secret: SecretType
-    verification_token_lifetime_seconds: int = 3600
-    verification_token_audience: str = VERIFY_USER_TOKEN_AUDIENCE
-
     def __init__(
         self,
         user: User = None,
@@ -41,11 +28,10 @@ class UserManager:
         else:
             self.password_helper = password_helper
 
-
     async def _validate_password(self, password: str) -> bool:
         """
         Validates a password
-        Parameters
+        Args
         ----------
         password: str - The password to validate
 
@@ -63,12 +49,32 @@ class UserManager:
             return True
         return False
 
+    def parse_id(self, user_id: Any) -> models.ID:
+        """
+        Parse a value into a correct ID type.
+
+        Args
+        ----------
+        user_id: Any - User ID as different type.
+
+        Returns
+        -------
+        id: ID - User correct ID
+        """
+
+        if isinstance(user_id, models.ID):
+            return user_id
+        try:
+            return uuid.UUID(user_id)
+        except ValueError as e:
+            raise exceptions.InvalidID() from e
+
     async def get(self, user_id: models.ID) -> User:
         """
         Gets a user with the given email
-        Parameters
+        Args
         ----------
-        id: ID - The user's id
+        user_id: ID - The user's id
 
         Returns
         -------
@@ -77,7 +83,7 @@ class UserManager:
 
         user: Union[User, None] = await User.get_by_id(user_id)
         if user is None:
-            raise exceptions.UserNotExist()
+            raise exceptions.UserNotExists()
 
         self.user = user
         return user
@@ -85,7 +91,7 @@ class UserManager:
     async def get_by_email(self, email: str) -> User:
         """
         Gets a user with the given email
-        Parameters
+        Args
         ----------
         email: str - The user's email
 
@@ -96,7 +102,7 @@ class UserManager:
 
         user: Union[User, None] = await User.get_by_email(email)
         if user is None:
-            raise exceptions.UserNotExist()
+            raise exceptions.UserNotExists()
 
         self.user = user
         return user
@@ -104,7 +110,7 @@ class UserManager:
     async def get_by_token(self, token: str) -> User:
         """
         Gets a user with the given email
-        Parameters
+        Args
         ----------
         token: str - A token that can be associated with a user.
 
@@ -120,12 +126,12 @@ class UserManager:
 
     async def create(
         self,
-        user_create: user_schemas.BCU
+        user_create: user_schemas.UC
     ) -> User:
         """
         Creates a new user
 
-        Parameters
+        Args
         ----------
         user_create: UserCreate - The user to create schema to create
 
@@ -139,7 +145,7 @@ class UserManager:
 
         is_user_exists = self.user.get_by_email(user_create.email)
         if not is_user_exists:
-            raise exceptions.UserAlreadyExist()
+            raise exceptions.UserAlreadyExists()
 
         user_dict = user_create.create_update_dict()
         password = user_dict.pop('password')
@@ -155,7 +161,7 @@ class UserManager:
     ) -> User:
         """
         Validates sent data and updates a user
-        Parameters
+        Args
         ----------
         user: User - The user to update
         update_dict: dict - The updated data
@@ -169,8 +175,8 @@ class UserManager:
             if key == "email" and value != user.email:
                 try:
                     await user.get_by_email(value)
-                    raise exceptions.UserAlreadyExist()
-                except exceptions.UserNotExist:
+                    raise exceptions.UserAlreadyExists()
+                except exceptions.UserNotExists:
                     validated_dict[key] = value
             elif key == "password" and value is not None:
                 await self._validate_password(value)
@@ -182,12 +188,12 @@ class UserManager:
 
     async def update(
         self,
-        user_update: user_schemas.BUU,
+        user_update: user_schemas.UU,
         user: User
     ):
         """
         Updates a user
-        Parameters
+        Args
         ----------
         user_update: UserUpdate - The updated data
         user: User - The user to update
@@ -204,7 +210,7 @@ class UserManager:
         """
         Deletes a user
 
-        Parameters
+        Args
         ----------
         user: User - The user to delete
 
@@ -222,7 +228,7 @@ class UserManager:
         """
         Validates a user password
 
-        Parameters
+        Args
         ----------
         password: str - The password to validate
         user: User - The user to validate
@@ -235,11 +241,11 @@ class UserManager:
 
     async def authenticate(
         self,
-        credentials: auth_schemas.APRF
-    ) -> Optional[User]:
+        credentials: OAuth2PasswordRequestForm
+    ) -> Union[User, None]:
         try:
             user: User = await self.get_by_email(credentials.email)
-        except exceptions.UserNotExist:
+        except exceptions.UserNotExists:
             return None
 
         verified, password_hash = self.password_helper.verify_password(

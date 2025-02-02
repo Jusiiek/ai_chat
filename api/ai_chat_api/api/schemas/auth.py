@@ -1,4 +1,4 @@
-from typing import Optional, TypeVar
+from typing import TypeVar
 from pydantic import BaseModel
 
 
@@ -7,4 +7,10 @@ class AuthPasswordRequestForm(BaseModel):
     password: str
 
 
+class AuthResponseSchema(BaseModel):
+    access_token: str
+    token_type: str
+
+
 APRF = TypeVar("APRF", bound=AuthPasswordRequestForm)
+ARS = TypeVar("ARS", bound=AuthResponseSchema)
