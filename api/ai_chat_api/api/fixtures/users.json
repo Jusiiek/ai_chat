@@ -1,0 +1,16 @@
+[
+  {
+    "email": "admin@test.com",
+    "password": "@adM8n@test.com",
+    "is_active": true,
+    "is_superuser": true,
+    "is_verified": true
+  },
+  {
+    "email": "test_user@test.com",
+    "password": "T3st@test.com",
+    "is_active": true,
+    "is_superuser": false,
+    "is_verified": true
+  }
+]

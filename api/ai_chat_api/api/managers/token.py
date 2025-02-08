@@ -144,7 +144,7 @@ class TokenManager:
             return token.token
 
         data = {"sub": str(user.id), "aud": self.token_audience}
-        expires_in = datetime.utcnow() + timedelta(seconds=self.lifetime_seconds)
+        expires_in = datetime.now() + timedelta(seconds=self.lifetime_seconds)
 
         token = self._encode_jwt(
             data, self.secret, expires_in=expires_in, algorithm=self.algorithm
@@ -154,7 +154,6 @@ class TokenManager:
             token=token,
             user_id=user.id,
             expire_at=expires_in,
-            created_at=datetime.utcnow(),
         )
 
         return token_obj.token
@@ -162,12 +161,11 @@ class TokenManager:
     async def destroy_token(self, token: str, user: User) -> None:
         token_obj: Optional[Token, None] = Token.get_by_token(token)
 
-        if token_obj is None:
+        if token_obj is not None:
             await token_obj.delete()
 
             BlacklistedToken.create(
                 token=token,
                 user_id=user.id,
-                expire_at=datetime.utcnow() + timedelta(seconds=self.lifetime_seconds),
-                created_at=datetime.utcnow(),
+                expire_at=datetime.now() + timedelta(seconds=self.lifetime_seconds),
             )

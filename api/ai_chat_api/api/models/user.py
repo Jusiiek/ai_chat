@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import Tuple, Union, Optional
+from typing import Tuple, Union
+from cassandra.cqlengine import columns
 
 from ai_chat_api.api.models.base import BaseModel
 
@@ -9,13 +10,13 @@ from ai_chat_api.api.authentication.password import PasswordHelper
 class User(BaseModel):
     __table_name__ = 'user'
 
-    email: str
-    hashed_password: str
-    is_active: bool
-    is_superuser: bool
-    is_verified: bool
-    created_at: datetime
-    edited_at: datetime
+    email = columns.Text(primary_key=True)
+    hashed_password = columns.Text()
+    is_active = columns.Boolean(default=False)
+    is_superuser = columns.Boolean(default=False)
+    is_verified = columns.Boolean(default=False)
+    created_at = columns.DateTime(default=datetime.now())
+    edited_at = columns.DateTime(default=datetime.now())
 
     async def set_password(
       self,
@@ -51,5 +52,5 @@ class User(BaseModel):
         return ph.verify_password(password, self.hashed_password)
 
     @classmethod
-    async def get_by_email(cls, email: str) -> Optional["User"]:
-        return cls.objects.get(email=email)
+    async def get_by_email(cls, email: str) -> Union["User", None]:
+        return cls.objects.filter(email=email).allow_filtering().first()

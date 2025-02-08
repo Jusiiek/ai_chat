@@ -14,9 +14,5 @@ class BaseModel(Model):
     id = columns.UUID(primary_key=True, default=uuid.uuid4)
 
     @classmethod
-    async def create(cls, **kwargs):
-        return await cls.create(**kwargs)
-
-    @classmethod
     async def get_by_id(cls, model_id: ID):
-        return await cls.get(id=model_id)
+        return await cls.objects.filter(id=model_id).allow_filtering().first()

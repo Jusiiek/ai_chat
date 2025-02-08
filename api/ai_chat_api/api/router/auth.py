@@ -1,5 +1,4 @@
 from typing import Union
-from urllib.request import Request
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -20,7 +19,7 @@ def get_auth_router(
     user_manager: UserManager,
 ) -> APIRouter:
 
-    router = APIRouter()
+    router = APIRouter(prefix="/auth/jwt", tags=["/auth"])
 
     get_current_user_and_token = authenticator.get_current_user()
 

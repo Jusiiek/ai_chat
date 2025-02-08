@@ -1,14 +1,12 @@
 import os
 
-from typing import Union
-from pydantic import SecretStr
-
 
 class Config:
     """
     A simple class for storing environment variables
     """
     APP_NAME = "AI_CHAT"
+    #  ai_chat_keyspace
     APP_KEYSPACE = f"{APP_NAME.lower()}_keyspace"
     SECRET_KEY = os.environ.get('SECRET_KEY')
     HOST = os.environ.get('HOST', '0.0.0.0')
@@ -22,6 +20,9 @@ class Config:
 
     # router
     MAIN_ROUTER = "/api"
+
+    # paths
+    HERE = os.getcwd()
 
     # cassandra
     CASSANDRA_USERNAME = os.environ.get('CASSANDRA_USERNAME', 'admin')

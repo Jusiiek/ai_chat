@@ -19,7 +19,7 @@ VERIFY_USER_TOKEN_AUDIENCE = "verify-user-token"
 class UserManager:
     def __init__(
         self,
-        user: User = None,
+        user: Union[User, None] = None,
         password_helper: Optional[PasswordHelper] = None
     ):
         self.user = user
@@ -99,7 +99,6 @@ class UserManager:
         -------
         result: A user
         """
-
         user: Union[User, None] = await User.get_by_email(email)
         if user is None:
             raise exceptions.UserNotExists()
@@ -141,17 +140,17 @@ class UserManager:
         """
         ps_valid = await self._validate_password(user_create.password)
         if not ps_valid:
-            raise exceptions.PasswordInvalid()
+            raise exceptions.PasswordInvalid("Password must contain at least 8 characters.")
 
-        is_user_exists = self.user.get_by_email(user_create.email)
-        if not is_user_exists:
+        is_user_exists = await self.get_by_email(user_create.email)
+        if is_user_exists:
             raise exceptions.UserAlreadyExists()
 
         user_dict = user_create.create_update_dict()
         password = user_dict.pop('password')
         user_dict["hashed_password"] = self.password_helper.hash_password(password)
 
-        created_user = await User.create(**user_dict)
+        created_user = User.create(**user_dict)
         return created_user
 
     async def _update(
