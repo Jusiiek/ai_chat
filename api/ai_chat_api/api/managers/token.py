@@ -115,7 +115,7 @@ class TokenManager:
         self, token: str, user_manager: UserManager
     ) -> Union[User, None]:
         try:
-            blacklisted_token: Optional[BlacklistedToken, None] = BlacklistedToken.get_by_token(token)
+            blacklisted_token: Union[BlacklistedToken, None] = BlacklistedToken.get_by_token(token)
             if blacklisted_token is not None:
                 return None
 
@@ -139,14 +139,14 @@ class TokenManager:
 
     async def write_token(self, user: User) -> str:
 
-        token: Optional[Token, None] = Token.get_by_user_id(user.id)
+        token: Union[Token, None] = await Token.get_by_user_id(user.id)
         if token is not None:
             return token.token
 
         data = {"sub": str(user.id), "aud": self.token_audience}
         expires_in = datetime.now() + timedelta(seconds=self.lifetime_seconds)
 
-        token = self._encode_jwt(
+        token: SecretType = self._encode_jwt(
             data, self.secret, expires_in=expires_in, algorithm=self.algorithm
         )
 
@@ -159,7 +159,7 @@ class TokenManager:
         return token_obj.token
 
     async def destroy_token(self, token: str, user: User) -> None:
-        token_obj: Optional[Token, None] = Token.get_by_token(token)
+        token_obj: Union[Token, None] = await Token.get_by_token(token)
 
         if token_obj is not None:
             await token_obj.delete()

@@ -233,25 +233,6 @@ class UserManager:
         """
         return user.delete()
 
-    async def validate_password(
-        self,
-        password: str,
-        user: User
-    ) -> Tuple[bool, Union[str, None]]:
-        """
-        Validates a user password
-
-        Args
-        ----------
-        password: str - The password to validate
-        user: User - The user to validate
-
-        Returns
-        -------
-        valid: bool - Whether the password is valid
-        """
-        return await user.verify_password(password)
-
     async def authenticate(
         self,
         credentials: AuthPasswordRequestForm
@@ -261,13 +242,14 @@ class UserManager:
         except exceptions.UserNotExists:
             return None
 
-        verified, password_hash = self.password_helper.verify_password(
+        print("YES YESY ESY USER", user.email)
+        print("YES YESY ESY password", credentials.password)
+        print("YES YESY ESY password_hash", user.hashed_password)
+        verified = self.password_helper.verify_password(
             credentials.password, user.hashed_password
         )
+        print("verified", verified)
         if not verified:
             return None
-
-        if password_hash is None:
-            await self._update(user, {"hashed_password": password_hash})
 
         return user

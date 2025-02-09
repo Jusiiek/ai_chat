@@ -48,7 +48,11 @@ def get_auth_router(
         user: Union[User, None] = await user_manager.authenticate(credentials)
 
         detail = None
-
+        print("user", user)
+        print("is_verified", user.is_verified)
+        print("is_active", user.is_active)
+        print("is_superuser", user.is_superuser)
+        print("email", user.email)
         if user is None or not user.is_verified:
             detail = ErrorMessages.LOGIN_USER_NOT_VERIFIED.value,
 
@@ -61,7 +65,7 @@ def get_auth_router(
                 detail=detail,
             )
 
-        response = backend.login(user)
+        response = await backend.login(user)
         print(response)
         return response
 

@@ -1,14 +1,14 @@
 [
   {
-    "email": "admin@test.com",
-    "password": "@adM8n@test.com",
+    "email": "admin@ai_app.com",
+    "password": "Admin3<>0asd",
     "is_active": true,
     "is_superuser": true,
     "is_verified": true
   },
   {
-    "email": "test_user@test.com",
-    "password": "T3st@test.com",
+    "email": "test_user@ai_app.com",
+    "password": "T3stU3sr<>0",
     "is_active": true,
     "is_superuser": false,
     "is_verified": true

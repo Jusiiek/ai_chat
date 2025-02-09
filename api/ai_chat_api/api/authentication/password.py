@@ -16,8 +16,8 @@ class PasswordHelper:
 
     def verify_password(
             self, password: str, hashed_password: str
-    ) -> Tuple[bool, Union[str, None]]:
-        return self.pwd_context.verify_and_update(
+    ) -> bool:
+        return self.pwd_context.verify(
             password, hashed_password
         )
 

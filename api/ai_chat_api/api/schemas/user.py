@@ -8,12 +8,7 @@ class CreateUpdateModel(BaseModel):
     def create_update_dict(self):
         return self.model_dump(
             exclude_unset=True,
-            exclude={
-                "id",
-                "is_active",
-                "is_superuser",
-                "is_verified"
-            }
+            exclude={"id"}
         )
 
 

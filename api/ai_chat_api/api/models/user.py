@@ -36,7 +36,7 @@ class User(BaseModel):
     async def verify_password(
         self,
         password: str
-    ) -> Tuple[bool, Union[str, None]]:
+    ) -> bool:
         """
         Verify user password
 

@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 
 from ai_chat_api.api.utils.models import model_dump
-from ai_chat_api.api.schemas import auth
+from ai_chat_api.api.schemas.auth import AuthResponseSchema
 from ai_chat_api.api.responses.auth import AuthResponse
 
 
@@ -17,7 +17,7 @@ class BearerResponse(AuthResponse):
     def get_success_login_response() -> dict:
         return {
             status.HTTP_200_OK: {
-                "model": auth.ARS,
+                "model": AuthResponseSchema,
             }
         }
 
@@ -26,7 +26,7 @@ class BearerResponse(AuthResponse):
         return {}
 
     async def get_login_response(self, token: str) -> Response:
-        bearer_response = auth.ARS(
+        bearer_response = AuthResponseSchema(
             access_token=token,
             token_type="bearer",
         )
