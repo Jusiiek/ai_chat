@@ -10,7 +10,7 @@ loop.run_until_complete(startup_event())
 client = TestClient(app)
 
 
-def get_token(login="test_user@test.com", password="T3st@test.com"):
+def get_token(login="test_user@ai_app.com", password="T3stU3sr<>0"):
     res = client.post("/auth/jwt/login", data={"username": login, "password": password})
     assert res.status_code == 200
     data = res.json()
@@ -19,4 +19,10 @@ def get_token(login="test_user@test.com", password="T3st@test.com"):
 
 def get_auth_client():
     client.headers.update({"Authorization": get_token()})
+    return client
+
+def get_admin_auth_client():
+    client.headers.update(
+        {"Authorization": get_token("admin@ai_app.com", "Admin3<>0asd")}
+    )
     return client

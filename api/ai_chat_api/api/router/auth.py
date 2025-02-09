@@ -82,7 +82,7 @@ def get_auth_router(
         except exceptions.UserAlreadyExists:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=ErrorMessages.REGISTER_USER_ALREADY_EXISTS,
+                detail=ErrorMessages.REGISTER_USER_ALREADY_EXISTS.value,
             )
         except exceptions.PasswordInvalid as e:
             raise HTTPException(
