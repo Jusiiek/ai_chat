@@ -8,7 +8,7 @@ from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.schemas import user as user_schemas
-from ai_chat_api.api.schemas.auth import AuthRequestForm
+from ai_chat_api.api.schemas.auth import AuthPasswordRequestForm
 from ai_chat_api.api.common.password_error import PasswordErrorMessages, PasswordErrorsHolder
 
 
@@ -81,7 +81,7 @@ class UserManager:
         except ValueError as e:
             raise exceptions.InvalidID() from e
 
-    async def get(self, user_id: models.ID) -> User:
+    async def get(self, user_id: models.ID) -> Union[User, None]:
         """
         Gets a user with the given email
         Args
@@ -95,12 +95,12 @@ class UserManager:
 
         user: Union[User, None] = await User.get_by_id(user_id)
         if user is None:
-            raise exceptions.UserNotExists()
+            return None
 
         self.user = user
         return user
 
-    async def get_by_email(self, email: str) -> User:
+    async def get_by_email(self, email: str) -> Union[User, None]:
         """
         Gets a user with the given email
         Args
@@ -113,12 +113,12 @@ class UserManager:
         """
         user: Union[User, None] = await User.get_by_email(email)
         if user is None:
-            raise exceptions.UserNotExists()
+            return None
 
         self.user = user
         return user
 
-    async def get_by_token(self, token: str) -> User:
+    async def get_by_token(self, token: str) -> Union[User, None]:
         """
         Gets a user with the given email
         Args
@@ -131,7 +131,7 @@ class UserManager:
         """
         token_db: Union[Token, None] = await Token.get_by_token(token)
         if token_db is None:
-            raise exceptions.InvalidVerifyToken()
+            return None
 
         return await self.get(token.user_id)
 
@@ -152,7 +152,7 @@ class UserManager:
         """
         password_errors_holder: PasswordErrorsHolder = await self._validate_password(user_create.password)
         if not password_errors_holder.is_valid:
-            raise exceptions.PasswordInvalid(" ".join(password_errors_holder.errors))
+            raise exceptions.PasswordInvalid(", ".join(password_errors_holder.errors))
 
         is_user_exists = await self.get_by_email(user_create.email)
         if is_user_exists:
@@ -197,7 +197,7 @@ class UserManager:
             else:
                 validated_dict[key] = value
 
-        return await user.update(**validated_dict)
+        return user.update(**validated_dict)
 
     async def update(
         self,
@@ -231,7 +231,7 @@ class UserManager:
         -------
         None
         """
-        return await user.delete()
+        return user.delete()
 
     async def validate_password(
         self,
@@ -254,7 +254,7 @@ class UserManager:
 
     async def authenticate(
         self,
-        credentials: AuthRequestForm
+        credentials: AuthPasswordRequestForm
     ) -> Union[User, None]:
         try:
             user: User = await self.get_by_email(credentials.email)

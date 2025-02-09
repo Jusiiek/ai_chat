@@ -8,7 +8,7 @@ from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.common.auth_error import ErrorMessages, ErrorModel
 from ai_chat_api.api.schemas import user as user_schemas
-from ai_chat_api.api.schemas.auth import AuthRequestForm
+from ai_chat_api.api.schemas.auth import AuthPasswordRequestForm
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.utils.models import model_validate
 
@@ -43,7 +43,7 @@ def get_auth_router(
 
     @router.post("/login", responses=login_responses)
     async def login(
-        credentials: AuthRequestForm = Depends(),
+        credentials: AuthPasswordRequestForm
     ):
         user: Union[User, None] = await user_manager.authenticate(credentials)
 
@@ -52,7 +52,7 @@ def get_auth_router(
         if user is None or not user.is_verified:
             detail = ErrorMessages.LOGIN_USER_NOT_VERIFIED.value,
 
-        if not user.is_active:
+        if user and not user.is_active:
             detail = ErrorMessages.LOGIN_BAD_CREDENTIALS.value
 
         if detail is not None:
