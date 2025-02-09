@@ -17,9 +17,6 @@ async def inject_users():
 
         for user in users:
             user_create = BaseCreateUser(**user)
-            print("is_active:", user_create.is_active)
-            print("is_superuser:", user_create.is_superuser)
-            print("is_verified:", user_create.is_verified)
             await user_manager.create(user_create)
 
 

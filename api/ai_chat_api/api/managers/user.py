@@ -242,13 +242,9 @@ class UserManager:
         except exceptions.UserNotExists:
             return None
 
-        print("YES YESY ESY USER", user.email)
-        print("YES YESY ESY password", credentials.password)
-        print("YES YESY ESY password_hash", user.hashed_password)
         verified = self.password_helper.verify_password(
             credentials.password, user.hashed_password
         )
-        print("verified", verified)
         if not verified:
             return None
 
