@@ -1,7 +1,6 @@
 from typing import Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
 
 from ai_chat_api.api.backend.authentication import AuthenticationBackend
 from ai_chat_api.api.authentication.authenticator import Authenticator
@@ -9,6 +8,7 @@ from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.common.auth_error import ErrorMessages, ErrorModel
 from ai_chat_api.api.schemas import user as user_schemas
+from ai_chat_api.api.schemas.auth import AuthRequestForm
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.utils.models import model_validate
 
@@ -41,10 +41,9 @@ def get_auth_router(
         **backend.responses.get_unsuccessful_register_response()
     }
 
-    @router.post("/login",responses=login_responses)
+    @router.post("/login", responses=login_responses)
     async def login(
-        credentials: OAuth2PasswordRequestForm = Depends(),
-        user_manager: UserManager = Depends(get_current_user_and_token)
+        credentials: AuthRequestForm = Depends(),
     ):
         user: Union[User, None] = await user_manager.authenticate(credentials)
 
@@ -66,7 +65,7 @@ def get_auth_router(
         print(response)
         return response
 
-    @router.post("/logout",responses=logout_responses)
+    @router.post("/logout", responses=logout_responses)
     async def logout(
         user_token: tuple[User, str] = Depends(get_current_user_and_token)
     ):

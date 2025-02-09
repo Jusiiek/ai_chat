@@ -2,14 +2,14 @@ import uuid
 import re
 from typing import Optional, Any, Dict, Tuple, Union
 
-from fastapi.security import OAuth2PasswordRequestForm
-
 from ai_chat_api.api.authentication.password import PasswordHelper
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.schemas import user as user_schemas
+from ai_chat_api.api.schemas.auth import AuthRequestForm
+from ai_chat_api.api.common.password_error import PasswordErrorMessages, PasswordErrorsHolder
 
 
 RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
@@ -28,7 +28,7 @@ class UserManager:
         else:
             self.password_helper = password_helper
 
-    async def _validate_password(self, password: str) -> bool:
+    async def _validate_password(self, password: str) -> PasswordErrorsHolder:
         """
         Validates a password
         Args
@@ -39,15 +39,27 @@ class UserManager:
         -------
         result: bool - Whether the password is valid
         """
-        has_upper = re.search(r'[A-Z]', password)
-        has_lower = re.search(r'[a-z]', password)
-        has_digit = re.search(r'\d', password)
-        has_special = re.search(r'[!@#$%^&*(),.?":{}|<>]', password)
-        is_long_enough = len(password) >= 8
+        errors = []
+        if not re.search(r'[A-Z]', password):
+            errors.append(PasswordErrorMessages.PASSWORD_MISSING_UPPERCASE.value)
 
-        if has_upper and has_lower and has_digit and has_special and is_long_enough:
-            return True
-        return False
+        if not re.search(r'[a-z]', password):
+            errors.append(PasswordErrorMessages.PASSWORD_MISSING_LOWERCASE.value)
+
+        if not re.search(r'\d', password):
+            errors.append(PasswordErrorMessages.PASSWORD_MISSING_DIGIT.value)
+
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            errors.append(PasswordErrorMessages.PASSWORD_MISSING_SPECIAL_CHAR.value)
+
+        if len(password) < 8:
+            errors.append(PasswordErrorMessages.PASSWORD_TOO_SHORT.value)
+
+        return PasswordErrorsHolder(
+            password=password,
+            errors=errors,
+            is_valid=len(errors) == 0,
+        )
 
     def parse_id(self, user_id: Any) -> models.ID:
         """
@@ -138,9 +150,9 @@ class UserManager:
         -------
         result: A new user.
         """
-        ps_valid = await self._validate_password(user_create.password)
-        if not ps_valid:
-            raise exceptions.PasswordInvalid("Password must contain at least 8 characters.")
+        password_errors_holder: PasswordErrorsHolder = await self._validate_password(user_create.password)
+        if not password_errors_holder.is_valid:
+            raise exceptions.PasswordInvalid(" ".join(password_errors_holder.errors))
 
         is_user_exists = await self.get_by_email(user_create.email)
         if is_user_exists:
@@ -178,7 +190,9 @@ class UserManager:
                 except exceptions.UserNotExists:
                     validated_dict[key] = value
             elif key == "password" and value is not None:
-                await self._validate_password(value)
+                password_errors_holder: PasswordErrorsHolder = await self._validate_password(value)
+                if not password_errors_holder.is_valid:
+                    raise exceptions.PasswordInvalid(", ".join(password_errors_holder.errors))
                 validated_dict[key] = self.password_helper.hash_password(value)
             else:
                 validated_dict[key] = value
@@ -240,7 +254,7 @@ class UserManager:
 
     async def authenticate(
         self,
-        credentials: OAuth2PasswordRequestForm
+        credentials: AuthRequestForm
     ) -> Union[User, None]:
         try:
             user: User = await self.get_by_email(credentials.email)
