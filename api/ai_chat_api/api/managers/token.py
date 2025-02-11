@@ -79,7 +79,7 @@ class TokenManager:
             payload["exp"] = expires_in
 
         elif lifetime_seconds:
-            expire = datetime.utcnow() + timedelta(seconds=lifetime_seconds)
+            expire = datetime.now() + timedelta(seconds=lifetime_seconds)
             payload["exp"] = expire
         return jwt.encode(payload, self._get_secret_value(secret), algorithm=algorithm)
 
@@ -115,7 +115,7 @@ class TokenManager:
         self, token: str, user_manager: UserManager
     ) -> Union[User, None]:
         try:
-            blacklisted_token: Union[BlacklistedToken, None] = BlacklistedToken.get_by_token(token)
+            blacklisted_token: Union[BlacklistedToken, None] = await BlacklistedToken.get_by_token(token)
             if blacklisted_token is not None:
                 return None
 
@@ -125,7 +125,10 @@ class TokenManager:
             expire_at = data.get("exp")
             user_id = data.get("sub")
 
-            if expire_at < datetime.utcnow() or user_id is None:
+            if isinstance(expire_at, int):
+                expire_at = datetime.fromtimestamp(expire_at)
+
+            if expire_at < datetime.now() or user_id is None:
                 return None
 
         except jwt.PyJWTError:
@@ -162,10 +165,10 @@ class TokenManager:
         token_obj: Union[Token, None] = await Token.get_by_token(token)
 
         if token_obj is not None:
-            await token_obj.delete()
+            token_obj.delete()
 
             BlacklistedToken.create(
                 token=token,
                 user_id=user.id,
-                expire_at=datetime.now() + timedelta(seconds=self.lifetime_seconds),
+                expired_at=datetime.now() + timedelta(seconds=self.lifetime_seconds),
             )

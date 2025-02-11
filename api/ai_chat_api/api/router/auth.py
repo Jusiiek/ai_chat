@@ -19,9 +19,9 @@ def get_auth_router(
     user_manager: UserManager,
 ) -> APIRouter:
 
-    router = APIRouter(prefix="/auth/jwt", tags=["/auth"])
+    get_current_user_and_token = authenticator.get_current_user_and_token()
 
-    get_current_user_and_token = authenticator.get_current_user()
+    router = APIRouter(prefix="/auth/jwt", tags=["/auth"])
 
     login_responses: dict = {
         **backend.responses.get_success_login_response(),
@@ -29,12 +29,6 @@ def get_auth_router(
     }
     logout_responses: dict = {
         **backend.responses.get_success_logout_response(),
-        **{
-            status.HTTP_401_UNAUTHORIZED: {
-                "model": ErrorModel,
-                "description": ErrorMessages.MISSING_TOKEN_OR_USER_IS_NOT_ACTIVE.value
-            }
-        },
     }
 
     register_responses: dict = {

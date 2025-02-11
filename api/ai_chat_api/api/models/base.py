@@ -15,4 +15,4 @@ class BaseModel(Model):
 
     @classmethod
     async def get_by_id(cls, model_id: ID):
-        return await cls.objects.filter(id=model_id).allow_filtering().first()
+        return cls.objects.filter(id=model_id).allow_filtering().first()

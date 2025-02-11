@@ -1,4 +1,4 @@
-from fastapi import Response, status
+from fastapi import Response, status, Header
 from fastapi.security.base import SecurityBase
 from ai_chat_api.api.common.auth_error import ErrorMessages, ErrorModel
 
@@ -59,3 +59,5 @@ class AuthResponse:
     async def get_login_response(self, token: str) -> Response: ...
 
     async def get_logout_response(self) -> Response: ...
+
+    async def get_token_from_request(self, authorization: str = Header(None)) -> str: ...
