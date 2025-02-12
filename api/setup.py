@@ -8,7 +8,8 @@ flake8==7.1.1
 PyJWT==2.9.0
 pytest==8.3.3
 passlib==1.7.4
-bcrypt==4.2.0
+bcrypt==4.0.1
+python-multipart==0.0.20
 """
 
 setup(

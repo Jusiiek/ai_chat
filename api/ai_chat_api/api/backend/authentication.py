@@ -2,6 +2,7 @@ from fastapi import Response, status
 
 from ai_chat_api.api.managers.token import TokenManager
 from ai_chat_api.api.responses.auth import AuthResponse
+from ai_chat_api.api.models.user import User
 from ai_chat_api.api import exceptions
 
 
@@ -23,7 +24,7 @@ class AuthenticationBackend:
         self.responses = responses
         self.token_manager = token_manager
 
-    async def login(self, user) -> Response:
+    async def login(self, user: User) -> Response:
         """
         Writes token for the user and returns successful login response.
 
@@ -38,7 +39,7 @@ class AuthenticationBackend:
         token = await self.token_manager.write_token(user)
         return await self.responses.get_login_response(token)
 
-    async def logout(self, token: str, user) -> Response:
+    async def logout(self, token: str, user: User) -> Response:
         """
         Destroys the user's token and returns successful logout response.
 

@@ -3,7 +3,9 @@ class AppException(Exception):
 
 
 class UserNotExists(AppException):
-    pass
+    def __init__(self):
+        message = "User doesn't exist"
+        super().__init__(message)
 
 
 class InvalidID(AppException):

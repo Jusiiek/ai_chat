@@ -60,7 +60,7 @@ class DatabaseManager:
             )
 
             self.session = self.cluster.connect()
-            self.create_keyspace()
+            self._create_keyspace()
             self.session.set_keyspace(self.KEYSPACE)
 
             connection.register_connection(
@@ -79,18 +79,25 @@ class DatabaseManager:
         Closes connection to cassandra
         """
         if self.session:
-            self.session.execute(f"DROP KEYSPACE IF EXISTS {self.KEYSPACE}")
             self.session.shutdown()
         if self.cluster:
             self.cluster.shutdown()
         print("Cassandra connection closed.")
 
-    def create_keyspace(self):
+    def _create_keyspace(self):
         if self.session:
             self.session.execute("""
                     CREATE KEYSPACE IF NOT EXISTS {}
-                    WITH replication = {{'class': 'SimpleStrategy', 'replication_factor': '1'}}
+                    WITH replication = {{
+                    'class': 'SimpleStrategy', 'replication_factor': '1'
+                    }}
                 """.format(self.KEYSPACE))
+
+    def _delete_keyspace(self):
+        if self.session:
+            self.session.execute(
+                f"DROP KEYSPACE IF EXISTS {self.KEYSPACE}"
+            )
 
     def drop_db(self):
         """

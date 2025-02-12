@@ -9,7 +9,6 @@ from ai_chat_api.middleware import (
 from ai_chat_api.config import Config
 from ai_chat_api.app_config import router
 from ai_chat_api.cassandradb import DatabaseManager
-from ai_chat_api.api.router import Router
 
 
 def create_app() -> FastAPI:
@@ -34,11 +33,11 @@ def create_app() -> FastAPI:
     return app
 
 
-def get_app_routers(app: FastAPI) -> None:
-    app.include_router(router.get_auth_router())
-
-
 app = create_app()
+
+
+def get_app_routers() -> None:
+    app.include_router(router.get_auth_router())
 
 
 @app.on_event("startup")
@@ -46,7 +45,7 @@ async def startup_event():
     db = DatabaseManager.get_instance()
     db.connect()
 
-    get_app_routers(app)
+    get_app_routers()
 
 
 @app.on_event("shutdown")

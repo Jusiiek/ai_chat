@@ -3,6 +3,7 @@ import asyncio
 from functools import wraps
 
 from ai_chat_api.cassandradb import DatabaseManager
+from ai_chat_api.api.utils.fixtures import inject_fixtures
 
 
 def coroutine(f):
@@ -30,6 +31,8 @@ async def init_db():
 
     db.drop_db()
     db.create_db()
+
+    await inject_fixtures()
 
     db.close()
 

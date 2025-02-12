@@ -1,8 +1,6 @@
 import uuid
 import re
-from typing import Optional, Any, Dict, Tuple, Union
-
-from fastapi.security import OAuth2PasswordRequestForm
+from typing import Optional, Any, Dict, Union
 
 from ai_chat_api.api.authentication.password import PasswordHelper
 from ai_chat_api.api.models.user import User
@@ -10,6 +8,11 @@ from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.schemas import user as user_schemas
+from ai_chat_api.api.schemas.auth import AuthPasswordRequestForm
+from ai_chat_api.api.common.password_error import (
+    PasswordErrorMessages,
+    PasswordErrorsHolder
+)
 
 
 RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
@@ -19,7 +22,7 @@ VERIFY_USER_TOKEN_AUDIENCE = "verify-user-token"
 class UserManager:
     def __init__(
         self,
-        user: User = None,
+        user: Union[User, None] = None,
         password_helper: Optional[PasswordHelper] = None
     ):
         self.user = user
@@ -28,7 +31,7 @@ class UserManager:
         else:
             self.password_helper = password_helper
 
-    async def _validate_password(self, password: str) -> bool:
+    async def _validate_password(self, password: str) -> PasswordErrorsHolder:
         """
         Validates a password
         Args
@@ -39,15 +42,27 @@ class UserManager:
         -------
         result: bool - Whether the password is valid
         """
-        has_upper = re.search(r'[A-Z]', password)
-        has_lower = re.search(r'[a-z]', password)
-        has_digit = re.search(r'\d', password)
-        has_special = re.search(r'[!@#$%^&*(),.?":{}|<>]', password)
-        is_long_enough = len(password) >= 8
+        errors = []
+        if not re.search(r'[A-Z]', password):
+            errors.append(PasswordErrorMessages.PASSWORD_MISSING_UPPERCASE.value)
 
-        if has_upper and has_lower and has_digit and has_special and is_long_enough:
-            return True
-        return False
+        if not re.search(r'[a-z]', password):
+            errors.append(PasswordErrorMessages.PASSWORD_MISSING_LOWERCASE.value)
+
+        if not re.search(r'\d', password):
+            errors.append(PasswordErrorMessages.PASSWORD_MISSING_DIGIT.value)
+
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            errors.append(PasswordErrorMessages.PASSWORD_MISSING_SPECIAL_CHAR.value)
+
+        if len(password) < 8:
+            errors.append(PasswordErrorMessages.PASSWORD_TOO_SHORT.value)
+
+        return PasswordErrorsHolder(
+            password=password,
+            errors=errors,
+            is_valid=len(errors) == 0,
+        )
 
     def parse_id(self, user_id: Any) -> models.ID:
         """
@@ -69,7 +84,7 @@ class UserManager:
         except ValueError as e:
             raise exceptions.InvalidID() from e
 
-    async def get(self, user_id: models.ID) -> User:
+    async def get(self, user_id: models.ID) -> Union[User, None]:
         """
         Gets a user with the given email
         Args
@@ -83,12 +98,12 @@ class UserManager:
 
         user: Union[User, None] = await User.get_by_id(user_id)
         if user is None:
-            raise exceptions.UserNotExists()
+            return None
 
         self.user = user
         return user
 
-    async def get_by_email(self, email: str) -> User:
+    async def get_by_email(self, email: str) -> Union[User, None]:
         """
         Gets a user with the given email
         Args
@@ -99,15 +114,14 @@ class UserManager:
         -------
         result: A user
         """
-
         user: Union[User, None] = await User.get_by_email(email)
         if user is None:
-            raise exceptions.UserNotExists()
+            return None
 
         self.user = user
         return user
 
-    async def get_by_token(self, token: str) -> User:
+    async def get_by_token(self, token: str) -> Union[User, None]:
         """
         Gets a user with the given email
         Args
@@ -120,13 +134,13 @@ class UserManager:
         """
         token_db: Union[Token, None] = await Token.get_by_token(token)
         if token_db is None:
-            raise exceptions.InvalidVerifyToken()
+            return None
 
         return await self.get(token.user_id)
 
     async def create(
         self,
-        user_create: user_schemas.UC
+        user_create: user_schemas.BaseCreateUser
     ) -> User:
         """
         Creates a new user
@@ -139,19 +153,21 @@ class UserManager:
         -------
         result: A new user.
         """
-        ps_valid = await self._validate_password(user_create.password)
-        if not ps_valid:
-            raise exceptions.PasswordInvalid()
+        password_errors_holder: PasswordErrorsHolder = (
+            await self._validate_password(user_create.password)
+        )
+        if not password_errors_holder.is_valid:
+            raise exceptions.PasswordInvalid(", ".join(password_errors_holder.errors))
 
-        is_user_exists = self.user.get_by_email(user_create.email)
-        if not is_user_exists:
+        is_user_exists = await self.get_by_email(user_create.email)
+        if is_user_exists:
             raise exceptions.UserAlreadyExists()
 
         user_dict = user_create.create_update_dict()
         password = user_dict.pop('password')
         user_dict["hashed_password"] = self.password_helper.hash_password(password)
 
-        created_user = await User.create(**user_dict)
+        created_user = User.create(**user_dict)
         return created_user
 
     async def _update(
@@ -179,16 +195,22 @@ class UserManager:
                 except exceptions.UserNotExists:
                     validated_dict[key] = value
             elif key == "password" and value is not None:
-                await self._validate_password(value)
+                password_errors_holder: PasswordErrorsHolder = (
+                    await self._validate_password(value)
+                )
+                if not password_errors_holder.is_valid:
+                    raise exceptions.PasswordInvalid(
+                        ", ".join(password_errors_holder.errors)
+                    )
                 validated_dict[key] = self.password_helper.hash_password(value)
             else:
                 validated_dict[key] = value
 
-        return await user.update(**validated_dict)
+        return user.update(**validated_dict)
 
     async def update(
         self,
-        user_update: user_schemas.UU,
+        user_update: user_schemas.BaseUpdateUser,
         user: User
     ):
         """
@@ -218,43 +240,21 @@ class UserManager:
         -------
         None
         """
-        return await user.delete()
-
-    async def validate_password(
-        self,
-        password: str,
-        user: User
-    ) -> Tuple[bool, Union[str, None]]:
-        """
-        Validates a user password
-
-        Args
-        ----------
-        password: str - The password to validate
-        user: User - The user to validate
-
-        Returns
-        -------
-        valid: bool - Whether the password is valid
-        """
-        return await user.verify_password(password)
+        return user.delete()
 
     async def authenticate(
         self,
-        credentials: OAuth2PasswordRequestForm
+        credentials: AuthPasswordRequestForm
     ) -> Union[User, None]:
         try:
             user: User = await self.get_by_email(credentials.email)
         except exceptions.UserNotExists:
             return None
 
-        verified, password_hash = self.password_helper.verify_password(
+        verified = self.password_helper.verify_password(
             credentials.password, user.hashed_password
         )
         if not verified:
             return None
-
-        if password_hash is None:
-            await self._update(user, {"hashed_password": password_hash})
 
         return user
