@@ -19,9 +19,8 @@ def get_auth_router(
     user_manager: UserManager,
 ) -> APIRouter:
 
-    get_current_user_and_token = authenticator.get_current_user_and_token()
-
     router = APIRouter(prefix="/auth/jwt", tags=["/auth"])
+    get_current_user_and_token = authenticator.get_current_user_and_token()
 
     login_responses: dict = {
         **backend.responses.get_success_login_response(),
