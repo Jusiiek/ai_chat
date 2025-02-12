@@ -1,8 +1,6 @@
 from enum import Enum
 from typing import List
 
-from ai_chat_api.api.models.base import BaseModel
-
 
 class PasswordErrorMessages(str, Enum):
     PASSWORD_MISSING_UPPERCASE = "PASSWORD_MISSING_UPPERCASE"

@@ -115,7 +115,9 @@ class TokenManager:
         self, token: str, user_manager: UserManager
     ) -> Union[User, None]:
         try:
-            blacklisted_token: Union[BlacklistedToken, None] = await BlacklistedToken.get_by_token(token)
+            blacklisted_token: Union[BlacklistedToken, None] = (
+                await BlacklistedToken.get_by_token(token)
+            )
             if blacklisted_token is not None:
                 return None
 

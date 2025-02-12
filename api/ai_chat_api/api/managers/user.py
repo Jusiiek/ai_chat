@@ -1,6 +1,6 @@
 import uuid
 import re
-from typing import Optional, Any, Dict, Tuple, Union
+from typing import Optional, Any, Dict, Union
 
 from ai_chat_api.api.authentication.password import PasswordHelper
 from ai_chat_api.api.models.user import User
@@ -9,7 +9,10 @@ from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.schemas import user as user_schemas
 from ai_chat_api.api.schemas.auth import AuthPasswordRequestForm
-from ai_chat_api.api.common.password_error import PasswordErrorMessages, PasswordErrorsHolder
+from ai_chat_api.api.common.password_error import (
+    PasswordErrorMessages,
+    PasswordErrorsHolder
+)
 
 
 RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
@@ -150,7 +153,9 @@ class UserManager:
         -------
         result: A new user.
         """
-        password_errors_holder: PasswordErrorsHolder = await self._validate_password(user_create.password)
+        password_errors_holder: PasswordErrorsHolder = (
+            await self._validate_password(user_create.password)
+        )
         if not password_errors_holder.is_valid:
             raise exceptions.PasswordInvalid(", ".join(password_errors_holder.errors))
 
@@ -190,9 +195,13 @@ class UserManager:
                 except exceptions.UserNotExists:
                     validated_dict[key] = value
             elif key == "password" and value is not None:
-                password_errors_holder: PasswordErrorsHolder = await self._validate_password(value)
+                password_errors_holder: PasswordErrorsHolder = (
+                    await self._validate_password(value)
+                )
                 if not password_errors_holder.is_valid:
-                    raise exceptions.PasswordInvalid(", ".join(password_errors_holder.errors))
+                    raise exceptions.PasswordInvalid(
+                        ", ".join(password_errors_holder.errors)
+                    )
                 validated_dict[key] = self.password_helper.hash_password(value)
             else:
                 validated_dict[key] = value

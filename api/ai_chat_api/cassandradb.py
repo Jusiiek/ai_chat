@@ -88,7 +88,9 @@ class DatabaseManager:
         if self.session:
             self.session.execute("""
                     CREATE KEYSPACE IF NOT EXISTS {}
-                    WITH replication = {{'class': 'SimpleStrategy', 'replication_factor': '1'}}
+                    WITH replication = {{
+                    'class': 'SimpleStrategy', 'replication_factor': '1'
+                    }}
                 """.format(self.KEYSPACE))
 
     def _delete_keyspace(self):

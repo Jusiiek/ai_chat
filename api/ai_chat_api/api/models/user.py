@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Tuple, Union
+from typing import Union
 from cassandra.cqlengine import columns
 
 from ai_chat_api.api.models.base import BaseModel
@@ -19,8 +19,8 @@ class User(BaseModel):
     edited_at = columns.DateTime(default=datetime.now())
 
     async def set_password(
-      self,
-      password: str
+        self,
+        password: str
     ) -> None:
         """
         Set user password

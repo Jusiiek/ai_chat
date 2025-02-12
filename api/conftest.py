@@ -21,6 +21,7 @@ def get_auth_client():
     client.headers.update({"Authorization": get_token()})
     return client
 
+
 def get_admin_auth_client():
     client.headers.update(
         {"Authorization": get_token("admin@ai_app.com", "Admin3<>0asd")}

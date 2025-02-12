@@ -13,7 +13,7 @@ class Config:
     PORT = os.environ.get('PORT', 8000)
 
     # security
-    TOKEN_LIFETIME = 60 * 60 * 24 # day
+    TOKEN_LIFETIME = 60 * 60 * 24  # day
     RESET_PASSWORD_TOKEN_LIFETIME = 3600
     VERIFICATION_TOKEN_LIFETIME = 3600
     JWT_ALGORITHM = "HS256"

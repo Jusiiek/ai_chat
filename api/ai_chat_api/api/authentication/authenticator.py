@@ -10,7 +10,6 @@ from ai_chat_api.api.models.user import User
 
 class Authenticator:
     """
-
     Gets the authenticated user
 
     It is responsible for authentication.
@@ -32,7 +31,6 @@ class Authenticator:
     ):
         self.backend = backend
         self.user_manager = user_manager
-
 
     def get_signature(self):
         try:
@@ -57,7 +55,6 @@ class Authenticator:
         except Exception as e:
             raise e
 
-
     async def _authenticate(
         self,
         token: str = None,
@@ -77,7 +74,10 @@ class Authenticator:
             if is_active and not user.is_active:
                 status_code = status.HTTP_401_UNAUTHORIZED
                 user = None
-            elif is_verified and not user.is_verified or is_superuser and not user.is_superuser:
+            elif (
+                is_verified and not user.is_verified
+                or is_superuser and not user.is_superuser
+            ):
                 user = None
         if not user and not optional:
             raise HTTPException(status_code=status_code)

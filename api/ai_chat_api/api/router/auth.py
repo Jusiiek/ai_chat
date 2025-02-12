@@ -6,7 +6,7 @@ from ai_chat_api.api.backend.authentication import AuthenticationBackend
 from ai_chat_api.api.authentication.authenticator import Authenticator
 from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.models.user import User
-from ai_chat_api.api.common.auth_error import ErrorMessages, ErrorModel
+from ai_chat_api.api.common.auth_error import ErrorMessages
 from ai_chat_api.api.schemas import user as user_schemas
 from ai_chat_api.api.schemas.auth import AuthPasswordRequestForm
 from ai_chat_api.api import exceptions
@@ -88,9 +88,5 @@ def get_auth_router(
             )
 
         return model_validate(type[user_schemas.U], created_user)
-
-    @router.get("/test_endpoint")
-    async def test_endpoint():
-        return {"hello": "world"}
 
     return router

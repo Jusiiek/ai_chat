@@ -46,5 +46,7 @@ class BearerResponse(AuthResponse):
 
     async def get_token_from_request(self, authorization: str = Header(None)) -> str:
         if not authorization or not authorization.startswith("Bearer "):
-            raise HTTPException(status_code=401, detail="Invalid or missing authorization token")
+            raise HTTPException(
+                status_code=401, detail="Invalid or missing authorization token"
+            )
         return authorization[len("Bearer "):]
