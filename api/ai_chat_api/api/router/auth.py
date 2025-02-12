@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Type
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -66,11 +66,11 @@ def get_auth_router(
 
     @router.post(
         "/register",
-        response_model=user_schemas.U,
+        response_model=user_schemas.BaseUser,
         status_code=status.HTTP_201_CREATED,
         responses=register_responses
     )
-    async def register(user_create_payload: user_schemas.UC):
+    async def register(user_create_payload: user_schemas.BaseCreateUser):
         try:
             created_user = await user_manager.create(user_create_payload)
         except exceptions.UserAlreadyExists:
@@ -87,6 +87,9 @@ def get_auth_router(
                 },
             )
 
-        return model_validate(type[user_schemas.U], created_user)
+        return model_validate(
+            user_schemas.BaseUser,
+            created_user
+        )
 
     return router

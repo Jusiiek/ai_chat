@@ -1,10 +1,13 @@
-from typing import Optional, TypeVar
+from typing import Optional
 from pydantic import BaseModel
 
 from ai_chat_api.api.protocols import models
 
 
 class CreateUpdateModel(BaseModel):
+    class Config:
+        from_attributes = True
+
     def create_update_dict(self):
         return self.model_dump(
             exclude_unset=True,
@@ -36,8 +39,3 @@ class BaseUpdateUser(CreateUpdateModel):
     is_active: Optional[bool] = None
     is_superuser: Optional[bool] = None
     is_verified: Optional[bool] = None
-
-
-U = TypeVar("U", bound=BaseUser)
-UC = TypeVar("UC", bound=BaseCreateUser)
-UU = TypeVar("UU", bound=BaseUpdateUser)

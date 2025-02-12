@@ -140,7 +140,7 @@ class UserManager:
 
     async def create(
         self,
-        user_create: user_schemas.UC
+        user_create: user_schemas.BaseCreateUser
     ) -> User:
         """
         Creates a new user
@@ -210,7 +210,7 @@ class UserManager:
 
     async def update(
         self,
-        user_update: user_schemas.UU,
+        user_update: user_schemas.BaseUpdateUser,
         user: User
     ):
         """
