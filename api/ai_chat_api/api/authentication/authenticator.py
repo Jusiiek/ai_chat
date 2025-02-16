@@ -133,7 +133,7 @@ class Authenticator:
     ):
         async def current_user_dependency(
             token: str = Depends(self.backend.responses.get_token_from_request),
-        ) -> Optional[User]:
+        ) -> Optional[UserManager]:
             user, _ = await self._authenticate(
                 token,
                 optional=optional,
