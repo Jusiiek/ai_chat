@@ -131,7 +131,7 @@ class Authenticator:
         is_verified: bool = False,
         is_superuser: bool = False,
     ):
-        async def current_user_dependency(
+        async def current_user_manager_dependency(
             token: str = Depends(self.backend.responses.get_token_from_request),
         ) -> Optional[UserManager]:
             user, _ = await self._authenticate(
@@ -143,4 +143,4 @@ class Authenticator:
             )
             return UserManager(user)
 
-        return current_user_dependency
+        return current_user_manager_dependency

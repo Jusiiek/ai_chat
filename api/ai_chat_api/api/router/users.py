@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, status, Depends, Request
+from fastapi import APIRouter, HTTPException, status, Depends, Request, Response
 
 from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.authentication.authenticator import Authenticator
@@ -34,7 +34,7 @@ def get_users_router(
         is_active=True, is_verified=True, is_superuser=True
     )
 
-    get_create_update_user_responses = {
+    get_or_update_user_responses = {
         status.HTTP_404_NOT_FOUND: {
             "description": UserErrorMessages.USER_DOES_NOT_EXIST.value,
         },
@@ -60,9 +60,7 @@ def get_users_router(
         dependencies=[Depends(get_current_superuser)],
         description="Get a user by id",
         status_code=status.HTTP_200_OK,
-        responses={
-            **get_create_update_user_responses
-        }
+        responses={**get_or_update_user_responses}
     )
     async def get_user(user=Depends(get_user_or_404)):
         return model_validate(BaseUser, user)
@@ -72,7 +70,7 @@ def get_users_router(
         response_model=BaseUser,
         dependencies=[Depends(get_current_superuser)],
         responses={
-            **get_create_update_user_responses,
+            **get_or_update_user_responses,
             status.HTTP_400_BAD_REQUEST: {
                 "model": ErrorModel,
                 "content": {
@@ -121,5 +119,21 @@ def get_users_router(
                 status.HTTP_400_BAD_REQUEST,
                 detail=ErrorMessages.USER_ALREADY_EXISTS.value,
             )
+
+    @router.delete(
+        "/{id}",
+        status_code=status.HTTP_204_NO_CONTENT,
+        response_class=Response,
+        dependencies=[Depends(get_current_superuser)],
+        name="users:delete_user",
+        responses={**get_or_update_user_responses}
+    )
+    async def delete_user(
+        user=Depends(get_user_or_404),
+        user_manager_instance: UserManager = Depends(get_user_manager),
+    ):
+        await user_manager_instance.delete(user)
+        return None
+
 
     return router
