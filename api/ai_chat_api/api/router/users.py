@@ -1,13 +1,12 @@
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, status, Depends, Request, Response
+from fastapi import APIRouter, HTTPException, status, Depends, Response
 
 from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.authentication.authenticator import Authenticator
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.schemas.user import (
     BaseUser,
-    BaseCreateUser,
     BaseUpdateUser
 )
 from ai_chat_api.api import exceptions
@@ -20,6 +19,9 @@ def get_users_router(
     user_manager: UserManager,
     authenticator: Authenticator
 ) -> APIRouter:
+
+    user_model = BaseUser
+    user_update_model = BaseUpdateUser
 
     router = APIRouter(prefix="/users", tags=["users"])
 
@@ -46,6 +48,34 @@ def get_users_router(
         },
     }
 
+    bad_request_responses = {
+        status.HTTP_400_BAD_REQUEST: {
+            "model": ErrorModel,
+            "content": {
+                "application/json": {
+                    "examples": {
+                        ErrorMessages.USER_ALREADY_EXISTS: {
+                            "summary": "A user with this email already exists.",
+                            "value": {
+                                "detail": (
+                                    ErrorMessages.USER_ALREADY_EXISTS.value
+                                )
+                            },
+                        },
+                        ErrorMessages.USER_INVALID_PASSWORD: {
+                            "summary": "Password validation failed.",
+                            "value": {
+                                "detail": (
+                                    ErrorMessages.USER_INVALID_PASSWORD.value,
+                                )
+                            },
+                        },
+                    }
+                }
+            },
+        },
+    }
+
     async def get_user_or_404(id: str) -> Optional[User]:
         try:
             parsed_id = user_manager.parse_id(id)
@@ -53,59 +83,34 @@ def get_users_router(
         except (exceptions.UserNotExists, exceptions.InvalidID) as e:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND) from e
 
-
     @router.get(
         "/{id}",
-        response_model=BaseUser,
+        response_model=user_model,
         dependencies=[Depends(get_current_superuser)],
         description="Get a user by id",
         status_code=status.HTTP_200_OK,
         responses={**get_or_update_user_responses}
     )
     async def get_user(user=Depends(get_user_or_404)):
-        return model_validate(BaseUser, user)
+        return model_validate(user_model, user)
 
     @router.put(
         "/{id}",
-        response_model=BaseUser,
+        response_model=user_model,
         dependencies=[Depends(get_current_superuser)],
         responses={
             **get_or_update_user_responses,
-            status.HTTP_400_BAD_REQUEST: {
-                "model": ErrorModel,
-                "content": {
-                    "application/json": {
-                        "examples": {
-                            ErrorMessages.USER_ALREADY_EXISTS: {
-                                "summary": "A user with this email already exists.",
-                                "value": {
-                                    "detail": (
-                                        ErrorMessages.USER_ALREADY_EXISTS.value
-                                    )
-                                },
-                            },
-                            ErrorMessages.USER_INVALID_PASSWORD: {
-                                "summary": "Password validation failed.",
-                                "value": {
-                                    "detail": (
-                                        ErrorMessages.USER_INVALID_PASSWORD.value,
-                                    )
-                                },
-                            },
-                        }
-                    }
-                },
-            },
+            **bad_request_responses
         },
     )
     async def update_user(
-        user_update: BaseUpdateUser,  # type: ignore
+        user_update: user_update_model,
         user=Depends(get_user_or_404),
         user_manager_instance: UserManager = Depends(get_user_manager),
     ):
         try:
             user = await user_manager_instance.update(user_update, user)
-            return model_validate(BaseUser, user)
+            return model_validate(user_model, user)
         except exceptions.PasswordInvalid as e:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -125,7 +130,6 @@ def get_users_router(
         status_code=status.HTTP_204_NO_CONTENT,
         response_class=Response,
         dependencies=[Depends(get_current_superuser)],
-        name="users:delete_user",
         responses={**get_or_update_user_responses}
     )
     async def delete_user(
@@ -135,5 +139,51 @@ def get_users_router(
         await user_manager_instance.delete(user)
         return None
 
+    @router.get(
+        "/me",
+        response_model=user_model,
+        responses={
+            status.HTTP_401_UNAUTHORIZED: {
+                "description": ErrorMessages.UNAUTHORIZED.value,
+            },
+        },
+    )
+    async def me(
+        user: User = Depends(get_current_active_user),
+    ):
+        return model_validate(user_model, user)
+
+    @router.put(
+        "/me",
+        response_model=user_model,
+        dependencies=[Depends(get_current_active_user)],
+        responses={
+            status.HTTP_401_UNAUTHORIZED: {
+                "description": ErrorMessages.UNAUTHORIZED.value,
+            },
+            **bad_request_responses
+        },
+    )
+    async def update_me(
+        user_update: user_update_model,
+        user: User = Depends(get_current_active_user),
+        user_manager_instance: UserManager = Depends(get_user_manager),
+    ):
+        try:
+            user = await user_manager_instance.update(user_update, user)
+            return model_validate(user_model, user)
+        except exceptions.PasswordInvalid as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "code": ErrorMessages.USER_INVALID_PASSWORD,
+                    "reason": e.reason,
+                },
+            )
+        except exceptions.UserAlreadyExists:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                detail=ErrorMessages.USER_ALREADY_EXISTS.value,
+            )
 
     return router
