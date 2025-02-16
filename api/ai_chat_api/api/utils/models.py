@@ -7,4 +7,4 @@ def model_dump(model: BaseModel, *args, **kwargs) -> dict:
 
 
 def model_validate(schema: Type[BaseModel], obj: Any, *args, **kwargs) -> BaseModel:
-    return schema.from_orm(obj)
+    return schema.model_validate(obj)

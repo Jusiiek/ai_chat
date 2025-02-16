@@ -32,16 +32,9 @@ def get_users_router(
         is_active=True, is_verified=True, is_superuser=True
     )
 
-    get_user_manager = authenticator.get_user_manager(
-        is_active=True, is_verified=True, is_superuser=True
-    )
-
     get_or_update_user_responses = {
         status.HTTP_404_NOT_FOUND: {
             "description": UserErrorMessages.USER_DOES_NOT_EXIST.value,
-        },
-        status.HTTP_403_FORBIDDEN: {
-            "description": UserErrorMessages.NOT_A_SUPERUSER.value,
         },
         status.HTTP_401_UNAUTHORIZED: {
             "description": ErrorMessages.MISSING_TOKEN_OR_USER_IS_NOT_ACTIVE.value,
@@ -100,11 +93,11 @@ def get_users_router(
         },
     )
     async def update_me(
-            user_update: user_update_model,
-            user: User = Depends(get_current_active_user),
-            user_manager_instance: UserManager = Depends(get_user_manager),
+        user_update: user_update_model,
+        user: User = Depends(get_current_active_user),
     ):
         try:
+            user_manager_instance = UserManager()
             user = await user_manager_instance.update(user_update, user)
             return model_validate(user_model, user)
         except exceptions.PasswordInvalid as e:
@@ -145,15 +138,18 @@ def get_users_router(
         dependencies=[Depends(get_current_superuser)],
         responses={
             **get_or_update_user_responses,
-            **bad_request_responses
+            **bad_request_responses,
+            status.HTTP_403_FORBIDDEN: {
+                "description": UserErrorMessages.NOT_A_SUPERUSER.value,
+            },
         },
     )
     async def update_user(
         user_update: user_update_model,
         user=Depends(get_user_or_404),
-        user_manager_instance: UserManager = Depends(get_user_manager),
     ):
         try:
+            user_manager_instance = UserManager()
             user = await user_manager_instance.update(user_update, user)
             return model_validate(user_model, user)
         except exceptions.PasswordInvalid as e:
@@ -179,8 +175,8 @@ def get_users_router(
     )
     async def delete_user(
         user=Depends(get_user_or_404),
-        user_manager_instance: UserManager = Depends(get_user_manager),
     ):
+        user_manager_instance = UserManager()
         await user_manager_instance.delete(user)
         return None
 
