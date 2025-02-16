@@ -7,7 +7,7 @@ from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
-from ai_chat_api.api.schemas import user as user_schemas
+from ai_chat_api.api.schemas.user import BaseCreateUser, BaseUpdateUser
 from ai_chat_api.api.schemas.auth import AuthPasswordRequestForm
 from ai_chat_api.api.common.password_error import (
     PasswordErrorMessages,
@@ -140,7 +140,7 @@ class UserManager:
 
     async def create(
         self,
-        user_create: user_schemas.BaseCreateUser
+        user_create: BaseCreateUser
     ) -> User:
         """
         Creates a new user
@@ -210,7 +210,7 @@ class UserManager:
 
     async def update(
         self,
-        user_update: user_schemas.BaseUpdateUser,
+        user_update: BaseUpdateUser,
         user: User
     ):
         """

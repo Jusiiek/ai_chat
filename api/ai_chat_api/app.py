@@ -38,6 +38,7 @@ app = create_app()
 
 def get_app_routers() -> None:
     app.include_router(router.get_auth_router())
+    app.include_router(router.get_users_router())
 
 
 @app.on_event("startup")

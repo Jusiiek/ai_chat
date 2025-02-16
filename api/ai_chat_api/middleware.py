@@ -30,6 +30,7 @@ async def jwt_middleware(request: Request, call_next):
     token = get_token(request.headers)
     from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 
-    if BlacklistedToken.objects(token=token).first():
-        return Response("JWT Token Invalid", status_code=401)
+    black_listed_token = await BlacklistedToken.get_by_token(token)
+    if  black_listed_token is not None:
+        return Response("INVALID_TOKEN", status_code=401)
     return await call_next(request)

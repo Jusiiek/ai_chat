@@ -76,6 +76,51 @@ def get_users_router(
         },
     }
 
+    @router.get(
+        "/me",
+        response_model=user_model,
+        responses={
+            status.HTTP_401_UNAUTHORIZED: {
+                "description": ErrorMessages.UNAUTHORIZED.value,
+            },
+        },
+    )
+    async def me(user: User = Depends(get_current_active_user)):
+        return model_validate(user_model, user)
+
+    @router.put(
+        "/me",
+        response_model=user_model,
+        dependencies=[Depends(get_current_active_user)],
+        responses={
+            status.HTTP_401_UNAUTHORIZED: {
+                "description": ErrorMessages.UNAUTHORIZED.value,
+            },
+            **bad_request_responses
+        },
+    )
+    async def update_me(
+            user_update: user_update_model,
+            user: User = Depends(get_current_active_user),
+            user_manager_instance: UserManager = Depends(get_user_manager),
+    ):
+        try:
+            user = await user_manager_instance.update(user_update, user)
+            return model_validate(user_model, user)
+        except exceptions.PasswordInvalid as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "code": ErrorMessages.USER_INVALID_PASSWORD,
+                    "reason": e.reason,
+                },
+            )
+        except exceptions.UserAlreadyExists:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                detail=ErrorMessages.USER_ALREADY_EXISTS.value,
+            )
+
     async def get_user_or_404(id: str) -> Optional[User]:
         try:
             parsed_id = user_manager.parse_id(id)
@@ -138,52 +183,5 @@ def get_users_router(
     ):
         await user_manager_instance.delete(user)
         return None
-
-    @router.get(
-        "/me",
-        response_model=user_model,
-        responses={
-            status.HTTP_401_UNAUTHORIZED: {
-                "description": ErrorMessages.UNAUTHORIZED.value,
-            },
-        },
-    )
-    async def me(
-        user: User = Depends(get_current_active_user),
-    ):
-        return model_validate(user_model, user)
-
-    @router.put(
-        "/me",
-        response_model=user_model,
-        dependencies=[Depends(get_current_active_user)],
-        responses={
-            status.HTTP_401_UNAUTHORIZED: {
-                "description": ErrorMessages.UNAUTHORIZED.value,
-            },
-            **bad_request_responses
-        },
-    )
-    async def update_me(
-        user_update: user_update_model,
-        user: User = Depends(get_current_active_user),
-        user_manager_instance: UserManager = Depends(get_user_manager),
-    ):
-        try:
-            user = await user_manager_instance.update(user_update, user)
-            return model_validate(user_model, user)
-        except exceptions.PasswordInvalid as e:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail={
-                    "code": ErrorMessages.USER_INVALID_PASSWORD,
-                    "reason": e.reason,
-                },
-            )
-        except exceptions.UserAlreadyExists:
-            raise HTTPException(
-                status.HTTP_400_BAD_REQUEST,
-                detail=ErrorMessages.USER_ALREADY_EXISTS.value,
-            )
 
     return router
