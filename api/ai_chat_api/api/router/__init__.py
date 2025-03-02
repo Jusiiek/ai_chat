@@ -4,6 +4,7 @@ from ai_chat_api.api.backend.authentication import AuthenticationBackend
 from ai_chat_api.api.authentication.authenticator import Authenticator
 from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.router.auth import get_auth_router
+from ai_chat_api.api.router.users import get_users_router
 
 
 class Router:
@@ -30,4 +31,10 @@ class Router:
             self.authenticator.backend,
             self.authenticator,
             self.user_manager
+        )
+
+    def get_users_router(self) -> APIRouter:
+        return get_users_router(
+            self.user_manager,
+            self.authenticator,
         )

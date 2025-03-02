@@ -38,10 +38,10 @@ class BearerResponse(AuthResponse):
         )
         return JSONResponse(model_dump(bearer_response))
 
-    async def get_logout_response(self) -> Response:
+    async def get_logout_response(self) -> JSONResponse:
         return JSONResponse(
-            status.HTTP_401_UNAUTHORIZED,
-            detail=ErrorMessages.UNAUTHORIZED.value
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"detail": ErrorMessages.UNAUTHORIZED.value}
         )
 
     async def get_token_from_request(self, authorization: str = Header(None)) -> str:

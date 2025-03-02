@@ -7,7 +7,7 @@ from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
-from ai_chat_api.api.schemas import user as user_schemas
+from ai_chat_api.api.schemas.user import BaseCreateUser, BaseUpdateUser
 from ai_chat_api.api.schemas.auth import AuthPasswordRequestForm
 from ai_chat_api.api.common.password_error import (
     PasswordErrorMessages,
@@ -98,7 +98,7 @@ class UserManager:
 
         user: Union[User, None] = await User.get_by_id(user_id)
         if user is None:
-            return None
+            raise exceptions.UserNotExists()
 
         self.user = user
         return user
@@ -116,7 +116,7 @@ class UserManager:
         """
         user: Union[User, None] = await User.get_by_email(email)
         if user is None:
-            return None
+            raise exceptions.UserNotExists()
 
         self.user = user
         return user
@@ -134,13 +134,13 @@ class UserManager:
         """
         token_db: Union[Token, None] = await Token.get_by_token(token)
         if token_db is None:
-            return None
+            raise exceptions.UserNotExists()
 
-        return await self.get(token.user_id)
+        return await self.get(token_db.user_id)
 
     async def create(
         self,
-        user_create: user_schemas.BaseCreateUser
+        user_create: BaseCreateUser
     ) -> User:
         """
         Creates a new user
@@ -159,9 +159,11 @@ class UserManager:
         if not password_errors_holder.is_valid:
             raise exceptions.PasswordInvalid(", ".join(password_errors_holder.errors))
 
-        is_user_exists = await self.get_by_email(user_create.email)
-        if is_user_exists:
+        try:
+            await self.get_by_email(user_create.email)
             raise exceptions.UserAlreadyExists()
+        except exceptions.UserNotExists:
+            pass
 
         user_dict = user_create.create_update_dict()
         password = user_dict.pop('password')
@@ -202,7 +204,8 @@ class UserManager:
                     raise exceptions.PasswordInvalid(
                         ", ".join(password_errors_holder.errors)
                     )
-                validated_dict[key] = self.password_helper.hash_password(value)
+                validated_dict["hashed_password"] = (
+                    self.password_helper.hash_password(value))
             else:
                 validated_dict[key] = value
 
@@ -210,7 +213,7 @@ class UserManager:
 
     async def update(
         self,
-        user_update: user_schemas.BaseUpdateUser,
+        user_update: BaseUpdateUser,
         user: User
     ):
         """

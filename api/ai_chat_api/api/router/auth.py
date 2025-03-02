@@ -1,4 +1,4 @@
-from typing import Union, Type
+from typing import Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -7,7 +7,7 @@ from ai_chat_api.api.authentication.authenticator import Authenticator
 from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.common.auth_error import ErrorMessages
-from ai_chat_api.api.schemas import user as user_schemas
+from ai_chat_api.api.schemas.user import BaseUser, BaseCreateUser
 from ai_chat_api.api.schemas.auth import AuthPasswordRequestForm
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.utils.models import model_validate
@@ -19,9 +19,8 @@ def get_auth_router(
     user_manager: UserManager,
 ) -> APIRouter:
 
-    get_current_user_and_token = authenticator.get_current_user_and_token()
-
     router = APIRouter(prefix="/auth/jwt", tags=["/auth"])
+    get_current_user_and_token = authenticator.get_current_user_and_token()
 
     login_responses: dict = {
         **backend.responses.get_success_login_response(),
@@ -66,11 +65,11 @@ def get_auth_router(
 
     @router.post(
         "/register",
-        response_model=user_schemas.BaseUser,
+        response_model=BaseUser,
         status_code=status.HTTP_201_CREATED,
         responses=register_responses
     )
-    async def register(user_create_payload: user_schemas.BaseCreateUser):
+    async def register(user_create_payload: BaseCreateUser):
         try:
             created_user = await user_manager.create(user_create_payload)
         except exceptions.UserAlreadyExists:
@@ -88,7 +87,7 @@ def get_auth_router(
             )
 
         return model_validate(
-            user_schemas.BaseUser,
+            BaseUser,
             created_user
         )
 

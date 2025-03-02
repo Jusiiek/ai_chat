@@ -81,6 +81,7 @@ class Authenticator:
                 user = None
         if not user and not optional:
             raise HTTPException(status_code=status_code)
+
         return user, token
 
     def get_current_user_and_token(

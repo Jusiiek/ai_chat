@@ -31,7 +31,7 @@ class User(BaseModel):
         """
         ph = PasswordHelper("")
         self.hashed_password = ph.hash_password(password)
-        await self.save()
+        self.save()
 
     async def verify_password(
         self,

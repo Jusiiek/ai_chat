@@ -48,19 +48,19 @@ class AuthResponse:
                 "content": {
                     "application/json": {
                         "examples": {
-                            ErrorMessages.REGISTER_INVALID_PASSWORD: {
+                            ErrorMessages.USER_INVALID_PASSWORD: {
                                 "summary": "Password validation failed.",
                                 "value": {
                                     "detail": (
-                                        ErrorMessages.REGISTER_INVALID_PASSWORD.value
+                                        ErrorMessages.USER_INVALID_PASSWORD.value
                                     )
                                 },
                             },
-                            ErrorMessages.REGISTER_USER_ALREADY_EXISTS: {
+                            ErrorMessages.USER_ALREADY_EXISTS: {
                                 "summary": "A user with this email already exists.",
                                 "value": {
                                     "detail": (
-                                        ErrorMessages.REGISTER_USER_ALREADY_EXISTS.value
+                                        ErrorMessages.USER_ALREADY_EXISTS.value
                                     )
                                 },
                             },
