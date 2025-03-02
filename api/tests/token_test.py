@@ -3,14 +3,14 @@ from typing import Type
 
 import pytest
 
-from tests_unit.base_test import BaseTest
+from tests.base_test import BaseTest
 from ai_chat_api.api.models.base import BaseModel
 from ai_chat_api.api.models.user import User
-from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
+from ai_chat_api.api.models.token import Token
 
 
-class TestBlacklistedToken(BaseTest):
-    model: Type[BaseModel] = BlacklistedToken
+class TestToken(BaseTest):
+    model: Type[BaseModel] = Token
     user_id = uuid4()
 
     @pytest.mark.asyncio
@@ -29,7 +29,7 @@ class TestBlacklistedToken(BaseTest):
             id=self.object_id,
             token="token",
             user_id=self.user_id,
-            expired_at=None
+            expire_at=None
         )
         token.save()
 
@@ -41,6 +41,11 @@ class TestBlacklistedToken(BaseTest):
     @pytest.mark.asyncio
     async def test_get_by_token(self):
         token = await self.model.get_by_token("token")
+        assert token is not None
+
+    @pytest.mark.asyncio
+    async def test_get_by_user_id(self):
+        token = await self.model.get_by_user_id(self.user_id)
         assert token is not None
 
     @pytest.mark.asyncio

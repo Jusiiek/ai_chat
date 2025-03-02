@@ -1,7 +1,7 @@
 import pytest
 from typing import Type
 
-from tests_unit.base_test import BaseTest
+from tests.base_test import BaseTest
 from ai_chat_api.api.models.base import BaseModel
 from ai_chat_api.api.models.user import User
 

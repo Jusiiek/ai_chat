@@ -7,13 +7,13 @@ dev_install:
 check_code:
 	@flake8 .
 
-test_unit:
+test:
 	make init_db
-	pytest tests_unit --cov-report=xml:./reports/unit_coverage.xml --cov-report term
+	pytest tests --cov-report=xml:./reports/tests_coverage.xml --cov-report term
 
-test_integration:
+test_api:
 	make init_db
-	pytest tests_integration --cov-report=xml:./reports/integration_coverage.xml --cov-report term
+	pytest tests_api --cov-report=xml:./reports/api_coverage.xml --cov-report term
 
 init_db:
 	@ai_chat_api_cli init-db
