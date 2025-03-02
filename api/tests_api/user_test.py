@@ -17,7 +17,10 @@ def test_update_and_delete_user(update_delete_client, admin_auth_client):
     data = res.json()
     user_id = data["id"]
 
-    update_res = admin_auth_client.put(f"{USERS_ENDPOINT}/{user_id}", json={"is_active": True, "is_verified": True})
+    update_res = admin_auth_client.put(
+        f"{USERS_ENDPOINT}/{user_id}",
+        json={"is_active": True, "is_verified": True}
+    )
     data = update_res.json()
     assert update_res.status_code == 200
     assert data["is_active"] is True

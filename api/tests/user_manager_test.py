@@ -7,7 +7,6 @@ from ai_chat_api.api.managers.user import UserManager
 from ai_chat_api.api.schemas.user import BaseCreateUser, BaseUpdateUser
 
 
-
 def test_parse_id(user_manager: UserManager):
     random_string_id = "16fd2706-8baf-433b-82eb-8c7fada847da"
     parsed_id = user_manager.parse_id(random_string_id)
@@ -28,7 +27,10 @@ async def test_update_user(user_manager: UserManager, user_schema_dict: dict):
 
 
 @pytest.mark.asyncio
-async def test_invalid_user_creation_with_password(user_manager: UserManager, user_schema_dict: dict):
+async def test_invalid_user_creation_with_password(
+    user_manager: UserManager,
+    user_schema_dict: dict
+):
     with pytest.raises(exceptions.PasswordInvalid):
         new_user_schema = user_schema_dict.copy()
         new_user_schema["password"] = "123"
@@ -38,7 +40,10 @@ async def test_invalid_user_creation_with_password(user_manager: UserManager, us
 
 
 @pytest.mark.asyncio
-async def test_invalid_user_creation_with_email(user_manager: UserManager, user_schema_dict: dict):
+async def test_invalid_user_creation_with_email(
+    user_manager: UserManager,
+    user_schema_dict: dict
+):
     with pytest.raises(exceptions.UserAlreadyExists):
         new_user_schema = user_schema_dict.copy()
         new_user_schema["email"] = "test_user_email@ai_app.com"
@@ -47,7 +52,10 @@ async def test_invalid_user_creation_with_email(user_manager: UserManager, user_
 
 
 @pytest.mark.asyncio
-async def test_invalid_user_update_password(user_manager: UserManager, user_schema_dict: dict):
+async def test_invalid_user_update_password(
+    user_manager: UserManager,
+    user_schema_dict: dict
+):
     with pytest.raises(exceptions.PasswordInvalid):
         new_user_schema = user_schema_dict.copy()
         new_user_schema["password"] = "123"

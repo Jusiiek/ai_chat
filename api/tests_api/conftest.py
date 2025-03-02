@@ -27,7 +27,10 @@ def auth_client():
 @pytest.fixture
 def update_delete_client():
     client.headers.update(
-        {"Authorization": get_token("test_user_to_update_and_delete@ai_app.com", "T3stU3sr<>0")}
+        {"Authorization": get_token(
+            "test_user_to_update_and_delete@ai_app.com",
+            "T3stU3sr<>0"
+        )}
     )
     return client
 

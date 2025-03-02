@@ -204,7 +204,8 @@ class UserManager:
                     raise exceptions.PasswordInvalid(
                         ", ".join(password_errors_holder.errors)
                     )
-                validated_dict["hashed_password"] = self.password_helper.hash_password(value)
+                validated_dict["hashed_password"] = (
+                    self.password_helper.hash_password(value))
             else:
                 validated_dict[key] = value
 
