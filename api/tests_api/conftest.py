@@ -19,13 +19,13 @@ def get_token(login="test_user@ai_app.com", password="T3stU3sr<>0"):
 
 
 @pytest.fixture
-def get_auth_client():
+def auth_client():
     client.headers.update({"Authorization": get_token()})
     return client
 
 
 @pytest.fixture
-def get_update_delete_client():
+def update_delete_client():
     client.headers.update(
         {"Authorization": get_token("test_user_to_update_and_delete@ai_app.com", "T3stU3sr<>0")}
     )
@@ -33,7 +33,7 @@ def get_update_delete_client():
 
 
 @pytest.fixture
-def get_admin_auth_client():
+def admin_auth_client():
     client.headers.update(
         {"Authorization": get_token("admin@ai_app.com", "Admin3<>0asd")}
     )
