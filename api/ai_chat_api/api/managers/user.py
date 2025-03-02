@@ -98,7 +98,7 @@ class UserManager:
 
         user: Union[User, None] = await User.get_by_id(user_id)
         if user is None:
-            return None
+            raise exceptions.UserNotExists()
 
         self.user = user
         return user
@@ -116,7 +116,7 @@ class UserManager:
         """
         user: Union[User, None] = await User.get_by_email(email)
         if user is None:
-            return None
+            raise exceptions.UserNotExists()
 
         self.user = user
         return user
@@ -134,9 +134,9 @@ class UserManager:
         """
         token_db: Union[Token, None] = await Token.get_by_token(token)
         if token_db is None:
-            return None
+            raise exceptions.UserNotExists()
 
-        return await self.get(token.user_id)
+        return await self.get(token_db.user_id)
 
     async def create(
         self,
@@ -159,9 +159,11 @@ class UserManager:
         if not password_errors_holder.is_valid:
             raise exceptions.PasswordInvalid(", ".join(password_errors_holder.errors))
 
-        is_user_exists = await self.get_by_email(user_create.email)
-        if is_user_exists:
+        try:
+            await self.get_by_email(user_create.email)
             raise exceptions.UserAlreadyExists()
+        except exceptions.UserNotExists:
+            pass
 
         user_dict = user_create.create_update_dict()
         password = user_dict.pop('password')

@@ -81,7 +81,7 @@ class TokenManager:
         elif lifetime_seconds:
             expire = datetime.now() + timedelta(seconds=lifetime_seconds)
             payload["exp"] = expire
-        return jwt.encode(payload, self._get_secret_value(secret), algorithm=algorithm)
+        return jwt.encode(payload, secret, algorithm=algorithm)
 
     def _decode_jwt(
         self,
@@ -106,7 +106,7 @@ class TokenManager:
         """
         return jwt.decode(
             encoded_jwt,
-            self._get_secret_value(secret),
+            secret,
             audience=audience,
             algorithms=algorithms
         )
@@ -139,8 +139,10 @@ class TokenManager:
         try:
             parsed_id: models.ID = user_manager.parse_id(user_id)
             return await user_manager.get(parsed_id)
-        except (exceptions.UserNotExists, exceptions.InvalidID):
-            return None
+        except exceptions.UserNotExists as e:
+            raise e
+        except exceptions.InvalidID as e:
+            raise e
 
     async def write_token(self, user: User) -> str:
 
@@ -151,7 +153,7 @@ class TokenManager:
         data = {"sub": str(user.id), "aud": self.token_audience}
         expires_in = datetime.now() + timedelta(seconds=self.lifetime_seconds)
 
-        token: SecretType = self._encode_jwt(
+        token: str = self._encode_jwt(
             data, self.secret, expires_in=expires_in, algorithm=self.algorithm
         )
 
