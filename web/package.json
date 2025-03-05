@@ -16,12 +16,12 @@
     "astro": "^5.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwindcss": "^4.0.9"
+    "sass": "^1.85.1"
   },
   "browserslist": [
     "defaults",
     "> 1%",
-    "not ie all"
+    "not ie >= 1"
   ],
   "engines": {
     "node": ">=22.0.0 <23.0.0",
