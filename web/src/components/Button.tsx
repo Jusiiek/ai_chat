@@ -21,7 +21,7 @@ const Button: React.FC<ButtonProps> = ({
     const baseClasses = '' +
         'font-bold rounded shadow transition duration-300 text-center relative ' +
         'ease-in-out focus:outline-none focus:ring-2 ' +
-        'focus:ring-opacity-50';
+        'focus:ring-opacity-50 overflow-hidden';
 
     const getButtonClasses = () => {
         let classes = baseClasses;
