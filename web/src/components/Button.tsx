@@ -5,6 +5,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     size?: 'small' | 'medium' | 'large';
     disabled?: boolean;
     children: React.ReactNode;
+    className?: string
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -12,6 +13,7 @@ const Button: React.FC<ButtonProps> = ({
     size = 'medium',
     onClick = {},
     disabled = false,
+    className = "",
     children,
     ...props
 }) => {
@@ -87,7 +89,7 @@ const Button: React.FC<ButtonProps> = ({
     }
 
     return (
-        <button ref={buttonRef} className={getButtonClasses()} onClick={handleClick} {...props}>
+        <button ref={buttonRef} className={`${getButtonClasses()} ${className}`} onClick={handleClick} {...props}>
             {children}
             <span ref={clickEffectRef} className={"w-10 h-10 absolute rounded-4xl"}></span>
         </button>

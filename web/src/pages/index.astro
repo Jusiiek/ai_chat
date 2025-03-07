@@ -1,9 +1,7 @@
 ---
 import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-import Button from '@components/Button.tsx';
-import Input from '@components/Input.tsx';
-import ThemeSwitcher from '@components/ThemeSwitcher.tsx';
+import Login from "@views/Login.tsx"
 import '@styles/global.css';
 import '@styles/sass/global.scss';
 
@@ -12,12 +10,5 @@ import '@styles/sass/global.scss';
 ---
 
 <Layout>
-	<Button variant="primary" size="medium" onClick={() => alert('Button clicked!')} client:load>
-	    Click me !!!
-	</Button>
-	<Button variant="primary" disabled size="medium" onClick={() => alert('Button clicked!')} client:load>
-	    Disabled !!!
-	</Button>
-	<Input placeholder="Enter your name" label="Name" client:load/>
-	<ThemeSwitcher client:load />
+    <Login client:load />
 </Layout>
