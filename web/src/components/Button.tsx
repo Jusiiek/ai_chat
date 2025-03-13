@@ -3,6 +3,7 @@ import React, {useRef} from 'react';
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'success' | 'danger';
     size?: 'small' | 'medium' | 'large';
+    to?: string;
     disabled?: boolean;
     children: React.ReactNode;
     className?: string
@@ -12,6 +13,7 @@ const Button: React.FC<ButtonProps> = ({
     variant = 'primary',
     size = 'medium',
     onClick = {},
+    to = "",
     disabled = false,
     className = "",
     children,
@@ -85,6 +87,8 @@ const Button: React.FC<ButtonProps> = ({
             setTimeout(() => {
                 clickEffect.classList.remove('animate-click-effect');
             }, 600);
+
+            if (to) window.location.href = to;
         }
     }
 
