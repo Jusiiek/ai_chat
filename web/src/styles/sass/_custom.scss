@@ -1,0 +1,16 @@
+.animate-click-effect {
+  animation: clickEffect 0.9s ease infinite;
+}
+
+@keyframes clickEffect {
+  0% {
+    background-color: white;
+    opacity: 0.5;
+    transform: scale(0);
+  }
+  100% {
+    background-color: white;
+    opacity:0;
+    transform: scale(20);
+  }
+}

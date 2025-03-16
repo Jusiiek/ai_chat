@@ -7,9 +7,14 @@ cassandra-driver==3.29.1
 flake8==7.1.1
 PyJWT==2.9.0
 pytest==8.3.3
+pytest-asyncio==0.25.3
+pytest-cov==6.0.0
 passlib==1.7.4
 bcrypt==4.0.1
 python-multipart==0.0.20
+click==8.1.8
+httpcore==1.0.7
+httpx==0.28.1
 """
 
 setup(
