@@ -13,9 +13,14 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
+      "@constants/*": ["src/constants/*"],
+      "@instances/*": ["src/instances/*"],
+      "@interfaces/*": ["src/interfaces/*"],
       "@layouts/*": ["src/layouts/*"],
       "@assets/*": ["src/assets/*"],
+      "@services/*": ["src/services/*"],
       "@styles/*": ["src/styles/*"],
+      "@utils/*": ["src/utils/*"],
       "@views/*": ["src/views/*"]
     }
   }

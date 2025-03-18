@@ -53,8 +53,7 @@ def get_auth_router(
                 detail=detail,
             )
 
-        response = await backend.login(user)
-        return response
+        return await backend.login(user)
 
     @router.post("/logout", responses=logout_responses)
     async def logout(
