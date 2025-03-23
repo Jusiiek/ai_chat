@@ -1,5 +1,5 @@
-import { RequestParams, RequestResponse } from "@interfaces/utils/request.ts";
-import { ActiveUser } from "@instances/user.ts";
+import { RequestParams, RequestResponse } from "../interfaces/utils/request";
+import { ActiveUser } from "../instances/user";
 
 
 export const redirectIfNotAuthenticated = (res: Response) => {
@@ -29,11 +29,16 @@ export const request = async ({
   if (body && jsonMethods.includes(methodLower) && !headers["Content-Type"]) {
     headers["Content-Type"] = "application/json";
   }
-  if (body && typeof body === "object") {
-    body = JSON.stringify(body);
-  }
+
+  let requestBody: BodyInit | null | undefined = undefined;
   if (formData) {
-    body = formData;
+    requestBody = formData;
+  } else if (body) {
+    if (typeof body === "object") {
+      requestBody = JSON.stringify(body);
+    } else {
+      requestBody = body as BodyInit;
+    }
   }
   const token = ActiveUser.getToken()
   const tokenType = ActiveUser.getTokenType()
@@ -47,7 +52,7 @@ export const request = async ({
   const res = await fetch(url, {
     method: method,
     headers: headers,
-    body: body,
+    body: requestBody,
     credentials: "include",
     ...rest,
   });

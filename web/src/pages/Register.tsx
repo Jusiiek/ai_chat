@@ -7,33 +7,40 @@ import {
     Row,
     Col,
     Text
-} from "@components/index.tsx";
+} from "../components";
+import { AuthService } from "../services/auth";
 
 
-const Login = () => {
+const Register = () => {
 
     const [formData, setFormData] = useState({
         email: "",
         password: "",
+        repeat_password: ""
     });
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [loginError, setLoginError] = useState("");
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        console.log("[e.target.id]: e.target.value ", [e.target.id], e.target.value )
         setFormData((prev) => ({
             ...prev,
-            [name]: value,
+            [e.target.id]: e.target.value
         }));
     };
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         try {
-          // Implement your login logic here
-          // Example:
-          // const response = await axios.post('/api/auth/signin', formData);
-          // console.log(response);
-            setLoginError("");
+            const isFilled = Object.values(formData).every((value) => value.trim() !== "");
+            const isPasswordValid = formData.repeat_password === formData.password
+            if (isFilled && isPasswordValid) {
+                let body = {
+                    email: formData.email,
+                    password: formData.password,
+                };
+                await AuthService.register(body);
+                setLoginError("");
+            }
         } catch (error) {
             setLoginError("Invalid email or password");
         }
@@ -56,24 +63,27 @@ const Login = () => {
                 className={"w-full max-w-6/12"}
                 style={{maxWidth: 500}}
             >
-                <Row className={"w-full text-center mb-4"}>
+                <Row className={"w-full text-center mb-5"}>
                     <Text
-                        size={"4xl"}
-                        weight={"bold"}
-                        className={"ml-auto mr-auto"}>
-                        Login
+                        size="3xl"
+                        weight="bold"
+                        className="ml-auto mr-auto"
+                    >
+                        Create your account
                     </Text>
                 </Row>
                 {
-                    Object.keys(formData).map((key) => (
-                        <Row className={"w-full text-center mb-4"}>
+                    Object.keys(formData).map((field) => (
+                        <Row className={"w-full text-center mb-4"} key={field}>
                             <Input
-                                id={key}
-                                name={key}
-                                label={key.replace("_", " ").toUpperCase()}
-                                type={key === "password" ? "password" : "text"}
+                                id={field}
+                                name={field}
+                                label={field.replace("_", " ").split(" ")
+                                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                                    .join(" ")}
+                                type={field.includes("password") ? "password" : "text"}
                                 onChange={handleInputChange}
-                                value={formData[key as keyof typeof formData]}
+                                value={formData[field as keyof typeof formData]}
                             />
                         </Row>
                     ))
@@ -83,9 +93,9 @@ const Login = () => {
                         <Button
                             variant={"secondary"}
                             className={"mr-auto"}
-                            to={"/auth/register"}
+                            to={"/auth/login"}
                         >
-                            Create an account
+                            Back to login
                         </Button>
                     </Col>
                     <Col className={"w-50 text-right ml-auto"}>
@@ -94,7 +104,7 @@ const Login = () => {
                             className={"ml-auto"}
                             disabled={isButtonDisabled}
                         >
-                            Login
+                            Register
                         </Button>
                     </Col>
                 </Row>
@@ -103,4 +113,4 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default Register;

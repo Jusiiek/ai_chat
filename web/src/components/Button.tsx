@@ -1,24 +1,28 @@
 import React, {useRef} from 'react';
+import { useNavigate } from "react-router-dom";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'success' | 'danger';
     size?: 'small' | 'medium' | 'large';
+    onClick?: () => void | Promise<void>;
     to?: string;
     disabled?: boolean;
     children: React.ReactNode;
     className?: string
 }
 
+
 const Button: React.FC<ButtonProps> = ({
     variant = 'primary',
     size = 'medium',
-    onClick = {},
+    onClick = undefined,
     to = "",
     disabled = false,
     className = "",
     children,
     ...props
 }) => {
+    const navigate = useNavigate();
     const buttonRef = useRef<HTMLButtonElement>(null);
     const clickEffectRef = useRef<HTMLSpanElement>(null);
 
@@ -65,7 +69,7 @@ const Button: React.FC<ButtonProps> = ({
         return classes;
     };
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         if (disabled) {
             e.preventDefault();
             return;
@@ -88,7 +92,8 @@ const Button: React.FC<ButtonProps> = ({
                 clickEffect.classList.remove('animate-click-effect');
             }, 600);
 
-            if (to) window.location.href = to;
+            if (to) navigate(to, { replace: true });
+            if (onClick) await onClick();
         }
     }
 

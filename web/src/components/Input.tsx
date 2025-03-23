@@ -5,7 +5,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     type?: React.HTMLInputTypeAttribute;
 }
 
-const Input: React.FC<InputProps> = ({ label, type = "text", ...props }) => {
+const Input: React.FC<InputProps> = ({ label, type = "text", onChange, value, name, ...props }) => {
     return (
         <div className="relative w-full">
             <input
@@ -14,17 +14,20 @@ const Input: React.FC<InputProps> = ({ label, type = "text", ...props }) => {
                 focus:outline-none focus:ring-2 focus:ring-blue-500
                 placeholder-transparent transition-all duration-300 ease-in-out"
                 id={props.id}
+                name={name}
                 placeholder=" "
+                onChange={onChange}
+                value={value}
                 {...props}
             />
 
             <label
-                className="absolute left-4 top-4 text-gray-500 dark:text-gray-300 px-1
+                className={`absolute left-4 top-4 text-gray-500 dark:text-gray-300 px-1
                 transition-all duration-300 ease-in-out transform
                 bg-white dark:bg-gray-900
                 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:bg-transparent
                 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-blue-500 peer-focus:scale-90 peer-focus:bg-white peer-focus:dark:bg-gray-900
-                peer-not-placeholder-shown:-top-2 peer-not-placeholder-shown:text-sm peer-not-placeholder-shown:text-blue-500 peer-not-placeholder-shown:scale-90 peer-not-placeholder-shown:bg-white peer-not-placeholder-shown:dark:bg-gray-900"
+                peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-sm peer-[&:not(:placeholder-shown)]:text-blue-500 peer-[&:not(:placeholder-shown)]:scale-90 peer-[&:not(:placeholder-shown)]:bg-white peer-[&:not(:placeholder-shown)]:dark:bg-gray-900`}
                 htmlFor={props.id}
             >
                 {label}
@@ -32,6 +35,7 @@ const Input: React.FC<InputProps> = ({ label, type = "text", ...props }) => {
         </div>
     );
 };
+
 
 
 export default Input;

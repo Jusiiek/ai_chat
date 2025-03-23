@@ -1,9 +1,9 @@
-import { request } from "@/utils/request";
-import { BASE_URL } from '@/constants/config';
-import { AuthInterface } from "@interfaces/services/auth.ts";
-import { ServiceReturnInterface } from "@interfaces/services/base.ts";
-import { RequestResponse } from "@interfaces/utils/request.ts";
-import { ActiveUser } from "@instances/user.ts";
+import { request } from "../utils/request";
+import { BASE_URL } from '../constants/config';
+import { AuthInterface } from "../interfaces/services/auth";
+import { ServiceReturnInterface } from "../interfaces/services/base";
+import { RequestResponse } from "../interfaces/utils/request";
+import { ActiveUser } from "../instances/user";
 
 
 export const AUTH_ENDPOINTS = {
@@ -22,14 +22,11 @@ class Auth {
   }
 
   async login(body: AuthInterface): Promise<ServiceReturnInterface> {
-    const formData = new FormData();
-    formData.append("password", body.password);
-    formData.append("email", body.email);
     const { data, res } = await request({
       url: AUTH_ENDPOINTS.login,
       method: "POST",
       skipRedirect: true,
-      formData,
+      body,
     });
     if (res.status === 200) {
       ActiveUser.setToken(data);

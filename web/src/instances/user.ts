@@ -1,4 +1,4 @@
-import { TokenInterface, UserInterface } from "@interfaces/instances/user.ts";
+import { TokenInterface, UserInterface } from "@/interfaces/instances/user";
 
 
 class User {
@@ -54,7 +54,7 @@ class User {
     return this.tokenData?.token_type;
   }
 
-  isAdministrator() {
+  isSuperUser() {
     this.get();
     return this.user?.is_superuser;
   }
