@@ -47,22 +47,18 @@ function AnimatedPage({ children }: {children: React.ReactNode}) {
 
 const ProtectedRoute: React.FC = () => {
     const location = useLocation();
-    const userToken = ActiveUser.getToken();
     const user = ActiveUser.getUser();
 
-    if (!userToken && !location.pathname.includes("/auth")) {
+    if (!user && !location.pathname.includes("/auth")) {
         ActiveUser.clear();
         return <Navigate to={PATHS.LOGIN} state={{ from: location }} replace />;
     }
 
-    if (userToken && location.pathname.includes("/auth")) {
+    if (user && location.pathname.includes("/auth")) {
         return <Navigate to={PATHS.HOME} replace />;
     }
     return <Outlet />;
 };
-
-export default ProtectedRoute;
-
 
 export function AiChatRoutes() {
     const location = useLocation();

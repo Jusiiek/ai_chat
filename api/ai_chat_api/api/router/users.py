@@ -70,7 +70,7 @@ def get_users_router(
     }
 
     @router.get(
-        "/me",
+        "/active-user",
         response_model=user_model,
         responses={
             status.HTTP_401_UNAUTHORIZED: {
@@ -82,7 +82,7 @@ def get_users_router(
         return model_validate(user_model, user)
 
     @router.put(
-        "/me",
+        "/active-user",
         response_model=user_model,
         dependencies=[Depends(get_current_active_user)],
         responses={
