@@ -10,7 +10,9 @@ import {
     Text
 } from "../components";
 import { AuthService } from "../services/auth";
+import { UsersService } from "../services/user";
 import { PATHS } from "../router/routes";
+import { ActiveUser } from "../instances/user";
 
 
 const Login = () => {
@@ -33,12 +35,14 @@ const Login = () => {
     const handleLogin = async () => {
         try {
             if (!isButtonDisabled) {
-                const { res, data } = await AuthService.login(formData);
-                console.log(res, data);
+                const { res } = await AuthService.login(formData);
                 if (res.status === 200) {
+                    const { data } = await UsersService.fetchCurrentUser();
+                    ActiveUser.set(data);
                     navigate(PATHS.HOME, { replace: true });
+                } else {
+                    setLoginError("Invalid email or password");
                 }
-                setLoginError("");
             }
         } catch (error) {
             setLoginError("Invalid email or password");
