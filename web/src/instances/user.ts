@@ -44,6 +44,11 @@ class User {
     this.tokenData = null;
   }
 
+  getUser() {
+    this.get()
+    return this.user;
+  }
+
   getToken() {
     this.get()
     return this.tokenData?.access_token;

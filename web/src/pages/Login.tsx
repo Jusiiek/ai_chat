@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
     Card,
@@ -9,10 +10,11 @@ import {
     Text
 } from "../components";
 import { AuthService } from "../services/auth";
+import { PATHS } from "../router/routes";
 
 
 const Login = () => {
-
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -31,7 +33,11 @@ const Login = () => {
     const handleLogin = async () => {
         try {
             if (!isButtonDisabled) {
-                await AuthService.login(formData);
+                const { res, data } = await AuthService.login(formData);
+                console.log(res, data);
+                if (res.status === 200) {
+                    navigate(PATHS.HOME, { replace: true });
+                }
                 setLoginError("");
             }
         } catch (error) {
@@ -85,7 +91,7 @@ const Login = () => {
                         <Button
                             variant={"secondary"}
                             className={"mr-auto"}
-                            to={"/auth/register"}
+                            to={PATHS.REGISTER}
                         >
                             Create an account
                         </Button>

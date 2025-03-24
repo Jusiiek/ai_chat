@@ -1,12 +1,14 @@
-import { Navigate, Routes, Route, useLocation } from "react-router-dom";
+import React from "react";
+import { Navigate, Routes, Route, useLocation, Outlet } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { ActiveUser } from "../instances/user";
 import {
-  Login,
-  Register
+    Login,
+    Register,
+    Home
 } from "../pages";
-import React from "react";
+import { PATHS } from "../router/routes";
 
 
 function AnimatedPage({ children }: {children: React.ReactNode}) {
@@ -46,9 +48,17 @@ function AnimatedPage({ children }: {children: React.ReactNode}) {
 const ProtectedRoute: React.FC = () => {
     const location = useLocation();
     const userToken = ActiveUser.getToken();
+    const user = ActiveUser.getUser();
 
-    if (!userToken) return <Navigate to="/auth/login" state={{ from: location }} replace />;
-    return <Navigate to="/" replace />;
+    if (!userToken && !location.pathname.includes("/auth")) {
+        ActiveUser.clear();
+        return <Navigate to={PATHS.LOGIN} state={{ from: location }} replace />;
+    }
+
+    if (userToken && location.pathname.includes("/auth")) {
+        return <Navigate to={PATHS.HOME} replace />;
+    }
+    return <Outlet />;
 };
 
 export default ProtectedRoute;
@@ -57,16 +67,49 @@ export default ProtectedRoute;
 export function AiChatRoutes() {
     const location = useLocation();
 
+    const routeConfig = {
+        auth: {
+            path: "/auth",
+            children: {
+                login: {
+                    path: "login",
+                    element: <Login />
+                },
+                register: {
+                    path: "register",
+                    element: <Register />
+                }
+            }
+        },
+        main: {
+            path: "/",
+            children: {
+                home: {
+                    index: true,
+                    element: <Home />
+                }
+            }
+        }
+    };
+
     return (
         <AnimatePresence mode="wait">
             <Routes location={location} key={location.key}>
-                <Route path="/auth/login" element={<AnimatedPage><Login /> </AnimatedPage>} />
-                <Route path="/auth/register" element={<AnimatedPage><Register /> </AnimatedPage>} />
                 <Route element={<ProtectedRoute />}>
-
+                    {Object.entries(routeConfig).map(([key, route]) => (
+                        <Route key={key} path={route.path}>
+                            {route.children && Object.entries(route.children).map(([childKey, child]) => (
+                                <Route
+                                    key={childKey}
+                                    path={child.path}
+                                    index={child.index}
+                                    element={<AnimatedPage>{child.element}</AnimatedPage>}
+                                />
+                            ))}
+                        </Route>
+                    ))}
                 </Route>
             </Routes>
         </AnimatePresence>
-
-    )
+    );
 }

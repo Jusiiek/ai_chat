@@ -9,6 +9,7 @@ import {
     Text
 } from "../components";
 import { AuthService } from "../services/auth";
+import { PATHS } from "../router/routes";
 
 
 const Register = () => {
@@ -93,7 +94,7 @@ const Register = () => {
                         <Button
                             variant={"secondary"}
                             className={"mr-auto"}
-                            to={"/auth/login"}
+                            to={PATHS.LOGIN}
                         >
                             Back to login
                         </Button>
