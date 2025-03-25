@@ -1,4 +1,5 @@
 import React from "react";
+import { ActiveUser } from "../instances/user";
 
 interface AvatarProps {
   onClick?: () => void;
@@ -8,6 +9,8 @@ interface AvatarProps {
 
 
 const Avatar: React.FC<AvatarProps> = ({ image, onClick }) => {
+    const userData = ActiveUser.getUser();
+
     return (
         <div className="flex -space-x-1 overflow-hidden">
             {
@@ -21,7 +24,9 @@ const Avatar: React.FC<AvatarProps> = ({ image, onClick }) => {
                     <div
                         className="flex size-10 rounded-full bg-sky-500 dark:bg-sky-700  items-center justify-center text-white"
                     >
-                        JZ
+                        {userData?.email
+                        ? userData.email.slice(0, 2).toUpperCase()
+                        : "UN"}
                     </div>
             }
         </div>

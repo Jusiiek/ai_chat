@@ -18,7 +18,7 @@ function AnimatedPage({ children }: {children: React.ReactNode}) {
             opacity: 0
             },
         animate: {
-            scale: [0.9, 1, 0.9],
+            scale: [0.9, 1, 0.9, 1],
             opacity: 1,
             transition: {
                 duration: 2,
@@ -38,7 +38,7 @@ function AnimatedPage({ children }: {children: React.ReactNode}) {
             initial="initial"
             animate="animate"
             exit="exit"
-            className={"h-screen w-screen flex items-center justify-center"}
+            className={"h-full w-full"}
         >
             {children}
         </motion.div>

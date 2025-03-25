@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-const ThemeSwitcher = () => {
+interface ThemeSwitcherProps {
+    className?: string
+}
+
+const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({className}) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -42,7 +46,7 @@ const ThemeSwitcher = () => {
   return (
     <button
       onClick={toggleTheme}
-      className={"px-4 py-2 rounded-md transition-colors duration-200 bg-gray-800 dark:bg-yellow-400 text-white"}
+      className={`px-4 py-2 rounded-md transition-colors duration-200 bg-gray-800 dark:bg-yellow-400 text-white ${className}`}
     >
       {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     </button>

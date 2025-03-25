@@ -1,23 +1,24 @@
 import {
-    Row, Col, Text
+    Row,
+    Col,
+    Text,
+    Navbar
 } from "../components";
 
 
 function Home() {
     return (
-        <div
-            className={'h-full w-full flex items-center justify-center'}
+        <Row
+            className={'h-full w-full'}
         >
-            <Col>
+            <Col className={"overflow-hidden"}>
                 <Text size={"3xl"} weight={"bold"}>
                     HERE WILL BE SIDEBAR
                 </Text>
             </Col>
-            <Col>
+            <Col className={"w-auto flex-1"}>
                 <Row className={"w-full items-center justify-center text-center"}>
-                    <Text size={"3xl"} weight={"bold"}>
-                        Some header text!!!
-                    </Text>
+                    <Navbar />
                 </Row>
                 <Row className={"w-full items-center justify-center text-center"}>
                     <Text size={"xl"} weight={"normal"}>
@@ -25,7 +26,7 @@ function Home() {
                     </Text>
                 </Row>
             </Col>
-        </div>
+        </Row>
     )
 }
 
