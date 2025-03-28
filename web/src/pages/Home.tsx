@@ -11,7 +11,7 @@ function Home() {
         <Row
             className={'h-full w-full'}
         >
-            <Col className={"overflow-hidden"}>
+            <Col className={"overflow-hidden w-0"}>
                 <Text size={"3xl"} weight={"bold"}>
                     HERE WILL BE SIDEBAR
                 </Text>

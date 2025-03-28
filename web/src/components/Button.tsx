@@ -1,16 +1,14 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+import { IconButtonProps } from "@/components/IconButton";
+
+interface ButtonProps extends IconButtonProps {
     variant?: 'primary' | 'secondary' | 'success' | 'danger';
     size?: 'small' | 'medium' | 'large';
-    onClick?: () => void | Promise<void>;
     to?: string;
     disabled?: boolean;
-    children: React.ReactNode;
-    className?: string
 }
-
 
 const Button: React.FC<ButtonProps> = ({
     variant = 'primary',
