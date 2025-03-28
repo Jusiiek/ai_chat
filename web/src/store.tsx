@@ -1,11 +1,12 @@
-import {configureStore} from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
+import sidebarReducer from './reducers/siderbar';
 
-import { sidebarSlice } from "./providers/siderbar";
+export type RootState = ReturnType<typeof store.getState>;
 
 const store = configureStore({
-    reducer: {
-        sidebar: sidebarSlice.reducer,
-    },
+  reducer: {
+    sidebar: sidebarReducer,
+  },
 });
 
 export default store;

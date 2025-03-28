@@ -1,16 +1,25 @@
 import React from 'react';
+import { useDispatch } from "react-redux";
+
+import { setSidebarState } from "../reducers/siderbar";
 
 import { Row, Col, Tooltip, IconButton } from "../components";
 
 
 const Sidebar: React.FC = () => {
+    const dispatch = useDispatch();
+
+    const closeSidebar = () => {
+        dispatch(setSidebarState(false));
+    }
+
     return (
-        <Row className={"w-100 bg-black"}>
+        <Row className={"w-100 bg-black overflow-hidden"}>
             <Row className={`w-full py-[23px] px-[12px]`}>
                 <Col className={"justify-center items-start align-middle w-1/2"}>
                     <div className="flex justify-center items-center">
                         <Tooltip content={"Close sidebar"} placement={"right"}>
-                            <IconButton>
+                            <IconButton onClick={closeSidebar}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                      fill="none"
                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"

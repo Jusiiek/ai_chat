@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useSelector } from 'react-redux';
 
 import {
     Row,
@@ -7,13 +8,14 @@ import {
     Navbar,
     Sidebar
 } from "../components";
+import { RootState } from "../store";
 
 
 function Home() {
-    const [openSidebar, setOpenSidebar] = useState(true);
+    const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     return (
         <Row className={'h-full w-full'}>
-            <Col style={{width: `${openSidebar ? '300px' : '0px'}`}}>
+            <Col style={{width: `${isSidebarOpen ? '300px' : '0px'}`}}>
                 <Sidebar />
             </Col>
             <Col className={"w-auto flex-1"}>
