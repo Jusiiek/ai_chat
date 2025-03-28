@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 
-import { IconButtonProps } from "@/components/IconButton";
+import { IconButtonProps } from "./IconButton";
 
 interface ButtonProps extends IconButtonProps {
     variant?: 'primary' | 'secondary' | 'success' | 'danger';
