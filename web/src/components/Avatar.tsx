@@ -1,29 +1,24 @@
 import React from "react";
+import { ActiveUser } from "../instances/user";
 
 interface AvatarProps {
-  onClick?: () => void;
-  image?: string
+    onClick?: () => void;
 }
 
 
 
-const Avatar: React.FC<AvatarProps> = ({ image, onClick }) => {
+const Avatar: React.FC<AvatarProps> = ({ onClick }) => {
+    const userData = ActiveUser.getUser();
+
     return (
         <div className="flex -space-x-1 overflow-hidden">
-            {
-                image ?
-                    <img
-                        className="inline-block size-10 rounded-full"
-                        src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                    />
-                    :
-                    <div
-                        className="flex size-10 rounded-full bg-sky-500 dark:bg-sky-700  items-center justify-center text-white"
-                    >
-                        JZ
-                    </div>
-            }
+            <div
+                className="flex size-10 rounded-full bg-sky-500 dark:bg-sky-700 items-center justify-center text-white"
+            >
+                {userData?.email
+                ? userData.email.slice(0, 2).toUpperCase()
+                : "UN"}
+            </div>
         </div>
     )
 }
