@@ -14,9 +14,9 @@ const Sidebar: React.FC = () => {
     }
 
     return (
-        <Row className={"w-100 bg-black overflow-hidden"}>
+        <nav className={"d-flex w-full h-full bg-black text-white overflow-hidden"}>
             <Row className={`w-full py-[23px] px-[12px]`}>
-                <Col className={"justify-center items-start align-middle w-1/2"}>
+                <Col className={"justify-start items-start align-middle w-1/2"}>
                     <div className="flex justify-center items-center">
                         <Tooltip content={"Close sidebar"} placement={"right"}>
                             <IconButton onClick={closeSidebar}>
@@ -32,9 +32,9 @@ const Sidebar: React.FC = () => {
                         </Tooltip>
                     </div>
                 </Col>
-                <Col className={"justify-center items-end align-middle w-1/2"}>
+                <Col className={"justify-start items-end align-middle w-1/2"}>
                     <div className="flex justify-center items-center">
-                        <Tooltip content={"New Chat"} placement={"right"}>
+                        <Tooltip content={"New Chat"} placement={"left"}>
                             <IconButton>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                      fill="none"
@@ -50,7 +50,7 @@ const Sidebar: React.FC = () => {
                     </div>
                 </Col>
             </Row>
-        </Row>
+        </nav>
     )
 }
 

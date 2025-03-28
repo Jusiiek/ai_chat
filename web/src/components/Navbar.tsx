@@ -27,7 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
     }
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     return (
-        <Row className={`w-full h-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-600 py-[18px] px-[12px] ${className}`}>
+        <Row className={`w-full h-full bg-white dark:bg-gray-900 py-[18px] px-[12px] ${className}`}>
             <Col className={"justify-center items-start w-1/2"}>
                 <Row className={"items-center"}>
                     {

@@ -15,7 +15,10 @@ function Home() {
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     return (
         <Row className={'h-full w-full'}>
-            <Col style={{width: `${isSidebarOpen ? '300px' : '0px'}`}}>
+            <Col
+                style={{width: `${isSidebarOpen ? '300px' : '0px'}`}}
+                className={"h-full transition-all duration-300 ease-in-out"}
+            >
                 <Sidebar />
             </Col>
             <Col className={"w-auto flex-1"}>
