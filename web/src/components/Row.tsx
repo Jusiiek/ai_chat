@@ -1,13 +1,14 @@
 import React from "react";
 
-interface RowProps {
+export interface RowProps {
   className?: string;
   children?: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
-const Row: React.FC<RowProps> = ({ className, children }) => {
+const Row: React.FC<RowProps> = ({ className, style, children }) => {
     return (
-        <div className={`flex flex-row ${className}`}>
+        <div className={`flex flex-row ${className}`} style={style}>
             { children }
         </div>
     )

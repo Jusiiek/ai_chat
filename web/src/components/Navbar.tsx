@@ -19,7 +19,7 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
             <Col className={"justify-center items-start w-1/2"}>
                 <Row className={"items-center"}>
                     <div>
-                        <Tooltip content={"Tooltip text"} placement={"right"}>
+                        <Tooltip content={"Open sidebar"} placement={"right"}>
                             <IconButton>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -31,7 +31,7 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
                         </Tooltip>
                     </div>
                     <div className={"mr-3 ml-3"}>
-                        <Tooltip content={"Tooltip text"} placement={"right"}>
+                        <Tooltip content={"New Chat"} placement={"right"}>
                             <IconButton>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
