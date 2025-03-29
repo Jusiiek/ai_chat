@@ -13,7 +13,7 @@ import {
     Tooltip,
     IconButton
 } from "../components";
-import {RootState} from "@/store";
+import { RootState } from "../store";
 
 interface NavbarProps {
     className?: string

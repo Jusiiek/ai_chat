@@ -6,7 +6,8 @@ import { ActiveUser } from "../instances/user";
 import {
     Login,
     Register,
-    Home
+    Home,
+    NotFound
 } from "../pages";
 import { PATHS } from "../router/routes";
 
@@ -16,7 +17,7 @@ function AnimatedPage({ children }: {children: React.ReactNode}) {
         initial: {
             scale: 0.9,
             opacity: 0
-            },
+        },
         animate: {
             scale: [0.9, 1, 0.9, 1],
             opacity: 1,
@@ -85,7 +86,7 @@ export function AiChatRoutes() {
                     element: <Home />
                 }
             }
-        }
+        },
     };
 
     return (
@@ -105,6 +106,7 @@ export function AiChatRoutes() {
                         </Route>
                     ))}
                 </Route>
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </AnimatePresence>
     );
