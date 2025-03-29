@@ -16,8 +16,7 @@ function Home() {
     return (
         <Row className={'h-full w-full'}>
             <Col
-                style={{width: `${isSidebarOpen ? '300px' : '0px'}`}}
-                className={"h-full transition-all duration-300 ease-in-out"}
+                className={`h-full transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-[300px]' : 'w-0'}`}
             >
                 <Sidebar />
             </Col>
