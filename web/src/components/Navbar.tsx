@@ -1,10 +1,8 @@
-// Navbar.tsx
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-
+import {useNavigate} from "react-router-dom";
 
 import {setSidebarState} from "../reducers/siderbar";
-
 import {
     Row,
     Col,
@@ -13,9 +11,12 @@ import {
     Tooltip,
     IconButton,
     Dropdown,
-    Text
+    Text,
 } from "../components";
 import {RootState} from "../store";
+import { AuthService } from "../services/auth";
+import { ActiveUser } from "../instances/user";
+import { PATHS } from "../router/routes";
 
 interface NavbarProps {
     className?: string
@@ -23,11 +24,19 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({className}) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
 
     const openSidebar = () => {
         dispatch(setSidebarState(true));
     }
-    const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
+
+    const handleLogout =  async () => {
+        await AuthService.logout();
+        ActiveUser.clear();
+        navigate(PATHS.LOGIN, { replace: true });
+    }
+
     return (
         <Row className={`w-full h-full bg-white dark:bg-gray-900 py-[18px] px-[12px] ${className}`}>
             <Col className={"justify-center items-start w-1/2"}>
@@ -86,7 +95,7 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
                                     Settings
                                 </Text>
                             </Dropdown.MenuItem>
-                            <Dropdown.MenuItem>
+                            <Dropdown.MenuItem onClick={handleLogout}>
                                 <Text size={"base"} className={"text-red-600"}>
                                     Logout
                                 </Text>
