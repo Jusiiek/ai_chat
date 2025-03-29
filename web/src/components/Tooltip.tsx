@@ -50,11 +50,11 @@ const Tooltip: React.FC<TooltipProps> = ({content, children, placement = "bottom
             {visible && (
                 <div
                     ref={tooltipRef}
-                    className="absolute z-10 p-3 text-white bg-gray-800 dark:bg-black rounded shadow-lg w-48 text-center"
+                    className="absolute z-10 p-3 text-white bg-black rounded shadow-lg w-48 text-center"
                     style={getTooltipStyles()}
                 >
                     <div
-                        className="absolute w-3 h-3 bg-gray-800 dark:bg-black transform"
+                        className="absolute w-3 h-3 bg-black transform"
                         style={getArrowStyles()}
                     />
                     {content}

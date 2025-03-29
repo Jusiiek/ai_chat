@@ -1,4 +1,4 @@
-import { ServiceReturnInterface } from "@/interfaces/services/base";
+import { ServiceReturnInterface } from "../../interfaces/services/base";
 
 export interface RequestParams {
     url: string;

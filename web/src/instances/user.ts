@@ -1,4 +1,4 @@
-import { TokenInterface, UserInterface } from "@/interfaces/instances/user";
+import { TokenInterface, UserInterface } from "../interfaces/instances/user";
 
 
 class User {
