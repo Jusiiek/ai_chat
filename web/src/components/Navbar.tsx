@@ -1,9 +1,9 @@
 // Navbar.tsx
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
 
-import { setSidebarState } from "../reducers/siderbar";
+import {setSidebarState} from "../reducers/siderbar";
 
 import {
     Row,
@@ -11,9 +11,11 @@ import {
     ThemeSwitcher,
     Avatar,
     Tooltip,
-    IconButton
+    IconButton,
+    Dropdown,
+    Text
 } from "../components";
-import { RootState } from "../store";
+import {RootState} from "../store";
 
 interface NavbarProps {
     className?: string
@@ -74,7 +76,23 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
             <Col className={"justify-center items-end w-1/2"}>
                 <Row className={"items-center"}>
                     <ThemeSwitcher className={"mr-3"}/>
-                    <Avatar/>
+                    <Dropdown>
+                        <Dropdown.Trigger>
+                            <Avatar/>
+                        </Dropdown.Trigger>
+                        <Dropdown.Menu className="py-1">
+                            <Dropdown.MenuItem>
+                                <Text size={"base"}>
+                                    Settings
+                                </Text>
+                            </Dropdown.MenuItem>
+                            <Dropdown.MenuItem>
+                                <Text size={"base"} className={"text-red-600"}>
+                                    Logout
+                                </Text>
+                            </Dropdown.MenuItem>
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </Row>
             </Col>
         </Row>

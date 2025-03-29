@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
     }
 
     return (
-        <nav className={"d-flex w-full h-full bg-black text-white overflow-hidden"}>
+        <nav className={"d-flex w-full h-full bg-gray-800 text-white overflow-hidden"}>
             <Row className={`w-full py-[23px] px-[12px]`}>
                 <Col className={"justify-start items-start align-middle w-1/2"}>
                     <div className="flex justify-center items-center">
