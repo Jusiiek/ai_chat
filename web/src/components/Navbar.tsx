@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
 import {setSidebarState} from "../reducers/siderbar";
+import {setModalState} from "../reducers/modal";
 import {
     Row,
     Col,
@@ -30,6 +31,10 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
 
     const openSidebar = () => {
         dispatch(setSidebarState(true));
+    }
+
+    const openSettingsModal = () => {
+        dispatch(setModalState(true));
     }
 
     const handleLogout =  async () => {
@@ -76,7 +81,7 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
                             <Avatar/>
                         </Dropdown.Trigger>
                         <Dropdown.Menu className="py-1">
-                            <Dropdown.MenuItem>
+                            <Dropdown.MenuItem onClick={openSettingsModal}>
                                 <Text size={"base"}>
                                     Settings
                                 </Text>
