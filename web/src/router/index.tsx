@@ -50,7 +50,6 @@ const ProtectedRoute: React.FC = () => {
     const location = useLocation();
     const user = ActiveUser.getUser();
 
-    console.log("SADASDASDSA", user)
     if (!user && !location.pathname.includes("/auth")) {
         return <Navigate to={PATHS.LOGIN} state={{ from: location }} replace />;
     }

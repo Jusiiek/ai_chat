@@ -8,6 +8,7 @@ export { default as Input } from "./Input";
 export { default as Navbar } from "./Navbar";
 export { default as Row } from "./Row";
 export { default as Sidebar } from "./Sidebar";
+export { default as SettingsModal } from "./SettingsModal";
 export { default as Text } from "./Text";
 export { default as Tooltip } from "./Tooltip";
 export { default as ThemeSwitcher } from "./ThemeSwitcher";

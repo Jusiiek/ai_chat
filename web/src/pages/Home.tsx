@@ -6,7 +6,8 @@ import {
     Col,
     Text,
     Navbar,
-    Sidebar
+    Sidebar,
+    SettingsModal
 } from "../components";
 import { RootState } from "../store";
 
@@ -15,6 +16,7 @@ function Home() {
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     return (
         <Row className={'h-full w-full'}>
+            <SettingsModal />
             <Col
                 className={`h-full transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-[300px]' : 'w-0'}`}
             >
