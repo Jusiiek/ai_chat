@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import APIRouter, HTTPException, status, Depends, Response
 
@@ -7,7 +7,8 @@ from ai_chat_api.api.authentication.authenticator import Authenticator
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.schemas.user import (
     BaseUser,
-    BaseUpdateUser
+    BaseUpdateUser,
+    BaseUpdateActiveUser
 )
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.common.auth_error import ErrorMessages, ErrorModel
@@ -63,6 +64,14 @@ def get_users_router(
                                 )
                             },
                         },
+                        ErrorMessages.USER_INVALID_CURRENT_PASSWORD: {
+                            "summary": "Current password validation failed.",
+                            "value": {
+                                "detail": (
+                                    ErrorMessages.USER_INVALID_CURRENT_PASSWORD.value,
+                                )
+                            },
+                        },
                     }
                 }
             },
@@ -93,9 +102,30 @@ def get_users_router(
         },
     )
     async def update_me(
-        user_update: user_update_model,
+        user_update: BaseUpdateActiveUser,
         user: User = Depends(get_current_active_user),
     ):
+        user_update_dict = user_update.dict()
+        current_password: Union[str, None] = user_update_dict.get("current_password", None)
+        new_password: Union[str, None] = user_update_dict.get("password", None)
+
+        if new_password and current_password:
+            is_current_password_valid = user.verify_password(
+                current_password
+            )
+
+            if not is_current_password_valid:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail={
+                        "code": ErrorMessages.USER_INVALID_CURRENT_PASSWORD,
+                        "reason": "Current password is not correct.",
+                    },
+                )
+
+        user_update = BaseUpdateUser(
+            **user_update_dict.pop("current_password")
+        )
         try:
             user_manager_instance = UserManager()
             user = await user_manager_instance.update(user_update, user)

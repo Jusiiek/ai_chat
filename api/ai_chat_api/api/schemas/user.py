@@ -43,3 +43,7 @@ class BaseUpdateUser(CreateUpdateModel):
     is_active: Optional[bool] = None
     is_superuser: Optional[bool] = None
     is_verified: Optional[bool] = None
+
+
+class BaseUpdateActiveUser(BaseUpdateUser):
+    current_password: Optional[str] = None
