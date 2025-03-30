@@ -1,6 +1,7 @@
 import { request } from "../utils/request";
 import { BASE_URL } from '../constants/config';
 import { ServiceReturnInterface } from "../interfaces/services/base";
+import { currentUserUpdate } from "../interfaces/services/user";
 
 
 export const USERS_ENDPOINTS = {
@@ -15,6 +16,15 @@ class Users {
             method: "GET",
         });
     }
+
+    async updateCurrentUser(body: currentUserUpdate): Promise<ServiceReturnInterface> {
+        return await request({
+            url: USERS_ENDPOINTS.activeUser,
+            method: "PUT",
+            body
+        });
+    }
+
     async fetchUserData(user_id: string): Promise<ServiceReturnInterface> {
         return await request({
             url: USERS_ENDPOINTS.user(user_id),

@@ -123,8 +123,9 @@ def get_users_router(
                     },
                 )
 
+        del user_update_dict["current_password"]
         user_update = BaseUpdateUser(
-            **user_update_dict.pop("current_password")
+            **user_update_dict
         )
         try:
             user_manager_instance = UserManager()
@@ -135,7 +136,7 @@ def get_users_router(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
                     "code": ErrorMessages.USER_INVALID_PASSWORD,
-                    "reason": e.reason,
+                    "reason": str(e),
                 },
             )
         except exceptions.UserAlreadyExists:
