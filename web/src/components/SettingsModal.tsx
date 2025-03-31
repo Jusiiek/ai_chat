@@ -245,7 +245,7 @@ const SettingsModal: React.FC = () => {
 
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
                 <div className="fixed inset-0 transition-opacity" onClick={closeModal}>
                     <div className="absolute inset-0 bg-black opacity-75"></div>
                 </div>
@@ -291,7 +291,8 @@ const SettingsModal: React.FC = () => {
                                 ))}
                             </div>
 
-                            <div className="w-full md:w-3/4 mt-6 md:mt-0 md:pl-6 max-h-[500px] overflow-y-scroll overflow-x-hidden">
+                            <div
+                                className="w-full md:w-3/4 mt-6 md:mt-0 md:pl-6 max-h-[500px] overflow-y-scroll overflow-x-hidden">
                                 {renderSettingContent()}
                             </div>
                         </div>
