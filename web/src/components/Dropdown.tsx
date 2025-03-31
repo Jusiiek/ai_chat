@@ -15,7 +15,7 @@ type MenuProps = {
 
 type MenuItemProps = {
     children: React.ReactNode;
-    onClick?: () => void;
+    onClick?: () => void | Promise<void>;
     className?: string;
     disabled?: boolean;
 };

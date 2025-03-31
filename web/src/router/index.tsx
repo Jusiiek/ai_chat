@@ -15,7 +15,7 @@ import { PATHS } from "../router/routes";
 function AnimatedPage({ children }: {children: React.ReactNode}) {
     const breathingVariants = {
         initial: {
-            scale: 0.9,
+            scale: 1,
             opacity: 0
         },
         animate: {
@@ -27,7 +27,7 @@ function AnimatedPage({ children }: {children: React.ReactNode}) {
             }
         },
         exit: {
-            scale: 0.9,
+            scale: 1,
             opacity: 0,
             transition: { duration: 0.5 }
         }
@@ -51,7 +51,6 @@ const ProtectedRoute: React.FC = () => {
     const user = ActiveUser.getUser();
 
     if (!user && !location.pathname.includes("/auth")) {
-        ActiveUser.clear();
         return <Navigate to={PATHS.LOGIN} state={{ from: location }} replace />;
     }
 

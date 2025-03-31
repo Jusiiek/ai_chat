@@ -12,7 +12,8 @@ const Input: React.FC<InputProps> = ({ label, type = "text", onChange, value, na
                 type={type}
                 className="peer w-full px-4 pt-5 pb-2 border border-gray-600 dark:border-gray-50 rounded
                 focus:outline-none focus:ring-2 focus:ring-blue-500
-                placeholder-transparent transition-all duration-300 ease-in-out"
+                placeholder-transparent transition-all duration-300 ease-in-out
+                disabled:bg-gray-400 dark:disabled:bg-gray-600 dark:text-gray-900"
                 id={props.id}
                 name={name}
                 placeholder=" "

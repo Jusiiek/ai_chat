@@ -4,6 +4,7 @@ import { ActiveUser } from "../instances/user";
 
 export const redirectIfNotAuthenticated = (res: Response) => {
   if (res.status === 401) {
+    ActiveUser.clear();
     return window.location.replace("/auth/login");
   }
   if (res.status === 403) return window.location.replace("/");

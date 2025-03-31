@@ -192,20 +192,22 @@ class UserManager:
         for key, value in update_dict.items():
             if key == "email" and value != user.email:
                 try:
-                    await user.get_by_email(value)
-                    raise exceptions.UserAlreadyExists()
+                    user_with_email = await user.get_by_email(value)
+                    if user_with_email:
+                        raise exceptions.UserAlreadyExists()
                 except exceptions.UserNotExists:
                     validated_dict[key] = value
-            elif key == "password" and value is not None:
-                password_errors_holder: PasswordErrorsHolder = (
-                    await self._validate_password(value)
-                )
-                if not password_errors_holder.is_valid:
-                    raise exceptions.PasswordInvalid(
-                        ", ".join(password_errors_holder.errors)
+            elif key == "password":
+                if value:
+                    password_errors_holder: PasswordErrorsHolder = (
+                        await self._validate_password(value)
                     )
-                validated_dict["hashed_password"] = (
-                    self.password_helper.hash_password(value))
+                    if not password_errors_holder.is_valid:
+                        raise exceptions.PasswordInvalid(
+                            ", ".join(password_errors_holder.errors)
+                        )
+                    validated_dict["hashed_password"] = (
+                        self.password_helper.hash_password(value))
             else:
                 validated_dict[key] = value
 

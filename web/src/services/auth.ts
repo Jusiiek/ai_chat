@@ -37,11 +37,10 @@ class Auth {
     };
   }
 
-  async logout(token: string): Promise<RequestResponse>  {
+  async logout(): Promise<RequestResponse>  {
     return await request({
       url: AUTH_ENDPOINTS.logout,
-      method: "POST",
-      body: {token: token}
+      method: "POST"
     });
   }
 }
