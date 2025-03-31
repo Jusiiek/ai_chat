@@ -1,6 +1,7 @@
 export { default as Avatar } from "./Avatar";
 export { default as Button } from "./Button";
 export { default as Card } from "./Card";
+export { default as Conversation } from "./Conversation";
 export { default as Col } from "./Col";
 export { default as Dropdown } from "./Dropdown";
 export { default as Icon } from "./Icon";
@@ -11,5 +12,6 @@ export { default as Row } from "./Row";
 export { default as Sidebar } from "./Sidebar";
 export { default as SettingsModal } from "./SettingsModal";
 export { default as Text } from "./Text";
+export { default as Thread } from "./Thread";
 export { default as Tooltip } from "./Tooltip";
 export { default as ThemeSwitcher } from "./ThemeSwitcher";
