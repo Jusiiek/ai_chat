@@ -24,7 +24,7 @@ def get_users_router(
     user_model = BaseUser
     user_update_model = BaseUpdateUser
 
-    router = APIRouter(prefix="/users", tags=["users"])
+    router = APIRouter(prefix="/api/users", tags=["users"])
 
     get_current_active_user = authenticator.get_current_user(
         is_active=True, is_verified=True

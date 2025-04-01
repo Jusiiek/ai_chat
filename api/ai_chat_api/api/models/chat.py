@@ -14,8 +14,8 @@ class Chat(BaseModel):
     user_id = columns.UUID(index=True)
     created_at = columns.DateTime(default=datetime.now())
     updated_at = columns.DateTime(default=datetime.now())
-    user_message: columns.Text = columns.Text()
-    ai_message: columns.Text = columns.Text()
+    user_message: columns.Text = columns.Text(required=True)
+    ai_message: columns.Text = columns.Text(required=True)
 
     @classmethod
     async def get_by_user_id(cls, user_id: models.ID) -> Union[List["Chat"], List]:
