@@ -7,7 +7,6 @@ import {setModalState} from "../reducers/modal";
 import {
     Row,
     Col,
-    ThemeSwitcher,
     Avatar,
     Tooltip,
     IconButton,
@@ -75,7 +74,6 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
             </Col>
             <Col className={"justify-center items-end w-1/2"}>
                 <Row className={"items-center"}>
-                    <ThemeSwitcher className={"mr-3"}/>
                     <Dropdown>
                         <Dropdown.Trigger>
                             <Avatar/>

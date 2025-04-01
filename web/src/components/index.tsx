@@ -15,4 +15,3 @@ export { default as SettingsModal } from "./SettingsModal";
 export { default as Text } from "./Text";
 export { default as Thread } from "./Thread";
 export { default as Tooltip } from "./Tooltip";
-export { default as ThemeSwitcher } from "./ThemeSwitcher";

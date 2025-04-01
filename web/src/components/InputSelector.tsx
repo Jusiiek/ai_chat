@@ -4,7 +4,7 @@ interface InputSelectorProps {
     label: string;
     options: string[];
     value?: string;
-    onChange?: (value: string) => void;
+    onChange?: (value: any) => void;
     className?: string
 }
 

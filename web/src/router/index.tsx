@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Navigate, Routes, Route, useLocation, Outlet } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSelector } from "react-redux";
 
 import { ActiveUser } from "../instances/user";
 import {
@@ -10,6 +11,7 @@ import {
     NotFound
 } from "../pages";
 import { PATHS } from "../router/routes";
+import { RootState } from "@/store";
 
 
 function AnimatedPage({ children }: {children: React.ReactNode}) {
@@ -62,6 +64,25 @@ const ProtectedRoute: React.FC = () => {
 
 export function AiChatRoutes() {
     const location = useLocation();
+    const theme = useSelector((state: RootState) => state.theme.theme);
+
+    useEffect(() => {
+        const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+        const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+            if (theme === "auto") {
+                document.documentElement.classList.toggle("dark", e.matches);
+            }
+        };
+        const preferDark = darkModeMediaQuery.matches;
+        const isDarkMode = theme === "auto" ? preferDark : theme === "dark";
+        document.documentElement.classList.toggle("dark", isDarkMode);
+
+        darkModeMediaQuery.addEventListener("change", handleSystemThemeChange);
+        return () => {
+            darkModeMediaQuery.removeEventListener("change", handleSystemThemeChange);
+        };
+    }, [theme]);
 
     const routeConfig = {
         auth: {
