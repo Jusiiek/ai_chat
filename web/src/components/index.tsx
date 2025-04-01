@@ -7,6 +7,7 @@ export { default as Dropdown } from "./Dropdown";
 export { default as Icon } from "./Icon";
 export { default as IconButton } from "./IconButton";
 export { default as Input } from "./Input";
+export { default as InputSelector } from "./InputSelector";
 export { default as Navbar } from "./Navbar";
 export { default as Row } from "./Row";
 export { default as Sidebar } from "./Sidebar";

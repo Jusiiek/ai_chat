@@ -12,7 +12,8 @@ import {
     Icon,
     ThemeSwitcher,
     Button,
-    Input
+    Input,
+    InputSelector
 } from "../components";
 import {IconName} from "./Icon";
 import { AuthService } from "../services/auth";
@@ -139,7 +140,11 @@ const SettingsModal: React.FC = () => {
                                 </Text>
                             </Col>
                             <Col className={"w-1/2 items-end"}>
-                                <ThemeSwitcher className={"max-w-[56px]"} />
+                                <InputSelector
+                                    label={"Theme"}
+                                    options={["auto", "dark", "light"]}
+                                    className={"max-h-[28px] px-1 py-1"}
+                                />
                             </Col>
                         </Row>
 
