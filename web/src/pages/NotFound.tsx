@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {useNavigate} from "react-router-dom";
 
 import {
@@ -12,22 +12,6 @@ import {PATHS} from "../router/routes";
 
 const NotFound = () => {
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!localStorage.theme) {
-            document.documentElement.classList.add("dark");
-            localStorage.theme = "dark";
-            return
-        }
-        if (localStorage.theme === "dark") {
-            document.documentElement.classList.add("dark");
-            localStorage.theme = "dark";
-        } else {
-            document.documentElement.classList.remove("dark");
-            localStorage.theme = "light";
-        }
-    }, []);
-
     const navigateUser = () => {
         const user = ActiveUser.getUser();
 

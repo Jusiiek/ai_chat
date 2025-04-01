@@ -1,18 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 
-import {RootState} from "../store";
-import {setModalState} from "../reducers/modal";
+import { RootState } from "../store";
+import { setModalState } from "../reducers/modal";
+import { setThemeState, Themes } from "../reducers/theme";
 import {
     Row,
     Col,
     Text,
     IconButton,
     Icon,
-    ThemeSwitcher,
     Button,
-    Input
+    Input,
+    InputSelector
 } from "../components";
 import {IconName} from "./Icon";
 import { AuthService } from "../services/auth";
@@ -34,9 +35,9 @@ const SettingsModal: React.FC = () => {
         email: "",
         password: "",
         current_password: "",
-        is_active: ActiveUser.getUser()?.is_active,
+        is_active: true,
         is_superuser: ActiveUser.getUser()?.is_superuser,
-        is_verified: ActiveUser.getUser()?.is_verified,
+        is_verified: true,
     })
 
     const currentEmail = ActiveUser.getUser()?.email;
@@ -45,10 +46,15 @@ const SettingsModal: React.FC = () => {
     const [passwordUpdateDisabled, setPasswordUpdateDisabled] = useState(true);
 
     const isOpen = useSelector((state: RootState) => state.modal.isOpen);
+    const theme = useSelector((state: RootState) => state.theme.theme);
     const [selectedSetting, setSelectedSetting] = useState('General');
 
     const closeModal = () => {
         dispatch(setModalState(false))
+    }
+
+    const setTheme = (selectedTheme: Themes) => {
+        dispatch(setThemeState(selectedTheme))
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +145,13 @@ const SettingsModal: React.FC = () => {
                                 </Text>
                             </Col>
                             <Col className={"w-1/2 items-end"}>
-                                <ThemeSwitcher className={"max-w-[56px]"} />
+                                <InputSelector
+                                    label={"Theme"}
+                                    options={["auto", "dark", "light"]}
+                                    value={theme}
+                                    onChange={(value: Themes) => setTheme(value)}
+                                    className={"max-h-[28px] px-1 py-1"}
+                                />
                             </Col>
                         </Row>
 
