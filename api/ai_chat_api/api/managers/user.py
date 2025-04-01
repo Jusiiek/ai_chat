@@ -1,6 +1,7 @@
-import uuid
 import re
 from typing import Optional, Any, Dict, Union
+
+from fastapi import HTTPException, status
 
 from ai_chat_api.api.authentication.password import PasswordHelper
 from ai_chat_api.api.models.user import User
@@ -9,6 +10,7 @@ from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.schemas.user import BaseCreateUser, BaseUpdateUser
 from ai_chat_api.api.schemas.auth import AuthPasswordRequestForm
+from ai_chat_api.api.managers import BaseManager
 from ai_chat_api.api.common.password_error import (
     PasswordErrorMessages,
     PasswordErrorsHolder
@@ -19,17 +21,25 @@ RESET_PASSWORD_TOKEN_AUDIENCE = "reset-password-token"
 VERIFY_USER_TOKEN_AUDIENCE = "verify-user-token"
 
 
-class UserManager:
+class UserManager(BaseManager):
     def __init__(
         self,
         user: Union[User, None] = None,
         password_helper: Optional[PasswordHelper] = None
     ):
+        super().__init__()
         self.user = user
         if password_helper is None:
             self.password_helper = PasswordHelper()
         else:
             self.password_helper = password_helper
+
+    async def get_model_or_404(self, id: str) -> Optional[User]:
+        try:
+            parsed_id = self.parse_id(id)
+            return await self.get(parsed_id)
+        except (exceptions.UserNotExists, exceptions.InvalidID) as e:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND) from e
 
     async def _validate_password(self, password: str) -> PasswordErrorsHolder:
         """
@@ -63,26 +73,6 @@ class UserManager:
             errors=errors,
             is_valid=len(errors) == 0,
         )
-
-    def parse_id(self, user_id: Any) -> models.ID:
-        """
-        Parse a value into a correct ID type.
-
-        Args
-        ----------
-        user_id: Any - User ID as different type.
-
-        Returns
-        -------
-        id: ID - User correct ID
-        """
-
-        if isinstance(user_id, models.ID):
-            return user_id
-        try:
-            return uuid.UUID(user_id)
-        except ValueError as e:
-            raise exceptions.InvalidID() from e
 
     async def get(self, user_id: models.ID) -> Union[User, None]:
         """

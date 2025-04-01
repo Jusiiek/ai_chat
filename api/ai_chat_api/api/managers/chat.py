@@ -4,30 +4,30 @@ from fastapi import HTTPException, status
 
 from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
-from ai_chat_api.api.models.thread import Thread
+from ai_chat_api.api.models.chat import Chat
 from ai_chat_api.api.managers import BaseManager
 
 
-class ThreadManager(BaseManager):
-    async def get(self, thread_id: models.ID) -> Union[Thread, None]:
+class ChatManager(BaseManager):
+    async def get(self, chat_id: models.ID) -> Union[Chat, None]:
         """
-        Gets a thread with the given id
+        Gets a chat with the given id
         Args
         ----------
-        thread_id: ID - The thread's id
+        chat_id: ID - The chat's id
 
         Returns
         -------
-        result: A thread
+        result: A chat
         """
 
-        thread: Union[Thread, None] = await Thread.get_by_id(thread_id)
-        if thread is None:
+        chat: Union[Chat, None] = await Chat.get_by_id(chat_id)
+        if chat is None:
             raise exceptions.DoesNotExist()
 
-        return thread
+        return chat
 
-    async def get_model_or_404(self, id: str) -> Optional[Thread]:
+    async def get_model_or_404(self, id: str) -> Optional[Chat]:
         try:
             parsed_id = self.parse_id(id)
             return await self.get(parsed_id)

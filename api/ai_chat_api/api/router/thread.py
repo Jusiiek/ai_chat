@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import List
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, status, Depends
 
 from ai_chat_api.api.managers.thread import ThreadManager
 from ai_chat_api.api.authentication.authenticator import Authenticator
@@ -14,8 +14,6 @@ from ai_chat_api.api.schemas.thread import (
 
 from ai_chat_api.api.common.auth_error import ErrorMessages
 from ai_chat_api.api.utils.models import model_validate
-from ai_chat_api.api import exceptions
-
 
 
 def get_threads_router(
@@ -29,12 +27,6 @@ def get_threads_router(
         is_active=True, is_verified=True
     )
 
-    async def get_thread_or_404(id: str) -> Optional[Thread]:
-        try:
-            parsed_id = thread_manager.parse_id(id)
-            return await thread_manager.get(parsed_id)
-        except exceptions.DoesNotExist as e:
-            raise HTTPException(status.HTTP_404_NOT_FOUND) from e
 
     @router.get(
         "/",
@@ -78,9 +70,10 @@ def get_threads_router(
         dependencies=[Depends(get_current_active_user)],
     )
     async def get_thread(
-        thread: Thread = Depends(get_thread_or_404),
+        thread: Thread = Depends(thread_manager.get_model_or_404),
     ):
         return model_validate(BaseThread, thread)
+
 
     @router.post(
         "/",
