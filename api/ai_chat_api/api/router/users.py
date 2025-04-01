@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Union
 
 from fastapi import APIRouter, HTTPException, status, Depends, Response
 
@@ -106,7 +106,9 @@ def get_users_router(
         user: User = Depends(get_current_active_user),
     ):
         user_update_dict = user_update.dict()
-        current_password: Union[str, None] = user_update_dict.get("current_password", None)
+        current_password: Union[str, None] = (
+            user_update_dict.get("current_password", None)
+        )
         new_password: Union[str, None] = user_update_dict.get("password", None)
 
         if new_password and current_password:

@@ -14,7 +14,7 @@ from ai_chat_api.api.utils.models import model_validate
 
 def get_chats_router(
     authenticator: Authenticator
-)-> APIRouter:
+) -> APIRouter:
 
     router = APIRouter(prefix="/api/chats", tags=["chats"])
 

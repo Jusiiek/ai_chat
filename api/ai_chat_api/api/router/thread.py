@@ -27,7 +27,6 @@ def get_threads_router(
         is_active=True, is_verified=True
     )
 
-
     @router.get(
         "/",
         response_model=List[BaseThreadList],
@@ -58,7 +57,6 @@ def get_threads_router(
 
         return serialized_data
 
-
     @router.get(
         "/{id}",
         response_model=List[BaseThreadList],
@@ -74,7 +72,6 @@ def get_threads_router(
     ):
         return model_validate(BaseThread, thread)
 
-
     @router.post(
         "/",
         responses={
@@ -88,6 +85,5 @@ def get_threads_router(
         user: User = Depends(get_current_active_user),
     ):
         pass
-
 
     return router
