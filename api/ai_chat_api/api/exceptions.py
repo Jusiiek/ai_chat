@@ -8,6 +8,12 @@ class UserNotExists(AppException):
         super().__init__(message)
 
 
+class DoesNotExist(AppException):
+    def __init__(self):
+        message = "Object doesn't exist"
+        super().__init__(message)
+
+
 class InvalidID(AppException):
     pass
 

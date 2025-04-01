@@ -26,7 +26,7 @@ const InputSelector: React.FC<InputSelectorProps> = ({ label, options, value = "
                 peer w-full border border-gray-600 dark:border-gray-50 rounded
                 focus:outline-none focus:ring-2 focus:ring-blue-500
                 placeholder-transparent transition-all duration-300 ease-in-out
-                disabled:bg-gray-400 dark:disabled:bg-gray-600 dark:text-gray-900 ${className}
+                disabled:bg-gray-400 dark:disabled:bg-gray-600 dark:bg-gray-800 dark:text-white ${className}
                 `}
                 value={selectedValue}
                 onChange={handleChange}

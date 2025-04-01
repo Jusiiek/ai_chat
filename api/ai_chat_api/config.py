@@ -18,9 +18,6 @@ class Config:
     VERIFICATION_TOKEN_LIFETIME = 3600
     JWT_ALGORITHM = "HS256"
 
-    # router
-    MAIN_ROUTER = "/api"
-
     # paths
     HERE = os.getcwd()
 

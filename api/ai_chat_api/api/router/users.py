@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Union
 
 from fastapi import APIRouter, HTTPException, status, Depends, Response
 
@@ -24,7 +24,7 @@ def get_users_router(
     user_model = BaseUser
     user_update_model = BaseUpdateUser
 
-    router = APIRouter(prefix="/users", tags=["users"])
+    router = APIRouter(prefix="/api/users", tags=["users"])
 
     get_current_active_user = authenticator.get_current_user(
         is_active=True, is_verified=True
@@ -106,7 +106,9 @@ def get_users_router(
         user: User = Depends(get_current_active_user),
     ):
         user_update_dict = user_update.dict()
-        current_password: Union[str, None] = user_update_dict.get("current_password", None)
+        current_password: Union[str, None] = (
+            user_update_dict.get("current_password", None)
+        )
         new_password: Union[str, None] = user_update_dict.get("password", None)
 
         if new_password and current_password:
@@ -145,13 +147,6 @@ def get_users_router(
                 detail=ErrorMessages.USER_ALREADY_EXISTS.value,
             )
 
-    async def get_user_or_404(id: str) -> Optional[User]:
-        try:
-            parsed_id = user_manager.parse_id(id)
-            return await user_manager.get(parsed_id)
-        except (exceptions.UserNotExists, exceptions.InvalidID) as e:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND) from e
-
     @router.get(
         "/{id}",
         response_model=user_model,
@@ -160,7 +155,7 @@ def get_users_router(
         status_code=status.HTTP_200_OK,
         responses={**get_or_update_user_responses}
     )
-    async def get_user(user=Depends(get_user_or_404)):
+    async def get_user(user=Depends(user_manager.get_model_or_404)):
         return model_validate(user_model, user)
 
     @router.put(
@@ -177,7 +172,7 @@ def get_users_router(
     )
     async def update_user(
         user_update: user_update_model,
-        user=Depends(get_user_or_404),
+        user=Depends(user_manager.get_model_or_404),
     ):
         try:
             user_manager_instance = UserManager()
@@ -205,7 +200,7 @@ def get_users_router(
         responses={**get_or_update_user_responses}
     )
     async def delete_user(
-        user=Depends(get_user_or_404),
+        user=Depends(user_manager.get_model_or_404),
     ):
         user_manager_instance = UserManager()
         await user_manager_instance.delete(user)

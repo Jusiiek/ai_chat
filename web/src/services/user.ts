@@ -5,8 +5,8 @@ import { currentUserUpdate } from "../interfaces/services/user";
 
 
 export const USERS_ENDPOINTS = {
-    activeUser: `${BASE_URL}users/active-user`,
-    user: (user_id: string) => `${BASE_URL}users/${user_id}`,
+    activeUser: `${BASE_URL}api/users/active-user`,
+    user: (user_id: string) => `${BASE_URL}api/users/${user_id}`,
 };
 
 class Users {
