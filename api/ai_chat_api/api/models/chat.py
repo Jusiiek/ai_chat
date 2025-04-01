@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Union, List
+from typing import List
 
 from cassandra.cqlengine import columns
 
@@ -18,9 +18,9 @@ class Chat(BaseModel):
     ai_message: columns.Text = columns.Text(required=True)
 
     @classmethod
-    async def get_by_user_id(cls, user_id: models.ID) -> Union[List["Chat"], List]:
+    async def get_by_user_id(cls, user_id: models.ID) -> List["Chat"]:
         return cls.objects.filter(user_id=user_id).allow_filtering()
 
     @classmethod
-    async def get_by_thread_id(cls, thread_id: models.ID) -> Union[List["Chat"], List]:
+    async def get_by_thread_id(cls, thread_id: models.ID) -> List["Chat"]:
         return cls.objects.filter(thread_id=thread_id).allow_filtering()

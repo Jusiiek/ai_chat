@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Union
+from typing import List
 
 from cassandra.cqlengine import columns
 
@@ -17,12 +17,12 @@ class Thread(BaseModel):
     updated_at = columns.DateTime(default=datetime.now())
 
     @property
-    async def conversations(self) -> Union[List[Chat], List]:
+    async def conversations(self) -> List[Chat]:
         """
         Fetch conversations dynamically using thread_id.
         """
         return await Chat.get_by_thread_id(thread_id=self.id)
 
     @classmethod
-    async def get_by_user_id(cls, user_id: models.ID) -> Union[List["Thread"], List]:
+    async def get_by_user_id(cls, user_id: models.ID) -> List["Thread"]:
         return cls.objects.filter(user_id=user_id).allow_filtering()

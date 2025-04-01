@@ -8,12 +8,18 @@ from ai_chat_api.api.protocols import models
 
 
 class BaseCreateThread(CreateUpdateModel):
+    user_message: str
+
+
+class BaseThread(CreateUpdateModel):
+    id: models.ID
     user_id: models.ID
     title: str
-
-
-class BaseThread(BaseCreateThread):
-    id: models.ID
     created_at: datetime
     updated_at: datetime
     conversations: Union[List[BaseChat], List]
+
+
+class BaseThreadList(CreateUpdateModel):
+    id: models.ID
+    title: str
