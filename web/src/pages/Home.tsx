@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux';
 import {
     Row,
     Col,
-    Text,
     Navbar,
     Sidebar,
-    SettingsModal
+    SettingsModal,
+    Thread
 } from "../components";
 import { RootState } from "../store";
 
@@ -15,7 +15,7 @@ import { RootState } from "../store";
 function Home() {
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     return (
-        <Row className={'h-full w-full'}>
+        <Row className={'h-full w-full overflow-hidden'}>
             <SettingsModal />
             <Col
                 className={`h-full transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-[300px]' : 'w-0'}`}
@@ -27,9 +27,7 @@ function Home() {
                     <Navbar />
                 </Row>
                 <Row className={"w-full items-center justify-center text-center"}>
-                    <Text size={"xl"} weight={"normal"}>
-                        Some subheader text!!!
-                    </Text>
+                    <Thread />
                 </Row>
             </Col>
         </Row>
