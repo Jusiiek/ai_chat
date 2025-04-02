@@ -14,14 +14,15 @@ from ai_chat_api.api.schemas.thread import (
 
 from ai_chat_api.api.common.auth_error import ErrorMessages
 from ai_chat_api.api.utils.models import model_validate
+from ai_chat_api.api.tasks.thread import create_thread
 
 
 def get_threads_router(
-    authenticator: Authenticator
+    authenticator: Authenticator,
+    thread_manager: ThreadManager
 ) -> APIRouter:
 
     router = APIRouter(prefix="/api/threads", tags=["threads"])
-    thread_manager = ThreadManager()
 
     get_current_active_user = authenticator.get_current_user(
         is_active=True, is_verified=True
@@ -80,10 +81,14 @@ def get_threads_router(
             },
         },
     )
-    async def create_thread(
+    async def create_a_thread(
         payload: BaseCreateThread,
         user: User = Depends(get_current_active_user),
     ):
-        pass
+        task = await create_thread.delay(
+            user.id,
+            payload.user_message,
+        )
+        return task.id
 
     return router

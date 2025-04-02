@@ -4,16 +4,20 @@ from ai_chat_api.api.authentication.authenticator import Authenticator
 from ai_chat_api.api.common.auth_error import ErrorMessages
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.chat import Chat
+from ai_chat_api.api.models.thread import Thread
 from ai_chat_api.api.managers.chat import ChatManager
+from ai_chat_api.api.managers.thread import ThreadManager
 from ai_chat_api.api.schemas.chat import (
     BaseCreateChat,
     BaseChat
 )
 from ai_chat_api.api.utils.models import model_validate
+from ai_chat_api.api.tasks.chat import create_chat
 
 
 def get_chats_router(
-    authenticator: Authenticator
+    authenticator: Authenticator,
+    thread_manager: ThreadManager
 ) -> APIRouter:
 
     router = APIRouter(prefix="/api/chats", tags=["chats"])
@@ -46,10 +50,16 @@ def get_chats_router(
             },
         },
     )
-    async def create_chat(
+    async def create_a_chat(
         payload: BaseCreateChat,
         user: User = Depends(get_current_active_user),
+        thread: Thread = Depends(thread_manager.get_model_or_404),
     ):
-        pass
+        task = await create_chat.delay(
+            thread.id,
+            user.id,
+            payload.user_message,
+        )
+        return task.id
 
     return router

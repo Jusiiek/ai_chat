@@ -9,7 +9,6 @@ from ai_chat_api.middleware import (
 from ai_chat_api.config import Config
 from ai_chat_api.app_config import router
 from ai_chat_api.cassandradb import DatabaseManager
-from ai_chat_api.celery import celery_app
 
 
 def create_app() -> FastAPI:
@@ -40,6 +39,8 @@ app = create_app()
 def get_app_routers() -> None:
     app.include_router(router.get_auth_router())
     app.include_router(router.get_users_router())
+    app.include_router(router.get_thread_router())
+    app.include_router(router.get_chats_router())
 
 
 @app.on_event("startup")
