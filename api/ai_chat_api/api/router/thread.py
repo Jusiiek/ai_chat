@@ -14,7 +14,6 @@ from ai_chat_api.api.schemas.thread import (
 
 from ai_chat_api.api.common.auth_error import ErrorMessages
 from ai_chat_api.api.utils.models import model_validate
-from ai_chat_api.api.tasks.thread import create_thread
 
 
 def get_threads_router(
