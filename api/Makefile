@@ -1,6 +1,9 @@
 dev_run:
 	@python ./ai_chat_api/app.py
 
+dev_run_worker:
+	@PYTHONPATH=. celery -A ai_chat_api.celery worker --loglevel=info
+
 dev_install:
 	@pip install -e .
 

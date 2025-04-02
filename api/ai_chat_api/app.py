@@ -9,6 +9,7 @@ from ai_chat_api.middleware import (
 from ai_chat_api.config import Config
 from ai_chat_api.app_config import router
 from ai_chat_api.cassandradb import DatabaseManager
+from ai_chat_api.celery import celery_app
 
 
 def create_app() -> FastAPI:

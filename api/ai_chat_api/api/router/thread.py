@@ -59,7 +59,7 @@ def get_threads_router(
 
     @router.get(
         "/{id}",
-        response_model=List[BaseThreadList],
+        response_model=BaseThread,
         responses={
             status.HTTP_401_UNAUTHORIZED: {
                 "description": ErrorMessages.UNAUTHORIZED.value,

@@ -16,6 +16,13 @@ services:
     networks:
       - cassandra_net
 
+  redis:
+      image: redis:7
+      container_name: redis
+      restart: always
+      ports:
+        - "6379:6379"
+
 networks:
   cassandra_net:
     name: "cassandra_net"

@@ -6,6 +6,7 @@ class Config:
     A simple class for storing environment variables
     """
     APP_NAME = "AI_CHAT"
+
     #  ai_chat_keyspace
     APP_KEYSPACE = f"{APP_NAME.lower()}_keyspace"
     SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -17,6 +18,10 @@ class Config:
     RESET_PASSWORD_TOKEN_LIFETIME = 3600
     VERIFICATION_TOKEN_LIFETIME = 3600
     JWT_ALGORITHM = "HS256"
+
+    # celery
+    BROKER = "redis://0.0.0.0:6379/0"
+    BACKEND = "cassandra://0.0.0.0:9042"
 
     # paths
     HERE = os.getcwd()

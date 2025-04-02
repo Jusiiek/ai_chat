@@ -93,6 +93,12 @@ class DatabaseManager:
                     }}
                 """.format(self.KEYSPACE))
 
+            self.session.execute("""
+                CREATE KEYSPACE IF NOT EXISTS {}
+                WITH replication = {{
+                'class': 'SimpleStrategy', 'replication_factor': '1'
+                }}""".format("celeryks"))
+
     def _delete_keyspace(self):
         if self.session:
             self.session.execute(
@@ -120,3 +126,18 @@ class DatabaseManager:
                 print(f"Successfully created table for model: {model.__name__}")
             except Exception as e:
                 print(f"Failed to create table for model: {model.__name__}: {e}")
+
+        try:
+            self.session.execute("""
+            CREATE TABLE IF NOT EXISTS celeryks.tasks_result (
+                id UUID PRIMARY KEY,
+                status TEXT,
+                result TEXT,
+                date_created TIMESTAMP,
+                date_done TIMESTAMP,
+                traceback TEXT,
+                children TEXT
+            );
+            """)
+        except Exception as e:
+            print(f"Failed to create table for celeryks.tasks_result: {e}")

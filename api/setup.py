@@ -15,6 +15,8 @@ python-multipart==0.0.20
 click==8.1.8
 httpcore==1.0.7
 httpx==0.28.1
+celery==5.5.0
+redis==5.2.1
 """
 
 setup(
