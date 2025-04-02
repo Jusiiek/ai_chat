@@ -55,7 +55,7 @@ def get_chats_router(
         user: User = Depends(get_current_active_user),
         thread: Thread = Depends(thread_manager.get_model_or_404),
     ):
-        task = await create_chat.delay(
+        task = create_chat.delay(
             thread.id,
             user.id,
             payload.user_message,

@@ -16,7 +16,7 @@ def generate_title(message: str, max_length: int = 50) -> str:
 
 
 @celery_app.task
-async def create_thread(
+def create_thread(
     user_id: models.ID,
     user_message: str
 ):

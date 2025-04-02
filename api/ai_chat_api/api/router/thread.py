@@ -85,7 +85,7 @@ def get_threads_router(
         payload: BaseCreateThread,
         user: User = Depends(get_current_active_user),
     ):
-        task = await create_thread.delay(
+        task = create_thread.delay(
             user.id,
             payload.user_message,
         )

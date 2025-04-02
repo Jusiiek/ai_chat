@@ -6,7 +6,7 @@ from ai_chat_api.api.protocols import models
 
 
 @celery_app.task
-async def create_chat(
+def create_chat(
     thread_id: models.ID,
     user_id: models.ID,
     user_message: str
