@@ -81,14 +81,13 @@ def get_threads_router(
             },
         },
     )
-    async def create_a_thread(
+    async def create_thread(
         payload: BaseCreateThread,
         user: User = Depends(get_current_active_user),
     ):
-        task = create_thread.delay(
+        return await thread_manager.create(
             user.id,
             payload.user_message,
         )
-        return task.id
 
     return router

@@ -12,7 +12,6 @@ from ai_chat_api.api.schemas.chat import (
     BaseChat
 )
 from ai_chat_api.api.utils.models import model_validate
-from ai_chat_api.api.tasks.chat import create_chat
 
 
 def get_chats_router(
@@ -50,16 +49,15 @@ def get_chats_router(
             },
         },
     )
-    async def create_a_chat(
+    async def create_chat(
         payload: BaseCreateChat,
         user: User = Depends(get_current_active_user),
         thread: Thread = Depends(thread_manager.get_model_or_404),
     ):
-        task = create_chat.delay(
+        return await chat_manager.create(
             thread.id,
             user.id,
             payload.user_message,
         )
-        return task.id
 
     return router
