@@ -1,4 +1,4 @@
-from ai_chat_api.celery import celery_app
+from ai_chat_api.celery_app import celery_app
 
 from ai_chat_api.api.models.thread import Thread
 from ai_chat_api.api.models.chat import Chat

@@ -51,21 +51,6 @@ function Conversation() {
                     ))}
                 </div>
             </div>
-
-            <div className="fixed bottom-0 w-full p-4">
-                <div className="max-w-3xl mx-auto">
-                    <div className="relative">
-                        <textarea
-                            className="w-full p-3 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white resize-none"
-                            placeholder="Type a message..."
-                            rows={1}
-                        />
-                        <IconButton className="absolute right-3 top-3 text-blue-500 hover:text-blue-600">
-                            <Icon name={"triangular-arrow"} />
-                        </IconButton>
-                    </div>
-                </div>
-            </div>
         </div>
     );
 }

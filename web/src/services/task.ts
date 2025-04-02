@@ -1,6 +1,5 @@
-import {ServiceReturnInterface} from "@/interfaces/services/base";
-import {request} from "@/utils/request";
-import {CHATS_ENDPOINTS} from "@/services/chat";
+import { request } from "../utils/request";
+import { BASE_URL } from "../constants/config";
 
 type TaskStatus = 'PENDING' | 'STARTED' | 'SUCCESS' | 'FAILURE';
 
@@ -42,7 +41,7 @@ export class Task {
 
   private async getTaskResult(chat_id: string): Promise<Response> {
         const { res } = await request({
-            url: CHATS_ENDPOINTS.get_or_create(chat_id),
+            url: `${BASE_URL}api/tasks/${chat_id}`,
             method: "GET",
         });
         return res
@@ -87,7 +86,6 @@ export class Task {
           }
       }
   }
-
   async waitForCompletion(): Promise<any> {
       return new Promise((resolve, reject) => {
           this.onSuccess = resolve;

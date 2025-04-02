@@ -2,7 +2,7 @@ dev_run:
 	@python ./ai_chat_api/app.py
 
 dev_run_worker:
-	@celery -A ai_chat_api.celery worker --loglevel=info
+	@celery -A ai_chat_api.celery_app worker --loglevel=info
 
 dev_install:
 	@pip install -e .

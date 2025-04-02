@@ -15,6 +15,14 @@ class Threads {
             method: "GET",
         });
     }
+
+    async createThread(userMessage: string): Promise<ServiceReturnInterface> {
+        return await request({
+            url: THREADS_ENDPOINTS.list_or_create,
+            method: "POST",
+            body: { user_message: userMessage }
+        });
+    }
 }
 
 export const ThreadsService = new Threads();

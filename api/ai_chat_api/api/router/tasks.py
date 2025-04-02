@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 
 from ai_chat_api.api.authentication.authenticator import Authenticator
 from ai_chat_api.api.common.auth_error import ErrorMessages
-from ai_chat_api.celery import celery_app
+from ai_chat_api.celery_app import celery_app
 
 
 class TaskState(str, Enum):
