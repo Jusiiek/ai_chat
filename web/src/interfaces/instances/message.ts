@@ -4,5 +4,6 @@ export interface MessageInterface {
     author_role: string,
     content: string,
     created_at: Date,
-    updated_at: Date
+    updated_at: Date,
+    isLoading?: boolean
 }

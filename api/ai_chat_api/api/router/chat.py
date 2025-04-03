@@ -11,7 +11,7 @@ from ai_chat_api.api.schemas.chat import (
     BaseCreateChat,
     BaseChat
 )
-from ai_chat_api.api.utils.models import model_validate
+from ai_chat_api.api.schemas.message import BaseMessage
 
 
 def get_chats_router(
@@ -39,7 +39,17 @@ def get_chats_router(
     async def get_chat(
         chat: Chat = Depends(chat_manager.get_model_or_404)
     ):
-        return model_validate(BaseChat, chat)
+        messages = []
+        chat_messages = sorted(
+            chat.get_messages,
+            key=lambda msg: msg.created_at,
+            reverse=False
+        )
+        for message in chat_messages:
+            messages.append(
+                BaseMessage(**message._as_dict())
+            )
+        return BaseChat(**chat._as_dict(), messages=messages)
 
     @router.post(
         "/{id}",

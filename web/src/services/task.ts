@@ -16,9 +16,9 @@ export class Task {
     private isPolling: boolean = false;
     private abortController: AbortController;
 
-    public onSuccess: (result: any) => void = () => {
+    public onSuccess: (result: any) => void = async () => {
     };
-    public onFailure: (error: any) => void = () => {
+    public onFailure: (error: any) => void = async () => {
     };
 
     constructor(taskId: string, options: TaskOptions = {}) {

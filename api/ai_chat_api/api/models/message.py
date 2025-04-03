@@ -1,3 +1,4 @@
+from uuid import uuid1
 from enum import Enum
 from datetime import datetime
 
@@ -16,8 +17,7 @@ class Message(BaseModel):
 
     chat_id = columns.UUID(index=True)
     author_role = columns.Text(required=False)
-    created_at = columns.DateTime(default=datetime.now())
-    updated_at = columns.DateTime(default=datetime.now())
+    created_at_id = columns.TimeUUID(primary_key=True)
+    created_at = columns.DateTime(required=True)
+    updated_at = columns.DateTime(required=True)
     content = columns.Text()
-
-    __primary_key__ = ('id', 'created_at')

@@ -1,5 +1,7 @@
 import traceback
+from datetime import datetime
 import time
+import uuid
 
 from ai_chat_api.celery_app import celery_app
 from ai_chat_api.api.models.thread import Thread
@@ -44,14 +46,21 @@ def create_thread(
         Message.create(
             chat_id=chat.id,
             content=user_message,
-            author_role=AuthorRoles.USER.value
+            author_role=AuthorRoles.USER.value,
+            created_at_id=uuid.uuid1(),
+            created_at=datetime.now(),
+            updated_at=datetime.now(),
         )
 
-        time.sleep(3)
+        time.sleep(4)
+
         Message.create(
             chat_id=chat.id,
             content="Hi, how can I help you?",
-            author_role=AuthorRoles.AI.value
+            author_role=AuthorRoles.AI.value,
+            created_at_id=uuid.uuid1(),
+            created_at=datetime.now(),
+            updated_at=datetime.now(),
         )
 
         return thread.id

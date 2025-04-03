@@ -91,7 +91,11 @@ def get_threads_router(
     ):
         conversations = []
         for chat in await thread.conversations:
-            messages = chat.get_messages
+            messages = sorted(
+                chat.get_messages,
+                key=lambda msg: msg.created_at,
+                reverse=False
+            )
             conversations.append(
                 BaseChat(
                     **chat._as_dict(),
