@@ -21,7 +21,8 @@ function Thread() {
     const [message, setMessage] = useState("hi");
 
     const { thread_id } = useParams();
-    const [currentThread, setCurrentThread] = useState<string | null>(null);
+    const [threadId, setThreadId] = useState<string | null>(null);
+    const [thread, setThread] = useState(null)
 
     useEffect(() => {
         // Prevents state updates if component unmounts
@@ -32,7 +33,11 @@ function Thread() {
             await new Promise(resolve => setTimeout(resolve, 500));
 
             if (isMounted) {
-                setCurrentThread(thread_id || null);
+                setThreadId(thread_id || null);
+                if (thread_id) {
+                    const { data } = await ThreadsService.getThread(thread_id);
+                    setThread(data);
+                }
             }
         };
 
@@ -49,8 +54,8 @@ function Thread() {
     };
 
     const createChat = async() => {
-        if (currentThread) {
-            const { res, data } = await ChatsService.createChat(currentThread, message);
+        if (threadId) {
+            const { res, data } = await ChatsService.createChat(threadId, message);
             if (res.status === 200) {
                 const task = new Task(data)
 

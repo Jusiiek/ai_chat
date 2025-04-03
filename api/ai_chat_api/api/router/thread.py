@@ -10,12 +10,12 @@ from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.thread import Thread
 from ai_chat_api.api.schemas.thread import (
     BaseThread,
-    BaseThreadListItem,
     BaseCreateThread
 )
+from ai_chat_api.api.schemas.message import BaseMessage
+from ai_chat_api.api.schemas.chat import BaseChat
 
 from ai_chat_api.api.common.auth_error import ErrorMessages
-from ai_chat_api.api.utils.models import model_validate
 
 
 def get_threads_router(
@@ -89,7 +89,23 @@ def get_threads_router(
     async def get_thread(
         thread: Thread = Depends(thread_manager.get_model_or_404),
     ):
-        return model_validate(BaseThread, thread)
+        conversations = []
+        for chat in await thread.conversations:
+            messages = chat.get_messages
+            conversations.append(
+                BaseChat(
+                    **chat._as_dict(),
+                    messages=[
+                        BaseMessage(**msg._as_dict())
+                        for msg in messages
+                    ]
+                )
+            )
+
+        return BaseThread(
+            **thread._as_dict(),
+            conversations=conversations
+        )
 
     @router.post(
         "/",

@@ -16,6 +16,13 @@ class Threads {
         });
     }
 
+    async getThread(threadId: string): Promise<ServiceReturnInterface> {
+        return await request({
+            url: THREADS_ENDPOINTS.thread(threadId),
+            method: "GET",
+        });
+    }
+
     async createThread(userMessage: string): Promise<ServiceReturnInterface> {
         return await request({
             url: THREADS_ENDPOINTS.list_or_create,

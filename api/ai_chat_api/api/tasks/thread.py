@@ -1,7 +1,9 @@
 import traceback
+import time
 
 from ai_chat_api.celery_app import celery_app
 from ai_chat_api.api.models.thread import Thread
+from ai_chat_api.api.models.message import AuthorRoles, Message
 from ai_chat_api.api.models.chat import Chat
 from ai_chat_api.api.protocols import models
 from ai_chat_api.cassandradb import DatabaseManager
@@ -34,11 +36,22 @@ def create_thread(
             user_id=user_id,
         )
 
-        Chat.create(
+        chat = Chat.create(
             thread_id=thread.id,
-            user_id=user_id,
-            user_message=user_message,
-            ai_message="Hi, how can I help you?",
+            user_id=user_id
+        )
+
+        Message.create(
+            chat_id=chat.id,
+            content=user_message,
+            author_role=AuthorRoles.USER.value
+        )
+
+        time.sleep(3)
+        Message.create(
+            chat_id=chat.id,
+            content="Hi, how can I help you?",
+            author_role=AuthorRoles.AI.value
         )
 
         return thread.id

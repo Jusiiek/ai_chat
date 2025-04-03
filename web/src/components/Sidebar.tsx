@@ -20,7 +20,7 @@ const Sidebar: React.FC = () => {
     const dispatch = useDispatch();
 
     const {thread_id} = useParams();
-    const [currentThread, setCurrentThread] = useState<string | null>(null);
+    const [threadId, setThreadId] = useState<string | null>(null);
     const [threadList, setThreadList] = useState<CategorizedThreads>({});
 
     useEffect(() => {
@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
             await new Promise(resolve => setTimeout(resolve, 500));
 
             if (isMounted) {
-                setCurrentThread(thread_id || null);
+                setThreadId(thread_id || null);
                 if (thread_id) {
                     const {data} = await ThreadsService.getThreadList();
                     setThreadList(data)
@@ -101,7 +101,7 @@ const Sidebar: React.FC = () => {
                                 {threads.map((thread) => (
                                     <li
                                         key={thread.id}
-                                        className={`py-2 px-[12px] rounded-xl ${currentThread === thread.id ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
+                                        className={`py-2 px-[12px] rounded-xl ${threadId === thread.id ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
                                     >
                                         <IconButton className={"w-full items-start"}>
                                             <Text size={"base"} weight={"light"}>

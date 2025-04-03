@@ -1,9 +1,8 @@
 import React from "react";
 
-import {
-    Icon,
-    IconButton
-} from "../components/";
+import { ChatInterface } from "../interfaces/instances/chat";
+
+
 
 
 function Conversation() {

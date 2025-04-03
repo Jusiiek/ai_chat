@@ -16,6 +16,7 @@ from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
 from ai_chat_api.api.models.thread import Thread
 from ai_chat_api.api.models.chat import Chat
 from ai_chat_api.api.models.task import Task
+from ai_chat_api.api.models.message import Message
 
 
 class DatabaseManager:
@@ -28,7 +29,8 @@ class DatabaseManager:
         BlacklistedToken,
         Thread,
         Chat,
-        Task
+        Task,
+        Message
     ]
 
     def __init__(self):
