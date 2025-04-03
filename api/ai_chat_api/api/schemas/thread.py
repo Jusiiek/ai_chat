@@ -20,6 +20,6 @@ class BaseThread(CreateUpdateModel):
     conversations: Union[List[BaseChat], List]
 
 
-class BaseThreadList(CreateUpdateModel):
+class BaseThreadListItem(CreateUpdateModel):
     id: models.ID
     title: str

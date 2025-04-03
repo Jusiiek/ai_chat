@@ -10,6 +10,7 @@ import {
 import { useSelector } from "react-redux";
 
 import { ThreadsService } from "../services/thread";
+import { ChatsService } from "../services/chat";
 import { Task } from "../services/task";
 import { RootState } from "../store";
 
@@ -28,9 +29,6 @@ function Thread() {
 
         const watchThread = async () => {
             if (!isMounted) return;
-
-            console.log("Thread ID changed:", thread_id);
-
             await new Promise(resolve => setTimeout(resolve, 500));
 
             if (isMounted) {
@@ -51,20 +49,39 @@ function Thread() {
     };
 
     const createChat = async() => {
-        const { res, data } = await ThreadsService.createThread(message);
-        if (res.status === 200) {
-            const task = new Task(data)
+        if (currentThread) {
+            const { res, data } = await ChatsService.createChat(currentThread, message);
+            if (res.status === 200) {
+                const task = new Task(data)
 
-            task.onSuccess = (result) => {
-              console.log('Task succeeded:', result);
-              navigate(`/${result}`);
-            };
+                task.onSuccess = (result) => {
+                  console.log('Task succeeded:', result);
+                  navigate(`/${result}`);
+                };
 
-            task.onFailure = (error) => {
-              console.error('Task failed:', error);
-            };
-            task.start();
+                task.onFailure = (error) => {
+                  console.error('Task failed:', error);
+                };
+                task.start();
+            }
         }
+        else {
+            const { res, data } = await ThreadsService.createThread(message);
+                if (res.status === 200) {
+                const task = new Task(data)
+
+                task.onSuccess = (result) => {
+                  console.log('Task succeeded:', result);
+                  navigate(`/${result}`);
+                };
+
+                task.onFailure = (error) => {
+                  console.error('Task failed:', error);
+                };
+                task.start();
+            }
+        }
+
     }
 
     return (

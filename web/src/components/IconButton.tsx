@@ -18,7 +18,7 @@ const IconButton: React.FC<IconButtonProps> = ({children, onClick, className = "
     return (
         <button
             onClick={handleClick}
-            className={`flex items-center justify-center rounded transition-transform duration-150 ease-out ${isClicked ? "scale-90" : "scale-100"} ${className}`}
+            className={`flex rounded transition-transform duration-150 ease-out ${isClicked ? "scale-90" : "scale-100"} ${className}`}
         >
             {children}
         </button>

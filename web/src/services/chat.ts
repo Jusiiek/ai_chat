@@ -8,10 +8,18 @@ export const CHATS_ENDPOINTS = {
 };
 
 class Chats {
-    async getChat(chat_id: string): Promise<ServiceReturnInterface> {
+    async getChat(chatId: string): Promise<ServiceReturnInterface> {
         return await request({
-            url: CHATS_ENDPOINTS.get_or_create(chat_id),
+            url: CHATS_ENDPOINTS.get_or_create(chatId),
             method: "GET",
+        });
+    }
+
+    async createChat(threadId: string, userMessage: string): Promise<ServiceReturnInterface> {
+        return await request({
+            url: CHATS_ENDPOINTS.get_or_create(threadId),
+            method: "POST",
+            body: { user_message: userMessage }
         });
     }
 }
