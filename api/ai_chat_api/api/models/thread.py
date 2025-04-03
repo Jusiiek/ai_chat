@@ -9,7 +9,7 @@ from ai_chat_api.api.models.chat import Chat
 
 
 class Thread(BaseModel):
-    __tablename__ = 'thread'
+    __table_name__ = 'thread'
 
     user_id = columns.UUID(index=True)
     title = columns.Text()

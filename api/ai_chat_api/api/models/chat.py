@@ -8,7 +8,7 @@ from ai_chat_api.api.protocols import models
 
 
 class Chat(BaseModel):
-    __tablename__ = 'chat'
+    __table_name__ = 'chat'
 
     thread_id = columns.UUID(index=True)
     user_id = columns.UUID(index=True)
