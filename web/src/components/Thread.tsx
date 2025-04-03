@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+
 import {
     Row,
     Conversation,
@@ -12,8 +14,36 @@ import { Task } from "../services/task";
 import { RootState } from "../store";
 
 function Thread() {
+    const navigate = useNavigate();
+
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     const [message, setMessage] = useState("hi");
+
+    const { thread_id } = useParams();
+    const [currentThread, setCurrentThread] = useState<string | null>(null);
+
+    useEffect(() => {
+        // Prevents state updates if component unmounts
+        let isMounted = true;
+
+        const watchThread = async () => {
+            if (!isMounted) return;
+
+            console.log("Thread ID changed:", thread_id);
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            if (isMounted) {
+                setCurrentThread(thread_id || null);
+            }
+        };
+
+        watchThread();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [thread_id]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { value } = e.target;
@@ -27,6 +57,7 @@ function Thread() {
 
             task.onSuccess = (result) => {
               console.log('Task succeeded:', result);
+              navigate(`/${result}`);
             };
 
             task.onFailure = (error) => {

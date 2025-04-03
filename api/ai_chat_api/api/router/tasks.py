@@ -58,7 +58,7 @@ def get_tasks_router(
 
         response = {
             "task_id": task_id,
-            "status": task.state.lower()
+            "status": task.state
         }
 
         if task.state == TaskState.SUCCESS:

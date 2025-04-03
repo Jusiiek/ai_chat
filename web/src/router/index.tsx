@@ -62,6 +62,15 @@ const ProtectedRoute: React.FC = () => {
     return <Outlet />;
 };
 
+
+type RouteConfig = {
+    path?: string;
+    index?: boolean;
+    element?: JSX.Element;
+    children?: Record<string, RouteConfig>;
+};
+
+
 export function AiChatRoutes() {
     const location = useLocation();
     const theme = useSelector((state: RootState) => state.theme.theme);
@@ -84,7 +93,7 @@ export function AiChatRoutes() {
         };
     }, [theme]);
 
-    const routeConfig = {
+    const routeConfig: Record<string, RouteConfig> = {
         auth: {
             path: "/auth",
             children: {
@@ -104,6 +113,10 @@ export function AiChatRoutes() {
                 home: {
                     index: true,
                     element: <Home />
+                },
+                thread: {
+                    path: ":thread_id",
+                    element: <Home />
                 }
             }
         },
@@ -115,14 +128,14 @@ export function AiChatRoutes() {
                 <Route element={<ProtectedRoute />}>
                     {Object.entries(routeConfig).map(([key, route]) => (
                         <Route key={key} path={route.path}>
-                            {route.children && Object.entries(route.children).map(([childKey, child]) => (
-                                <Route
-                                    key={childKey}
-                                    path={child.path}
-                                    index={child.index}
-                                    element={<AnimatedPage>{child.element}</AnimatedPage>}
-                                />
-                            ))}
+                            {route.children &&
+                                Object.entries(route.children).map(([childKey, child]) => (
+                                    <Route
+                                        key={childKey}
+                                        {...(child.index ? { index: true } : { path: child.path })}
+                                        element={<AnimatedPage>{child.element}</AnimatedPage>}
+                                    />
+                                ))}
                         </Route>
                     ))}
                 </Route>
