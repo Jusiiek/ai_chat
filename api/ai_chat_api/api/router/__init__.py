@@ -8,6 +8,7 @@ from ai_chat_api.api.router.auth import get_auth_router
 from ai_chat_api.api.router.users import get_users_router
 from ai_chat_api.api.router.thread import get_threads_router
 from ai_chat_api.api.router.chat import get_chats_router
+from ai_chat_api.api.router.tasks import get_tasks_router
 
 
 class Router:
@@ -72,4 +73,16 @@ class Router:
         return get_chats_router(
             self.authenticator,
             self.thread_manager
+        )
+
+    def get_tasks_router(self) -> APIRouter:
+        """
+        Returns a tasks router.
+
+        Returns
+        ----------
+        router : APIRouter - The tasks router instance.
+        """
+        return get_tasks_router(
+            self.authenticator
         )

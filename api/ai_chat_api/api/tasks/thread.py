@@ -34,15 +34,12 @@ def create_thread(
             user_id=user_id,
         )
 
-        chat = Chat.create(
+        Chat.create(
             thread_id=thread.id,
             user_id=user_id,
             user_message=user_message,
             ai_message="Hi, how can I help you?",
         )
-
-        print("thread", thread.id)
-        print("chat", chat.id)
 
         return thread.id
     except Exception as e:

@@ -39,9 +39,9 @@ export class Task {
       this.abortController = new AbortController();
   }
 
-  private async getTaskResult(chat_id: string): Promise<Response> {
+  private async getTaskResult(task_id: string): Promise<Response> {
         const { res } = await request({
-            url: `${BASE_URL}api/tasks/${chat_id}`,
+            url: `${BASE_URL}api/tasks/${task_id}`,
             method: "GET",
         });
         return res

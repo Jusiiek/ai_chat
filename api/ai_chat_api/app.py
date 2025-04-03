@@ -41,6 +41,7 @@ def get_app_routers() -> None:
     app.include_router(router.get_users_router())
     app.include_router(router.get_thread_router())
     app.include_router(router.get_chats_router())
+    app.include_router(router.get_tasks_router())
 
 
 @app.on_event("startup")
