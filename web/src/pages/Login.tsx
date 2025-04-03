@@ -18,8 +18,8 @@ import { ActiveUser } from "../instances/user";
 const Login = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        email: "",
-        password: "",
+        email: "admin@ai_app.com",
+        password: "Admin3<>0asd",
     });
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [loginError, setLoginError] = useState("");

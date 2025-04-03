@@ -6,6 +6,7 @@ from ai_chat_api.api.protocols import models
 from ai_chat_api.api import exceptions
 from ai_chat_api.api.models.chat import Chat
 from ai_chat_api.api.managers import BaseManager
+from ai_chat_api.api.tasks.chat import create_chat
 
 
 class ChatManager(BaseManager):
@@ -33,3 +34,16 @@ class ChatManager(BaseManager):
             return await self.get(parsed_id)
         except exceptions.DoesNotExist as e:
             raise HTTPException(status.HTTP_404_NOT_FOUND) from e
+
+    async def create(
+        self,
+        thread_id: models.ID,
+        user_id: models.ID,
+        user_message: str,
+    ) -> str:
+        task = create_chat.delay(
+            thread_id,
+            user_id,
+            user_message,
+        )
+        return task.id

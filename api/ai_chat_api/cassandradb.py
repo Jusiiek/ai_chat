@@ -1,6 +1,6 @@
 from typing import Type, List
 
-from cassandra.cluster import Cluster
+from cassandra.cluster import Cluster, DCAwareRoundRobinPolicy
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.cqlengine.management import (
     sync_table,
@@ -13,6 +13,10 @@ from ai_chat_api.config import Config
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
+from ai_chat_api.api.models.thread import Thread
+from ai_chat_api.api.models.chat import Chat
+from ai_chat_api.api.models.task import Task
+from ai_chat_api.api.models.message import Message
 
 
 class DatabaseManager:
@@ -22,7 +26,11 @@ class DatabaseManager:
     MODELS: List[Type[Model]] = [
         User,
         Token,
-        BlacklistedToken
+        BlacklistedToken,
+        Thread,
+        Chat,
+        Task,
+        Message
     ]
 
     def __init__(self):
@@ -57,6 +65,8 @@ class DatabaseManager:
                 [Config.CASSANDRA_HOST],
                 port=Config.CASSANDRA_PORT,
                 auth_provider=self._get_auth_provider(),
+                protocol_version=5,
+                load_balancing_policy=DCAwareRoundRobinPolicy(local_dc="datacenter1")
             )
 
             self.session = self.cluster.connect()
@@ -92,6 +102,12 @@ class DatabaseManager:
                     'class': 'SimpleStrategy', 'replication_factor': '1'
                     }}
                 """.format(self.KEYSPACE))
+
+            self.session.execute("""
+                CREATE KEYSPACE IF NOT EXISTS {}
+                WITH replication = {{
+                'class': 'SimpleStrategy', 'replication_factor': '1'
+                }}""".format("celeryks"))
 
     def _delete_keyspace(self):
         if self.session:

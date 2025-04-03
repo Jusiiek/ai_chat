@@ -17,9 +17,9 @@ class BaseThread(CreateUpdateModel):
     title: str
     created_at: datetime
     updated_at: datetime
-    conversations: Union[List[BaseChat], List]
+    conversations: List[BaseChat]
 
 
-class BaseThreadList(CreateUpdateModel):
+class BaseThreadListItem(CreateUpdateModel):
     id: models.ID
     title: str
