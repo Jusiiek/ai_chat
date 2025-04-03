@@ -11,6 +11,8 @@ services:
       CASSANDRA_AUTHENTICATOR: "PasswordAuthenticator"
       CASSANDRA_USERNAME: "admin"
       CASSANDRA_PASSWORD: "admin"
+      CASSANDRA_RPC_ADDRESS: 0.0.0.0
+      CASSANDRA_NATIVE_TRANSPORT_PORT: 9042
     volumes:
       - ./data/cassandra_data:/var/lib/cassandra
     networks:

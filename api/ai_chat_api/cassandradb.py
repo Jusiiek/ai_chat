@@ -1,6 +1,6 @@
 from typing import Type, List
 
-from cassandra.cluster import Cluster
+from cassandra.cluster import Cluster, DCAwareRoundRobinPolicy
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.cqlengine.management import (
     sync_table,
@@ -13,6 +13,9 @@ from ai_chat_api.config import Config
 from ai_chat_api.api.models.user import User
 from ai_chat_api.api.models.token import Token
 from ai_chat_api.api.models.blacklisted_token import BlacklistedToken
+from ai_chat_api.api.models.thread import Thread
+from ai_chat_api.api.models.chat import Chat
+from ai_chat_api.api.models.task import Task
 
 
 class DatabaseManager:
@@ -22,7 +25,10 @@ class DatabaseManager:
     MODELS: List[Type[Model]] = [
         User,
         Token,
-        BlacklistedToken
+        BlacklistedToken,
+        Thread,
+        Chat,
+        Task
     ]
 
     def __init__(self):
@@ -57,6 +63,8 @@ class DatabaseManager:
                 [Config.CASSANDRA_HOST],
                 port=Config.CASSANDRA_PORT,
                 auth_provider=self._get_auth_provider(),
+                protocol_version=5,
+                load_balancing_policy=DCAwareRoundRobinPolicy(local_dc="datacenter1")
             )
 
             self.session = self.cluster.connect()
@@ -126,18 +134,3 @@ class DatabaseManager:
                 print(f"Successfully created table for model: {model.__name__}")
             except Exception as e:
                 print(f"Failed to create table for model: {model.__name__}: {e}")
-
-        try:
-            self.session.execute("""
-            CREATE TABLE IF NOT EXISTS celeryks.tasks_result (
-                id UUID PRIMARY KEY,
-                status TEXT,
-                result TEXT,
-                date_created TIMESTAMP,
-                date_done TIMESTAMP,
-                traceback TEXT,
-                children TEXT
-            );
-            """)
-        except Exception as e:
-            print(f"Failed to create table for celeryks.tasks_result: {e}")

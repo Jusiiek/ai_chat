@@ -13,19 +13,26 @@ import { RootState } from "../store";
 
 function Thread() {
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState("hi");
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { value } = e.target;
-        console.log("VASAVSVS", value)
         setMessage(value);
     };
 
     const createChat = async() => {
         const { res, data } = await ThreadsService.createThread(message);
         if (res.status === 200) {
-            console.log("data", data)
-            console.log("res", res)
+            const task = new Task(data)
+
+            task.onSuccess = (result) => {
+              console.log('Task succeeded:', result);
+            };
+
+            task.onFailure = (error) => {
+              console.error('Task failed:', error);
+            };
+            task.start();
         }
     }
 

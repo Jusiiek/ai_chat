@@ -2,6 +2,7 @@ from celery import Celery
 
 from ai_chat_api.config import Config
 
+
 celery_app = Celery(
     "ai_chat_worker",
     broker=Config.BROKER,
@@ -20,8 +21,9 @@ celery_app.conf.update(
 
 
 celery_app.conf.update(
-    cassandra_servers=["127.0.0.1:9042"],
-    cassandra_keyspace="celeryks",
-    cassandra_table="tasks_result"
+    result_backend=f'cassandra://{Config.CASSANDRA_HOST}:{Config.CASSANDRA_PORT}/{Config.APP_KEYSPACE}',
+    cassandra_servers=[Config.CASSANDRA_HOST],
+    cassandra_keyspace=Config.APP_KEYSPACE,
+    cassandra_table="celery_task"
 )
 celery_app.autodiscover_tasks(force=True)
