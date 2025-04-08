@@ -14,9 +14,9 @@ test:
 	make init_db
 	pytest tests --cov-report=xml:./reports/tests_coverage.xml --cov-report term
 
-test_api:
+test_integration:
 	make init_db
-	pytest tests_api --cov-report=xml:./reports/api_coverage.xml --cov-report term
+	pytest tests_integration --cov-report=xml:./reports/api_coverage.xml --cov-report term
 
 init_db:
 	@ai_chat_api_cli init-db
