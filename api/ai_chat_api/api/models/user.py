@@ -16,7 +16,7 @@ class User(BaseModel):
     is_superuser = columns.Boolean(default=False)
     is_verified = columns.Boolean(default=False)
     created_at = columns.DateTime(default=datetime.now())
-    edited_at = columns.DateTime(default=datetime.now())
+    updated_at = columns.DateTime(default=datetime.now())
 
     async def set_password(
         self,

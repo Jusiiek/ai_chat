@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from collections import defaultdict
-from typing import List
 
 from fastapi import APIRouter, status, Depends
 

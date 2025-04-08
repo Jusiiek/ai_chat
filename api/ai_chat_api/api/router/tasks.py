@@ -43,8 +43,8 @@ def get_tasks_router(
        Check the status of a Celery task and return its state and result.
 
        Returns:
-       - SUCCESS: {status: "success", result: ...}
-       - FAILURE: {status: "failed", error: ...}
+       - SUCCESS: {status: "success", result: result}
+       - FAILURE: {status: "failed", error: result_error, traceback: traceback}
        - PENDING/STARTED: {status: "pending"/"processing"}
        """
 

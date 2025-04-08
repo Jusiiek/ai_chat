@@ -1,6 +1,4 @@
-from uuid import uuid1
 from enum import Enum
-from datetime import datetime
 
 from cassandra.cqlengine import columns
 

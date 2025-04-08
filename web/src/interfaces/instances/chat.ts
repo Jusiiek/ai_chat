@@ -1,9 +1,7 @@
 import { MessageInterface } from "./message";
+import { BaseModel } from "./base";
 
-export interface ChatInterface {
-    id: string
+export interface ChatInterface extends BaseModel{
     user_id: string,
-    created_at: Date,
-    updated_at: Date,
     messages: MessageInterface[]
 }

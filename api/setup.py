@@ -17,6 +17,7 @@ httpcore==1.0.7
 httpx==0.28.1
 celery==5.5.0
 redis==5.2.1
+pytest-mock==3.14.0
 """
 
 setup(

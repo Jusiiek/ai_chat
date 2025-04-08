@@ -6,6 +6,8 @@ from ai_chat_api.config import Config
 from ai_chat_api.api.models.user import User
 from ai_chat_api.cassandradb import DatabaseManager
 from ai_chat_api.api.managers.user import UserManager
+from ai_chat_api.api.managers.chat import ChatManager
+from ai_chat_api.api.managers.thread import ThreadManager
 from ai_chat_api.api.responses.auth import AuthResponse
 from ai_chat_api.api.responses.bearer import BearerResponse
 from ai_chat_api.api.authentication.password import PasswordHelper
@@ -89,6 +91,16 @@ def token_manager() -> TokenManager:
 @pytest.fixture
 def user_manager() -> UserManager:
     return UserManager()
+
+
+@pytest.fixture
+def thread_manager() -> ThreadManager:
+    return ThreadManager()
+
+
+@pytest.fixture
+def chat_manager() -> ChatManager:
+    return ChatManager()
 
 
 @pytest.fixture

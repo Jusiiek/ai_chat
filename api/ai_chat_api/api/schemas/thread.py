@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from typing import Union, List
+from typing import List
 
 from ai_chat_api.api.schemas.user import CreateUpdateModel
 from ai_chat_api.api.schemas.chat import BaseChat

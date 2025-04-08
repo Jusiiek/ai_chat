@@ -21,7 +21,10 @@ celery_app.conf.update(
 
 
 celery_app.conf.update(
-    result_backend=f'cassandra://{Config.CASSANDRA_HOST}:{Config.CASSANDRA_PORT}/{Config.APP_KEYSPACE}',
+    result_backend=(
+        f'cassandra://{Config.CASSANDRA_HOST}:'
+        f'{Config.CASSANDRA_PORT}/{Config.APP_KEYSPACE}'
+    ),
     cassandra_servers=[Config.CASSANDRA_HOST],
     cassandra_keyspace=Config.APP_KEYSPACE,
     cassandra_table="celery_task"
