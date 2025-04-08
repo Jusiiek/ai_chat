@@ -1,9 +1,9 @@
-export interface MessageInterface {
-    id: string,
+import { BaseModel } from "./base";
+
+
+export interface MessageInterface extends BaseModel {
     chat_id: string,
     author_role: string,
     content: string,
-    created_at: Date,
-    updated_at: Date,
     isLoading?: boolean
 }

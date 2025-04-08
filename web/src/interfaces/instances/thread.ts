@@ -1,4 +1,5 @@
 import { ChatInterface } from "./chat";
+import { BaseModel } from "./base";
 
 export interface ThreadListItemInterface {
     id: string;
@@ -8,9 +9,8 @@ export interface ThreadListItemInterface {
 export type CategorizedThreads = Record<string, ThreadListItemInterface[]>;
 
 
-export interface ThreadInterface extends ThreadListItemInterface{
+export interface ThreadInterface extends BaseModel {
+    title: string;
     user_id: string,
-    created_at: Date,
-    updated_at: Date,
     conversations: ChatInterface[]
 }
