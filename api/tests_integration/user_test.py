@@ -1,10 +1,8 @@
-import pytest
 from ai_chat_api.api.models.user import User
 
 USERS_ENDPOINT = "/api/users"
 
 
-@pytest.mark.asyncio
 async def test_get_user_success(admin_auth_client, create_test_user):
     test_user: User = create_test_user()
 
@@ -14,7 +12,6 @@ async def test_get_user_success(admin_auth_client, create_test_user):
     test_user.delete()
 
 
-@pytest.mark.asyncio
 async def test_get_user_404(admin_auth_client, create_test_user):
     test_user: User = create_test_user()
 
@@ -25,7 +22,6 @@ async def test_get_user_404(admin_auth_client, create_test_user):
     test_user.delete()
 
 
-@pytest.mark.asyncio
 async def test_update_user_success(admin_auth_client, create_test_user):
     test_user: User = create_test_user()
 
@@ -39,7 +35,6 @@ async def test_update_user_success(admin_auth_client, create_test_user):
     test_user.delete()
 
 
-@pytest.mark.asyncio
 async def test_get_me(admin_auth_client):
     res = admin_auth_client.get(f"{USERS_ENDPOINT}/active-user")
     assert res.status_code == 200

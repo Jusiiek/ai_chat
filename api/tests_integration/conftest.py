@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 
 from ai_chat_api.app import app, startup_event
 from ai_chat_api.api.models.user import User
+from ai_chat_api.api.models.thread import Thread
 
 
 loop = asyncio.get_event_loop()
@@ -45,3 +46,13 @@ def create_test_user():
             is_verified=True
         )
     return create_user
+
+
+@pytest.fixture
+def create_test_thread():
+    def create_thread(user_id):
+        return Thread.create(
+            user_id=user_id,
+            title="test thread title"
+        )
+    return create_thread
