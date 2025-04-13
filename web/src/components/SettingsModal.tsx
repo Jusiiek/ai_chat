@@ -162,7 +162,11 @@ const SettingsModal: React.FC = () => {
                                 </Text>
                             </Col>
                             <Col className={"w-1/2 items-end"}>
-                                <Button variant={"danger"} onClick={handleLogout}>
+                                <Button
+                                    variant={"danger"}
+                                    onClick={handleLogout}
+                                    className={"modal-logout-button"}
+                                >
                                     <Text size={"base"}>
                                         Logout
                                     </Text>
@@ -273,8 +277,13 @@ const SettingsModal: React.FC = () => {
                                 </Text>
                             </Col>
                             <Col className={"w-1/2 items-end"}>
-                                <IconButton onClick={closeModal}>
-                                    <Icon name={"x"}/>
+                                <IconButton
+                                    onClick={closeModal}
+                                    className={"close-settings-modal-button"}
+                                >
+                                    <Icon
+                                        name={"x"}
+                                    />
                                 </IconButton>
                             </Col>
                         </Row>

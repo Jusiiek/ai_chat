@@ -30,12 +30,17 @@ const InputSelector: React.FC<InputSelectorProps> = ({ label, options, value = "
                 `}
                 value={selectedValue}
                 onChange={handleChange}
+                data-cy={"input-selector"}
             >
                 <option value="" disabled>
                     Select an option
                 </option>
                 {options.map((option) => (
-                    <option key={option} value={option}>
+                    <option
+                        key={option}
+                        value={option}
+                        data-cy={`theme-option-${option}`}
+                    >
                         {option}
                     </option>
                 ))}

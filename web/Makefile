@@ -6,3 +6,9 @@ dev_install:
 
 build:
 	@yarn build
+
+test:
+	@npx playwright test
+
+test_ui:
+	@npx playwright test --ui

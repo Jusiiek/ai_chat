@@ -14,6 +14,7 @@ const Avatar: React.FC<AvatarProps> = ({ onClick }) => {
         <div
             className="flex -space-x-1 overflow-hidden cursor-pointer"
             onClick={onClick}
+            data-cy={"avatar"}
         >
             <div
                 className="flex size-10 rounded-full bg-sky-500 dark:bg-sky-700 items-center justify-center text-white"

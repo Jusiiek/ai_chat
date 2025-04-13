@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {useParams, useNavigate} from "react-router-dom";
 
 import {setSidebarState} from "../reducers/siderbar";
 import {ThreadsService} from "../services/thread";
-import {CategorizedThreads, ThreadListItemInterface} from "../interfaces/instances/thread";
+import {CategorizedThreads} from "../interfaces/instances/thread";
+import { PATHS } from "../router/routes";
 
 import {
     Row,
@@ -14,10 +15,13 @@ import {
     Icon,
     Text
 } from "../components";
+import {RootState} from "@/store";
 
 
 const Sidebar: React.FC = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
 
     const {thread_id} = useParams();
     const [threadId, setThreadId] = useState<string | null>(null);
@@ -66,8 +70,15 @@ const Sidebar: React.FC = () => {
         dispatch(setSidebarState(false));
     }
 
+    const createNewChat = () => {
+        closeSidebar();
+        navigate(PATHS.HOME, { replace: true });
+    }
+
     return (
-        <nav className={"d-flex w-full h-full bg-gray-800 text-white overflow-hidden"}>
+        <nav
+            className={`d-flex w-full h-full bg-gray-800 text-white ${isSidebarOpen ? '' : 'overflow-hidden'}`}
+        >
             <Row className={`w-full py-[23px] px-[12px]`}>
                 <Col className={"justify-start items-start align-middle w-1/2"}>
                     <div className="flex justify-center items-center">
@@ -80,8 +91,8 @@ const Sidebar: React.FC = () => {
                 </Col>
                 <Col className={"justify-start items-end align-middle w-1/2"}>
                     <div className="flex justify-center items-center">
-                        <Tooltip content={"New Chat"} placement={"left"}>
-                            <IconButton>
+                        <Tooltip content={"New Chat"} placement={"right"}>
+                            <IconButton onClick={createNewChat}>
                                 <Icon name={"square-pen"}/>
                             </IconButton>
                         </Tooltip>

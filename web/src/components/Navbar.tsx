@@ -42,6 +42,10 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
         navigate(PATHS.LOGIN, { replace: true });
     }
 
+    const createNewChat = () => {
+        navigate(PATHS.HOME, { replace: true });
+    }
+
     return (
         <Row className={`w-full h-full bg-white dark:bg-gray-900 py-[18px] px-[12px] ${className}`}>
             <Col className={"justify-center items-start w-1/2"}>
@@ -62,7 +66,7 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
                         !isSidebarOpen ?
                             <div className={"mr-3 ml-3"}>
                                 <Tooltip content={"New Chat"} placement={"right"}>
-                                    <IconButton>
+                                    <IconButton onClick={createNewChat}>
                                         <Icon name={"square-pen"} />
                                     </IconButton>
                                 </Tooltip>
@@ -76,18 +80,25 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
                 <Row className={"items-center"}>
                     <Dropdown>
                         <Dropdown.Trigger>
-                            <Avatar/>
+                            <Avatar />
                         </Dropdown.Trigger>
                         <Dropdown.Menu className="py-1">
                             <Dropdown.MenuItem onClick={openSettingsModal}>
-                                <Text size={"base"}>
-                                    Settings
-                                </Text>
+                                <div data-cy={"settings-button"}>
+                                    <Text size={"base"}>
+                                        Settings
+                                    </Text>
+                                </div>
                             </Dropdown.MenuItem>
                             <Dropdown.MenuItem onClick={handleLogout}>
-                                <Text size={"base"} className={"text-red-600"}>
-                                    Logout
-                                </Text>
+                                <div data-cy={"logout-button"}>
+                                    <Text
+                                        size={"base"}
+                                        className={"text-red-600"}
+                                    >
+                                        Logout
+                                    </Text>
+                                </div>
                             </Dropdown.MenuItem>
                         </Dropdown.Menu>
                     </Dropdown>

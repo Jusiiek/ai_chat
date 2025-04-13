@@ -7,7 +7,7 @@ interface TooltipProps {
 }
 
 const Tooltip: React.FC<TooltipProps> = ({content, children, placement = "bottom"}) => {
-    const [visible, setVisible] = useState(false);
+    const [visible, setVisible] = useState(true);
     const tooltipRef = useRef<HTMLDivElement>(null);
 
     const handleMouseEnter = () => {
@@ -50,7 +50,7 @@ const Tooltip: React.FC<TooltipProps> = ({content, children, placement = "bottom
             {visible && (
                 <div
                     ref={tooltipRef}
-                    className="absolute z-10 p-3 text-white bg-black rounded shadow-lg w-48 text-center"
+                    className="absolute z-10 p-3 text-white bg-black rounded shadow-lg w-48 max-w-[160px] text-center"
                     style={getTooltipStyles()}
                 >
                     <div
