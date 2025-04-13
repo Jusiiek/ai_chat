@@ -7,7 +7,7 @@ interface TooltipProps {
 }
 
 const Tooltip: React.FC<TooltipProps> = ({content, children, placement = "bottom"}) => {
-    const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = useState(false);
     const tooltipRef = useRef<HTMLDivElement>(null);
 
     const handleMouseEnter = () => {
