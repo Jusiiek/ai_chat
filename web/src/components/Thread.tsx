@@ -20,7 +20,7 @@ function Thread() {
     const navigate = useNavigate();
 
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
-    const [message, setMessage] = useState("hi");
+    const [message, setMessage] = useState("");
 
     const {thread_id} = useParams();
     const [threadId, setThreadId] = useState<string | null>(null);
@@ -144,9 +144,12 @@ function Thread() {
                             onChange={handleInputChange}
                             value={message}
                             rows={1}
+                            data-cy={"chat-textarea"}
                         />
-                        <IconButton className="absolute right-3 top-3 text-blue-500 hover:text-blue-600"
-                                    onClick={createChat}>
+                        <IconButton
+                            className="absolute right-3 top-3 text-blue-500 hover:text-blue-600 create-chat-btn"
+                            onClick={createChat}
+                        >
                             <Icon name="triangular-arrow"/>
                         </IconButton>
                     </div>

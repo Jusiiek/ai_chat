@@ -86,6 +86,7 @@ const Login = () => {
                                 type={field === "password" ? "password" : "text"}
                                 onChange={handleInputChange}
                                 value={formData[field as keyof typeof formData]}
+                                data-cy={`login-input-${field}`}
                             />
                         </Row>
                     ))
@@ -106,6 +107,7 @@ const Login = () => {
                             className={"ml-auto"}
                             disabled={isButtonDisabled}
                             onClick={handleLogin}
+                            data-cy={"login-button"}
                         >
                             Login
                         </Button>
