@@ -18,7 +18,7 @@ export const alertSlice = createSlice({
     reducers: {
         setAlertState: (
             state,
-            action: PayloadAction<{ show: boolean; content: string, color: 'success' }>
+            action: PayloadAction<AlertState>
         ) => {
             state.show = action.payload.show;
             state.content = action.payload.content;
