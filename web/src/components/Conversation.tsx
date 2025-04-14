@@ -31,18 +31,39 @@ function Conversation({messages}: ConversationInterface) {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="px-6 py-6">
-                                            <div className="flex flex-col text-left">
-                                                <div
-                                                    className="w-8 h-8 rounded-sm flex items-center justify-center bg-blue-500 text-white mb-2">
-                                                    AI
+                                            msg.author_role === "ai" && msg.isLoading ? (
+                                                <div className="px-6 py-6">
+                                                    <div className="flex flex-col text-left">
+                                                        <div
+                                                            className="w-8 h-8 rounded-sm flex items-center justify-center bg-blue-500 text-white mb-2"
+                                                        >
+                                                            AI
+                                                        </div>
+                                                        <div className="text-base leading-relaxed flex items-center">
+                                                            <span className="loading-dots">
+                                                                <span>.</span>
+                                                                <span>.</span>
+                                                                <span>.</span>
+                                                              </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="text-base leading-relaxed">
-                                                    {msg.content}
+                                            ) : (
+                                                <div className="px-6 py-6">
+                                                    <div className="flex flex-col text-left">
+                                                        <div
+                                                            className="w-8 h-8 rounded-sm flex items-center justify-center bg-blue-500 text-white mb-2"
+                                                        >
+                                                            AI
+                                                        </div>
+                                                        <div className="text-base leading-relaxed">
+                                                            {msg.content}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    )}
+                                            )
+                                        )
+                                    }
                                 </div>
                             )) : ''
                     }

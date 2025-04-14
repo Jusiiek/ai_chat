@@ -52,7 +52,6 @@ function Thread() {
                     const {data} = await ThreadsService.getThread(thread_id);
                     setThread(data);
                     for (let i = 0; i < data.conversations.length; i++) {
-                        console.log(data.conversations[i].messages)
                         setConversation((prevMessages) => [
                             ...prevMessages,
                             ...data.conversations[i].messages
@@ -75,17 +74,29 @@ function Thread() {
     };
 
     const createChat = async () => {
-        if (threadId) {
-            const tempMessage: MessageInterface = {
-                id: `temp-${Date.now()}`,
-                chat_id: threadId,
-                author_role: "user",
-                content: message,
-                created_at: new Date(),
-                updated_at: new Date(),
-            };
+        const chatId = threadId || "";
+        const tempMessage: MessageInterface = {
+            id: `temp-${Date.now()}`,
+            chat_id: chatId,
+            author_role: "user",
+            content: message,
+            created_at: new Date(),
+            updated_at: new Date(),
+        };
 
-            setConversation((prev) => [...prev, tempMessage]);
+        const tempAiMessage: MessageInterface = {
+            id: `temp-${Date.now()}`,
+            chat_id: chatId,
+            author_role: "ai",
+            content: "",
+            created_at: new Date(),
+            updated_at: new Date(),
+            isLoading: true,
+        };
+        setConversation((prev) => [
+            ...prev, tempMessage, tempAiMessage
+        ]);
+        if (threadId) {
             const {res, data} = await ChatsService.createChat(threadId, message);
             if (res.status === 200) {
                 const task = new Task(data)
@@ -108,7 +119,7 @@ function Thread() {
 
                 task.onSuccess = (result) => {
                     console.log('Task succeeded:', result);
-                    navigate(`/${result}`);
+                    navigate(`/${result}`, { replace: true });
                 };
 
                 task.onFailure = (error) => {
