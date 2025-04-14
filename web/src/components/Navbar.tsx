@@ -12,7 +12,8 @@ import {
     IconButton,
     Dropdown,
     Text,
-    Icon
+    Icon,
+    InputSelector
 } from "../components";
 import {RootState} from "../store";
 import { AuthService } from "../services/auth";
@@ -73,7 +74,14 @@ const Navbar: React.FC<NavbarProps> = ({className}) => {
                             </div> :
                             ""
                     }
-                    <div>MODEL_NAME</div>
+                    <div>
+                        <InputSelector
+                            label={"Model"}
+                            options={["Default"]}
+                            value={"Default"}
+                            className={"max-h-[24px] px-1 py-1"}
+                        />
+                    </div>
                 </Row>
             </Col>
             <Col className={"justify-center items-end w-1/2"}>

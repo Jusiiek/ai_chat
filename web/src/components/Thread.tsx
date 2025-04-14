@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {useParams, useNavigate} from "react-router-dom";
+import {useParams} from "react-router-dom";
 
 import {
     Row,
@@ -18,7 +18,6 @@ import {MessageInterface} from "@/interfaces/instances/message";
 import {setAlertState} from "../reducers/alert";
 
 function Thread() {
-    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
@@ -42,18 +41,41 @@ function Thread() {
         // Prevents state updates if component unmounts
         let isMounted = true;
 
+        const watchThreadId = async () => {
+            if (!isMounted) return;
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            if (isMounted) {
+                if (threadId) {
+                    if (thread_id && thread_id !== threadId)
+                        setThreadId(thread_id);
+                }
+                else
+                    setThreadId(thread_id || null);
+            }
+        };
+        watchThreadId();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [thread_id]);
+
+    useEffect(() => {
+        // Prevents state updates if component unmounts
+        let isMounted = true;
+
         const watchThread = async () => {
             if (!isMounted) return;
             await new Promise(resolve => setTimeout(resolve, 500));
 
             if (isMounted) {
-                setThreadId(thread_id || null);
-                if (thread_id) {
-                    const {data} = await ThreadsService.getThread(thread_id);
+                if (threadId) {
+                    const {data} = await ThreadsService.getThread(threadId);
                     setThread(data);
                     for (let i = 0; i < data.conversations.length; i++) {
                         setConversation((prevMessages) => [
-                            ...prevMessages,
+                            ...prevMessages.filter((msg) => msg?.id && !msg.id.startsWith("temp-")),
                             ...data.conversations[i].messages
                         ]);
                     }
@@ -66,7 +88,7 @@ function Thread() {
         return () => {
             isMounted = false;
         };
-    }, [thread_id]);
+    }, [threadId]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const {value} = e.target;
@@ -119,7 +141,8 @@ function Thread() {
 
                 task.onSuccess = (result) => {
                     console.log('Task succeeded:', result);
-                    navigate(`/${result}`, { replace: true });
+                    setThreadId(result)
+                    window.history.pushState({ modalOpen: true }, "", `/${result}`);
                 };
 
                 task.onFailure = (error) => {
