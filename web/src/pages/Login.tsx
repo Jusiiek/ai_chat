@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import {
     Card,
@@ -13,16 +14,16 @@ import { AuthService } from "../services/auth";
 import { UsersService } from "../services/user";
 import { PATHS } from "../router/routes";
 import { ActiveUser } from "../instances/user";
-
+import { setAlertState } from "../reducers/alert";
 
 const Login = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: "admin@ai_app.com",
         password: "Admin3<>0asd",
     });
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-    const [loginError, setLoginError] = useState("");
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -32,6 +33,14 @@ const Login = () => {
         }));
     };
 
+    const showAlert = (message?: string) => {
+        dispatch(setAlertState({
+            show: true,
+            content: message || "Invalid email or password",
+            color: "danger"
+        }))
+    }
+
     const handleLogin = async () => {
         try {
             if (!isButtonDisabled) {
@@ -40,12 +49,11 @@ const Login = () => {
                     const { data } = await UsersService.fetchCurrentUser();
                     ActiveUser.set(data);
                     navigate(PATHS.HOME, { replace: true });
-                } else {
-                    setLoginError("Invalid email or password");
-                }
+                } else
+                    showAlert();
             }
         } catch (error) {
-            setLoginError("Invalid email or password");
+            showAlert();
         }
     };
 
@@ -57,7 +65,6 @@ const Login = () => {
     useEffect(() => {
         validateForm();
     }, [formData]);
-
 
     return (
         <div

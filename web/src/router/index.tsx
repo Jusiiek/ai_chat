@@ -21,7 +21,7 @@ function AnimatedPage({ children }: {children: React.ReactNode}) {
             opacity: 0
         },
         animate: {
-            scale: [0.9, 1, 0.9, 1],
+            scale: 1,
             opacity: 1,
             transition: {
                 duration: 2,

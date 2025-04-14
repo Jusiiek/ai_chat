@@ -114,7 +114,7 @@ const Sidebar: React.FC = () => {
                                         key={thread.id}
                                         className={`py-2 px-[12px] rounded-xl ${threadId === thread.id ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
                                     >
-                                        <IconButton className={"w-full items-start"}>
+                                        <IconButton className={"w-full items-start"} onClick={() => navigate(`/${thread.id}`, { replace: true })}>
                                             <Text size={"base"} weight={"light"}>
                                                 {thread.title}
                                             </Text>

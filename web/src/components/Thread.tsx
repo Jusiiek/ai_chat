@@ -7,7 +7,7 @@ import {
     IconButton,
     Icon
 } from "../components";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 
 import {ThreadsService} from "../services/thread";
 import {ChatsService} from "../services/chat";
@@ -15,9 +15,11 @@ import {Task} from "../services/task";
 import {RootState} from "../store";
 import {ThreadInterface} from "../interfaces/instances/thread";
 import {MessageInterface} from "@/interfaces/instances/message";
+import {setAlertState} from "../reducers/alert";
 
 function Thread() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     const [message, setMessage] = useState("");
@@ -27,6 +29,14 @@ function Thread() {
     const [thread, setThread] = useState<Partial<ThreadInterface>>({})
     const [conversation, setConversation] = useState<Partial<MessageInterface[]>>([])
     const [chatId, setChatId] = useState<string>("")
+
+    const showAlert = (message?: string) => {
+        dispatch(setAlertState({
+            show: true,
+            content: message || "Invalid email or password",
+            color: "danger"
+        }))
+    }
 
     useEffect(() => {
         // Prevents state updates if component unmounts
@@ -42,7 +52,6 @@ function Thread() {
                     const {data} = await ThreadsService.getThread(thread_id);
                     setThread(data);
                     for (let i = 0; i < data.conversations.length; i++) {
-                        console.log(data.conversations[i].messages)
                         setConversation((prevMessages) => [
                             ...prevMessages,
                             ...data.conversations[i].messages
@@ -52,7 +61,6 @@ function Thread() {
                 }
             }
         };
-
         watchThread();
 
         return () => {
@@ -66,28 +74,41 @@ function Thread() {
     };
 
     const createChat = async () => {
-        if (threadId) {
-            const tempMessage: MessageInterface = {
-                id: `temp-${Date.now()}`,
-                chat_id: threadId,
-                author_role: "user",
-                content: message,
-                created_at: new Date(),
-                updated_at: new Date(),
-            };
+        const chatId = threadId || "";
+        const tempMessage: MessageInterface = {
+            id: `temp-${Date.now()}`,
+            chat_id: chatId,
+            author_role: "user",
+            content: message,
+            created_at: new Date(),
+            updated_at: new Date(),
+        };
 
-            setConversation((prev) => [...prev, tempMessage]);
+        const tempAiMessage: MessageInterface = {
+            id: `temp-${Date.now()}`,
+            chat_id: chatId,
+            author_role: "ai",
+            content: "",
+            created_at: new Date(),
+            updated_at: new Date(),
+            isLoading: true,
+        };
+        setConversation((prev) => [
+            ...prev, tempMessage, tempAiMessage
+        ]);
+        if (threadId) {
             const {res, data} = await ChatsService.createChat(threadId, message);
             if (res.status === 200) {
                 const task = new Task(data)
 
                 task.onSuccess = (result) => {
                     console.log('Task succeeded:', result);
-                    setChatId(result)
+                    setChatId(result);
                 };
 
                 task.onFailure = (error) => {
                     console.error('Task failed:', error);
+                    showAlert(error);
                 };
                 task.start();
             }
@@ -98,11 +119,12 @@ function Thread() {
 
                 task.onSuccess = (result) => {
                     console.log('Task succeeded:', result);
-                    navigate(`/${result}`);
+                    navigate(`/${result}`, { replace: true });
                 };
 
                 task.onFailure = (error) => {
                     console.error('Task failed:', error);
+                    showAlert(error);
                 };
                 task.start();
             }
@@ -120,6 +142,7 @@ function Thread() {
                     ]);
                 } catch (error) {
                     console.error("Error fetching data:", error);
+                    showAlert("Error fetching data");
                 }
             }
         };
