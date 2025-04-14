@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {useParams, useNavigate} from "react-router-dom";
+import {useParams} from "react-router-dom";
 
 import {
     Row,
@@ -18,7 +18,6 @@ import {MessageInterface} from "@/interfaces/instances/message";
 import {setAlertState} from "../reducers/alert";
 
 function Thread() {
-    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
