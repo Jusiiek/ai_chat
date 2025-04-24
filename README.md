@@ -16,6 +16,7 @@ The project uses the FastAPI framework for building the API and a React client p
 ---------------
 
 #### The model is based on simple yet effective natural language processing (NLP) techniques to understand the user's intent.
+[Dataset from kaggle](https://www.kaggle.com/datasets/elvinagammed/chatbots-intent-recognition-dataset)
 
 🔤 Tokenization
 
