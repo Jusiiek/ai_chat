@@ -45,3 +45,7 @@ Output: intent classes with Softmax activation
 
 The model assigns each sentence to an intent defined in the Intent.json file.
 
+-------
+
+##### <span style="color:red;">WARNING</span>
+The project still contain many bugs.
