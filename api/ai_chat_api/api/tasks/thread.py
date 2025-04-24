@@ -9,6 +9,7 @@ from ai_chat_api.api.models.message import AuthorRoles, Message
 from ai_chat_api.api.models.chat import Chat
 from ai_chat_api.api.protocols import models
 from ai_chat_api.cassandradb import DatabaseManager
+from ai_chat_api.ai_model.model import model_instance
 
 
 def generate_title(message: str, max_length: int = 50) -> str:
@@ -53,10 +54,11 @@ def create_thread(
         )
 
         time.sleep(4)
+        model_response = model_instance.generate_response(user_message)
 
         Message.create(
             chat_id=chat.id,
-            content="Hi, how can I help you?",
+            content=model_response,
             author_role=AuthorRoles.AI.value,
             created_at_id=uuid.uuid1(),
             created_at=datetime.now(),
