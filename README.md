@@ -7,6 +7,10 @@
 [📦 API](./api/) – FastAPI routes and logic  
 [💻 WEB](./web/) – Frontend client
 
+![Login image](./img/ai_chat_1.jpg)
+![Chat image](./img/ai_chat_2.jpg)
+![Settings image](./img/ai_chat_3.jpg)
+
 -----------
 
 ## About

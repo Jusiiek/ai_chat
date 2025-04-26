@@ -20,8 +20,8 @@ const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        email: "admin@ai_app.com",
-        password: "Admin3<>0asd",
+        email: "",
+        password: "",
     });
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
